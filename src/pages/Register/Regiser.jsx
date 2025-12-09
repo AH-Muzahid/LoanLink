@@ -1,65 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import SocialLogin from '../../Componets/SocialLogin/SocialLogin';
 import toast from 'react-hot-toast';
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaImage, FaRocket } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaImage, FaRocket, FaUserTag } from 'react-icons/fa';
 import axios from 'axios';
 
 const Register = () => {
     const { createUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
-
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordValidation, setPasswordValidation] = useState({
-        length: false, capital: false, lowercase: false, match: false
-    });
-
-    useEffect(() => {
-        setPasswordValidation({
-            length: password.length >= 6,
-            capital: /[A-Z]/.test(password),
-            lowercase: /[a-z]/.test(password),
-            match: password === confirmPassword && confirmPassword !== ''
-        });
-    }, [password, confirmPassword]);
+    
+    const password = watch('password', '');
+    const confirmPassword = watch('confirmPassword', '');
 
 
-    const handleRegister = (event) => {
-        event.preventDefault();
-        const form = event.target;
-        const name = form.name.value;
-        const email = form.email.value;
-        const photoURL = form.photoURL.value;
+    const onSubmit = (data) => {
+        const { name, email, photoURL, role, password } = data;
 
-        // Validation Check
-        if (!passwordValidation.length || !passwordValidation.capital || !passwordValidation.lowercase) {
-            return toast.error('Password must meet all requirements.');
-        }
-        if (!passwordValidation.match) {
-            return toast.error('Passwords do not match.');
-        }
-
-        // Create User in Firebase
         createUser(email, password)
             .then(result => {
-                console.log(result.user);
-                // Update Profile
                 updateUserProfile(name, photoURL)
                     .then(() => {
-                        // Save User to MongoDB Server
-                        const userInfo = {
-                            name: name,
-                            email: email,
-                            role: 'borrower', // default role
-                            photoURL: photoURL,
-                            status: 'active',
-                        }
-                        console.log(userInfo.name);
-
-
+                        const userInfo = { name, email, role, photoURL, status: 'active' };
                         axios.post('http://localhost:5000/users', userInfo)
                             .then(res => {
                                 if (res.data.insertedId) {
@@ -69,9 +34,7 @@ const Register = () => {
                             })
                     })
             })
-            .catch(error => {
-                toast.error(error.message);
-            });
+            .catch(error => toast.error(error.message));
     };
 
     return (
@@ -83,87 +46,94 @@ const Register = () => {
                     <p className="text-gray-500">Start your financial journey</p>
                 </div>
 
-                <form onSubmit={handleRegister} className="space-y-4">
-                    {/* Name Field */}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="form-control">
-                        <label className="label justify-start gap-2 cursor-pointer">
+                        <label className="label justify-start gap-2">
                             <FaUser className="text-primary" /> <span className="font-semibold">Name</span>
                         </label>
-                        <input type="text" name="name" placeholder="Full Name" className="input input-bordered w-full" required />
+                        <input {...register('name', { required: 'Name is required' })} placeholder="Full Name" className="input input-bordered w-full" />
+                        {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
                     </div>
 
-                    {/* Email Field */}
                     <div className="form-control">
-                        <label className="label justify-start gap-2 cursor-pointer">
+                        <label className="label justify-start gap-2">
                             <FaEnvelope className="text-primary" /> <span className="font-semibold">Email</span>
                         </label>
-                        <input type="email" name="email" placeholder="Email" className="input input-bordered w-full" required />
+                        <input {...register('email', { required: 'Email is required' })} type="email" placeholder="Email" className="input input-bordered w-full" />
+                        {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
                     </div>
 
-                    {/* Photo URL Field */}
                     <div className="form-control">
-                        <label className="label justify-start gap-2 cursor-pointer">
+                        <label className="label justify-start gap-2">
                             <FaImage className="text-primary" /> <span className="font-semibold">Photo URL</span>
                         </label>
-                        <input type="url" name="photoURL" placeholder="Photo URL" className="input input-bordered w-full" required />
+                        <input {...register('photoURL', { required: 'Photo URL is required' })} type="url" placeholder="Photo URL" className="input input-bordered w-full" />
+                        {errors.photoURL && <span className="text-red-500 text-xs">{errors.photoURL.message}</span>}
                     </div>
 
-                    {/* Password Field */}
+                    <div className="form-control">
+                        <label className="label justify-start gap-2">
+                            <FaUserTag className="text-primary" /> <span className="font-semibold">Role</span>
+                        </label>
+                        <select {...register('role', { required: true })} className="select select-bordered w-full">
+                            <option value="borrower">Borrower</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+
                     <div className="form-control relative">
-                        <label className="label justify-start gap-2 cursor-pointer">
+                        <label className="label justify-start gap-2">
                             <FaLock className="text-primary" /> <span className="font-semibold">Password</span>
                         </label>
                         <input
+                            {...register('password', {
+                                required: 'Password is required',
+                                minLength: { value: 6, message: 'At least 6 characters' },
+                                pattern: {
+                                    value: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
+                                    message: 'Must have uppercase and lowercase'
+                                }
+                            })}
                             type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            name="password"
                             placeholder="Password"
                             className="input input-bordered w-full pr-12"
-                            required
                         />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-[52px] text-gray-500"
-                        >
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-[52px] text-gray-500">
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
+                        {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
                     </div>
 
-                    {/* Live Validation Feedback UI */}
                     {password && (
                         <div className="text-xs p-2 bg-base-200 rounded-lg space-y-1">
-                            <p className={passwordValidation.length ? 'text-green-600' : 'text-red-500'}>
-                                {passwordValidation.length ? '✓' : '•'} At least 6 chars
+                            <p className={password.length >= 6 ? 'text-green-600' : 'text-red-500'}>
+                                {password.length >= 6 ? '✓' : '•'} At least 6 chars
                             </p>
-                            <p className={passwordValidation.capital ? 'text-green-600' : 'text-red-500'}>
-                                {passwordValidation.capital ? '✓' : '•'} Uppercase letter
+                            <p className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-red-500'}>
+                                {/[A-Z]/.test(password) ? '✓' : '•'} Uppercase letter
                             </p>
-                            <p className={passwordValidation.lowercase ? 'text-green-600' : 'text-red-500'}>
-                                {passwordValidation.lowercase ? '✓' : '•'} Lowercase letter
+                            <p className={/[a-z]/.test(password) ? 'text-green-600' : 'text-red-500'}>
+                                {/[a-z]/.test(password) ? '✓' : '•'} Lowercase letter
                             </p>
                         </div>
                     )}
 
-                    {/* Confirm Password */}
                     <div className="form-control">
-                        <label className="label justify-start gap-2 cursor-pointer">
+                        <label className="label justify-start gap-2">
                             <FaLock className="text-primary" /> <span className="font-semibold">Confirm Password</span>
                         </label>
                         <input
+                            {...register('confirmPassword', {
+                                required: 'Confirm password',
+                                validate: value => value === password || 'Passwords do not match'
+                            })}
                             type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            name="confirmPassword"
                             placeholder="Confirm Password"
                             className="input input-bordered w-full"
-                            required
                         />
-                        {confirmPassword && (
-                            <p className={`text-xs mt-1 ${passwordValidation.match ? 'text-green-600' : 'text-red-500'}`}>
-                                {passwordValidation.match ? '✓ Passwords match!' : '• Passwords do not match'}
-                            </p>
+                        {errors.confirmPassword && <span className="text-red-500 text-xs">{errors.confirmPassword.message}</span>}
+                        {confirmPassword && password === confirmPassword && (
+                            <span className="text-green-600 text-xs">✓ Passwords match!</span>
                         )}
                     </div>
 

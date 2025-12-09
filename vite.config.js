@@ -4,6 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(),],
-  base: '/', 
+  plugins: [react(), tailwindcss()],
+  daisyui: {
+    themes: [
+      "light",
+      "dark",
+    ],
+  },
+  base: '/',
 })

@@ -1,4 +1,5 @@
-import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
     return (
@@ -27,9 +28,9 @@ const Footer = () => {
                 <nav>
                     <h6 className="footer-title">Social</h6>
                     <div className="grid grid-flow-col gap-4 text-2xl">
-                        <a><FaFacebook /></a>
-                        <a><FaTwitter /></a>
-                        <a><FaLinkedin /></a>
+                        <a href="#" className="hover:text-primary transition-colors"><FaFacebook /></a>
+                        <a href="#" className="hover:text-primary transition-colors"><FaXTwitter /></a>
+                        <a href="#" className="hover:text-primary transition-colors"><FaLinkedin /></a>
                     </div>
                 </nav>
             </div>

@@ -1,9 +1,12 @@
 import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../Hooks/useAuth/useAuth"
 import { toast } from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { HiMenu } from "react-icons/hi";
+import { MdLightMode, MdDarkMode } from "react-icons/md";
 
 const Navbar = () => {
-    const { user, logOut } = useAuth(); 
+    const { user, logOut } = useAuth();
     const handleLogOut = () => {
         logOut()
             .then(() => {
@@ -12,58 +15,82 @@ const Navbar = () => {
             .catch(error => console.error(error))
     }
 
+    // Theme Controller Logic
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'loanlink');
+
+    useEffect(() => {
+        localStorage.setItem('theme', theme);
+        document.querySelector('html').setAttribute('data-theme', theme);
+    }, [theme]);
+
+    const handleToggle = (e) => {
+        setTheme(e.target.checked ? 'dark' : 'loanlink');
+    }
+
     return (
-        <div className="navbar bg-base-100 shadow-sm container mx-auto px-4">
+        <div className="navbar bg-base-100/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-base-300">
+        <div className="container mx-auto px-4 flex justify-between items-center">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-                        </svg>
+                        <HiMenu className="h-5 w-5" />
                     </div>
-                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow bg-base-100 rounded-box w-52 gap-2">
-                        <li><NavLink to="/">Home</NavLink></li>
-                        <li><NavLink to="/all-loans">All Loans</NavLink></li>
-                        {user && <li><NavLink to="/dashboard">Dashboard</NavLink></li>}
+                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100 rounded-box w-52 gap-1">
+                        <li><NavLink to="/" className={({isActive}) => isActive ? 'bg-primary text-white' : ''}>Home</NavLink></li>
+                        <li><NavLink to="/all-loans" className={({isActive}) => isActive ? 'bg-primary text-white' : ''}>All Loans</NavLink></li>
+                        <li><NavLink to="/about" className={({isActive}) => isActive ? 'bg-primary text-white' : ''}>About Us</NavLink></li>
+                        <li><NavLink to="/contact" className={({isActive}) => isActive ? 'bg-primary text-white' : ''}>Contact</NavLink></li>
+                        {user && <li><NavLink to="/dashboard" className={({isActive}) => isActive ? 'bg-primary text-white' : ''}>Dashboard</NavLink></li>}
                     </ul>
                 </div>
-                <Link to="/" className="btn btn-ghost text-xl font-bold text-primary gap-0">
-                    Loan<span className="text-secondary">Link</span>
+                <Link to="/" className="btn btn-ghost text-2xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-105 transition-transform">
+                    Loan<span className="text-accent">Link</span>
                 </Link>
             </div>
 
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1 gap-2">
-                    <li><NavLink to="/">Home</NavLink></li>
-                    <li><NavLink to="/all-loans">All Loans</NavLink></li>
-                    {user && <li><NavLink to="/dashboard">Dashboard</NavLink></li>}
+                <ul className="menu menu-horizontal px-1 gap-1">
+                    <li><NavLink to="/" className={({isActive}) => isActive ? 'bg-primary text-white font-semibold' : 'hover:bg-primary/10'}>Home</NavLink></li>
+                    <li><NavLink to="/all-loans" className={({isActive}) => isActive ? 'bg-primary text-white font-semibold' : 'hover:bg-primary/10'}>All Loans</NavLink></li>
+                    <li><NavLink to="/about" className={({isActive}) => isActive ? 'bg-primary text-white font-semibold' : 'hover:bg-primary/10'}>About Us</NavLink></li>
+                    <li><NavLink to="/contact" className={({isActive}) => isActive ? 'bg-primary text-white font-semibold' : 'hover:bg-primary/10'}>Contact</NavLink></li>
+                    {user && <li><NavLink to="/dashboard" className={({isActive}) => isActive ? 'bg-primary text-white font-semibold' : 'hover:bg-primary/10'}>Dashboard</NavLink></li>}
                 </ul>
             </div>
 
-            <div className="navbar-end gap-2">
-                
+            <div className="navbar-end gap-3">
+                <label className="swap swap-rotate btn btn-ghost btn-circle">
+                    <input
+                        type="checkbox"
+                        onChange={handleToggle}
+                        checked={theme === 'dark'}
+                    />
+                    <MdLightMode className="swap-off fill-current w-6 h-6 text-yellow-500" />
+                    <MdDarkMode className="swap-on fill-current w-6 h-6 text-blue-500" />
+                </label>
+
+
                 {user ? (
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full border border-primary">
+                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar hover:scale-110 transition-transform">
+                            <div className="w-10 rounded-full border-2 border-primary ring ring-primary ring-offset-2">
                                 <img alt="User" src={user?.photoURL || "https://i.ibb.co/hYSMYwX/placeholder.jpg"} />
                             </div>
                         </div>
-                        <ul tabIndex={0} className="mt-3 z-1 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                            <li className="mb-2 pl-3 font-bold text-primary">{user.displayName}</li>
-                            <li><Link to="/dashboard/profile">Profile</Link></li>
-                            
-                          
-                            <li><button onClick={handleLogOut} className="text-red-500 font-bold">Logout</button></li>
+                        <ul tabIndex={0} className="mt-3 z-[1] p-3 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-56">
+                            <li className="mb-2 px-3 py-2 font-bold text-primary border-b border-base-300">{user.displayName}</li>
+                            <li><Link to="/dashboard/profile" className="hover:bg-primary/10">Profile</Link></li>
+                            <li><button onClick={handleLogOut} className="text-red-500 font-bold hover:bg-red-50">Logout</button></li>
                         </ul>
                     </div>
                 ) : (
                     <div className="flex gap-2">
-                        <Link to="/login" className="btn btn-outline btn-primary">Login</Link>
-                        <Link to="/register" className="btn btn-primary">Register</Link>
+                        <Link to="/login" className="btn btn-outline btn-primary hover:scale-105 transition-transform">Login</Link>
+                        <Link to="/register" className="btn btn-primary hover:scale-105 transition-transform">Register</Link>
                     </div>
                 )}
             </div>
+        </div>
         </div>
     );
 };
