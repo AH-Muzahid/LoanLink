@@ -86,7 +86,7 @@ const Navbar = () => {
                 ) : (
                     <div className="flex gap-2">
                         <Link to="/login" className="btn btn-outline btn-primary hover:scale-105 transition-transform">Login</Link>
-                        <Link to="/register" className="btn btn-primary hover:scale-105 transition-transform">Register</Link>
+                        
                     </div>
                 )}
             </div>

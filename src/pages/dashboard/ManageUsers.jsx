@@ -1,111 +1,162 @@
-import { useEffect, useState } from "react";
-import useAxiosSecure from "../../Hooks/useAxiosSecure/useAxiosSecure";
-import toast from "react-hot-toast";
-import { FaTrashAlt, FaUsers } from "react-icons/fa";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { FaEdit, FaBan, FaCheckCircle } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 
 const ManageUsers = () => {
-    const axiosSecure = useAxiosSecure();
-    const [users, setUsers] = useState([]);
-
-    // load all users
-    const fetchUsers = () => {
-        axiosSecure.get('/users')
-            .then(res => setUsers(res.data))
-            .catch(err => console.error(err));
-    };
-
     useEffect(() => {
-        fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        document.title = 'Manage Users - Dashboard | LoanLink';
     }, []);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [suspendModal, setSuspendModal] = useState(false);
+    const [suspendReason, setSuspendReason] = useState('');
+    const [suspendFeedback, setSuspendFeedback] = useState('');
+    const queryClient = useQueryClient();
 
-    // change user role to admin
-    const handleMakeAdmin = (user) => {
-        axiosSecure.patch(`/users/admin/${user._id}`)
-            .then(res => {
-                if(res.data.modifiedCount > 0){
-                    toast.success(`${user.name} is an Admin Now!`);
-                    fetchUsers(); 
-                }
-            })
+    const { data: users = [], isLoading } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const { data } = await axios.get('http://localhost:5000/users');
+            return data;
+        }
+    });
+
+    const updateUserMutation = useMutation({
+        mutationFn: async ({ id, updates }) => {
+            const { data } = await axios.patch(`http://localhost:5000/users/${id}`, updates);
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['users']);
+            toast.success('User updated successfully');
+            setSelectedUser(null);
+            setSuspendModal(false);
+            setSuspendReason('');
+            setSuspendFeedback('');
+        }
+    });
+
+    const handleRoleChange = (user, newRole) => {
+        updateUserMutation.mutate({ id: user._id, updates: { role: newRole } });
     };
 
-    // Change user role to manager 
-    const handleMakeManager = (user) => {
-        axiosSecure.patch(`/users/manager/${user._id}`)
-            .then(res => {
-                if(res.data.modifiedCount > 0){
-                    toast.success(`${user.name} is a Manager Now!`);
-                    fetchUsers();
-                }
-            })
-    };
-
-    // Delete user
-    const handleDeleteUser = (user) => {
-        if(window.confirm('Are you sure?')) {
-             axiosSecure.delete(`/users/${user._id}`)
-                .then(res => {
-                    if(res.data.deletedCount > 0){
-                        toast.success('User deleted');
-                        fetchUsers();
-                    }
-                })
+    const handleStatusToggle = (user) => {
+        if (user.status === 'active') {
+            setSelectedUser(user);
+            setSuspendModal(true);
+        } else {
+            updateUserMutation.mutate({ id: user._id, updates: { status: 'active', suspendReason: null, suspendFeedback: null } });
         }
     };
 
+    const handleSuspendSubmit = () => {
+        if (!suspendReason || !suspendFeedback) {
+            toast.error('Please provide reason and feedback');
+            return;
+        }
+        updateUserMutation.mutate({ 
+            id: selectedUser._id, 
+            updates: { status: 'suspended', suspendReason, suspendFeedback } 
+        });
+    };
+
+    if (isLoading) return <div className="flex justify-center p-8"><span className="loading loading-spinner loading-lg"></span></div>;
+
     return (
-        <div>
-            <div className="flex justify-evenly my-4">
-                <h2 className="text-3xl">All Users</h2>
-                <h2 className="text-3xl">Total Users: {users.length}</h2>
-            </div>
-            
-            <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                    {/* head */}
+        <div className="p-6">
+            <h2 className="text-3xl font-bold mb-6">Manage Users</h2>
+
+            <div className="overflow-x-auto bg-base-100 rounded-lg shadow-lg">
+                <table className="table table-zebra">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th>Action</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            users.map((user, index) => <tr key={user._id}>
-                                <th>{index + 1}</th>
-                                <td>{user.name}</td>
+                        {users.map((user) => (
+                            <tr key={user._id}>
+                                <td className="font-semibold">{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>
-                                    { user.role === 'admin' ? 'Admin' : 
-                                        <button
-                                            onClick={() => handleMakeAdmin(user)}
-                                            className="btn btn-lg bg-orange-500 text-white">
-                                            <FaUsers className="text-white text-2xl"></FaUsers>
-                                        </button>
-                                        || user.role === 'manager' ? 'Manager' :
-                                        <button
-                                            onClick={() => handleMakeManager(user)}
-                                            className="btn btn-lg bg-orange-500 text-white">
-                                            <FaUsers className="text-white text-2xl"></FaUsers>
-                                        </button>
-                                    }
+                                    <select
+                                        value={user.role || 'borrower'}
+                                        onChange={(e) => handleRoleChange(user, e.target.value)}
+                                        className="select select-bordered select-sm"
+                                    >
+                                        <option value="borrower">Borrower</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <span className={`badge ${user.status === 'suspended' ? 'badge-error' : 'badge-success'}`}>
+                                        {user.status || 'active'}
+                                    </span>
                                 </td>
                                 <td>
                                     <button
-                                        onClick={() => handleDeleteUser(user)}
-                                        className="btn btn-ghost btn-lg">
-                                        <FaTrashAlt className="text-red-600"></FaTrashAlt>
+                                        onClick={() => handleStatusToggle(user)}
+                                        className={`btn btn-sm ${user.status === 'suspended' ? 'btn-success' : 'btn-error'}`}
+                                    >
+                                        {user.status === 'suspended' ? <FaCheckCircle /> : <FaBan />}
+                                        {user.status === 'suspended' ? 'Activate' : 'Suspend'}
                                     </button>
                                 </td>
-                            </tr>)
-                        }
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* Suspend Modal */}
+            {suspendModal && (
+                <dialog open className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg mb-4">Suspend User: {selectedUser?.name}</h3>
+                        
+                        <div className="form-control mb-4">
+                            <label className="label">
+                                <span className="label-text font-semibold">Suspend Reason *</span>
+                            </label>
+                            <select 
+                                value={suspendReason} 
+                                onChange={(e) => setSuspendReason(e.target.value)}
+                                className="select select-bordered"
+                            >
+                                <option value="">Select reason</option>
+                                <option value="Fraudulent Activity">Fraudulent Activity</option>
+                                <option value="Policy Violation">Policy Violation</option>
+                                <option value="Payment Default">Payment Default</option>
+                                <option value="Suspicious Behavior">Suspicious Behavior</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div className="form-control mb-4">
+                            <label className="label">
+                                <span className="label-text font-semibold">Feedback/Details *</span>
+                            </label>
+                            <textarea 
+                                value={suspendFeedback}
+                                onChange={(e) => setSuspendFeedback(e.target.value)}
+                                className="textarea textarea-bordered h-24"
+                                placeholder="Provide detailed feedback about the suspension..."
+                            ></textarea>
+                        </div>
+
+                        <div className="modal-action">
+                            <button onClick={() => setSuspendModal(false)} className="btn btn-ghost">Cancel</button>
+                            <button onClick={handleSuspendSubmit} className="btn btn-error">Suspend User</button>
+                        </div>
+                    </div>
+                </dialog>
+            )}
         </div>
     );
 };

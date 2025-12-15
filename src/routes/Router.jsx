@@ -5,6 +5,7 @@ import ErrorPage from '../pages/Error/ErrorPage';
 import MainLayout from './../Layouts/MainLayout/MainLayout';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Regiser';
+import AllLoans from '../pages/AllLoans/AllLoans';
 
 import DashboardLayout from '../Layouts/DashboardLayout/DashboardLayout';
 import PrivateRoute from './PrivateRoute';
@@ -13,6 +14,12 @@ import ApplyLoan from '../pages/dashboard/ApplyLoan';
 import AddLoan from '../pages/dashboard/AddLoan';
 import ManageUsers from '../pages/dashboard/ManageUsers';
 import Profile from '../pages/dashboard/Profile';
+import AllLoansAdmin from '../pages/dashboard/AllLoansAdmin';
+import LoanApplications from '../pages/dashboard/LoanApplications';
+import DashboardHome from '../pages/dashboard/DashboardHome';
+import ManageLoans from '../pages/dashboard/ManageLoans';
+import PendingLoans from '../pages/dashboard/PendingLoans';
+import ApprovedLoans from '../pages/dashboard/ApprovedLoans';
 
 
 
@@ -27,8 +34,8 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "*",
-        element: <ErrorPage />,
+        path: "/all-loans",
+        element: <AllLoans />,
       },
       {
         path: "/login",
@@ -37,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
+      },
+      {
+        path: "*",
+        element: <ErrorPage />,
       }
 
     ]
@@ -51,6 +62,9 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      // Dashboard Home
+      { index: true, element: <DashboardHome /> },
+      
       // Common Route
       { path: "profile", element: <Profile /> },
 
@@ -60,11 +74,14 @@ export const router = createBrowserRouter([
 
       // Manager Routes
       { path: "add-loan", element: <AddLoan /> },
-      { path: "my-added-loans", element: <h2>My Added Loans (Manager)</h2> },
+      { path: "manage-loans", element: <ManageLoans /> },
+      { path: "pending-loans", element: <PendingLoans /> },
+      { path: "approved-loans", element: <ApprovedLoans /> },
 
       // Admin Routes
       { path: "manage-users", element: <ManageUsers /> },
-      { path: "all-loans", element: <h2>All Loans Management (Admin)</h2> },
+      { path: "all-loans", element: <AllLoansAdmin /> },
+      { path: "loan-applications", element: <LoanApplications /> },
     ],
   },
 ]);

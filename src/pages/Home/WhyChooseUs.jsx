@@ -1,47 +1,86 @@
-import { motion } from 'framer-motion';
-import { FaBolt, FaShieldAlt, FaHandshake, FaChartLine } from 'react-icons/fa';
-
+import React from 'react';
+import { FaUniversity, FaAward, FaCalendarAlt, FaFileInvoiceDollar } from 'react-icons/fa';
+import down from '../../assets/downwad.png'
 const WhyChooseUs = () => {
+
+    
     const features = [
-        { icon: <FaBolt />, title: 'Fast Approval', desc: 'Get approved within 24 hours' },
-        { icon: <FaShieldAlt />, title: 'Secure & Safe', desc: 'Your data is fully protected' },
-        { icon: <FaHandshake />, title: 'Transparent Process', desc: 'No hidden fees or charges' },
-        { icon: <FaChartLine />, title: 'Flexible Terms', desc: 'Customized repayment plans' }
+        {
+            id: 1,
+            icon: <FaUniversity className="text-5xl mb-4" />,
+            title: "LARGEST NON-BANKING FINANCIAL INSTITUTION",
+            description: "40 branches across the country serving your every need"
+        },
+        {
+            id: 2,
+            icon: <FaAward className="text-5xl mb-4" />,
+            title: "AAA CREDIT-RATING",
+            description: "Certified AAA long-term credit rating based on audited financials since 2012"
+        },
+        {
+            id: 3,
+            icon: <FaCalendarAlt className="text-5xl mb-4" />,
+            title: "40 YEARS OF LEGACY",
+            description: "Individual to institutional and capital market services to suit your every need"
+        },
+        {
+            id: 4,
+            icon: <FaFileInvoiceDollar className="text-5xl mb-4" />,
+            title: "WIDE RANGE OF FINANCIAL PRODUCTS",
+            description: "One of the oldest and most prestigious financial institutions of the country"
+        }
     ];
 
     return (
-        <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Why Choose Us</h2>
-                    <p className="text-base sm:text-lg lg:text-xl text-base-content/60 max-w-2xl mx-auto">Built for speed, security, and simplicity</p>
-                </motion.div>
+        <div className="relative py-8 md:py-12   bg-[#B21F1F] text-white overflow-hidden">
+            <div className='-mt-12
+            
+            '>
+            <img src={down} alt="" />
+            </div>
+            
+        
+            
+            <div className="container max-w-6xl mx-auto px-4 relative z-10">
+                {/* --- Title --- */}
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 mt-5 uppercase tracking-wide">
+                    Why Choose LoanLink?
+                </h2>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                    {features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            className="text-center"
+                {/* --- Grid Cards --- */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {features.map((feature) => (
+                        <div 
+                            key={feature.id} 
+                            className="bg-white/10 hover:bg-white/20 transition-all duration-300 rounded-lg p-8 flex flex-col items-center text-center border border-white/10 shadow-lg"
                         >
-                            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-primary/10 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
-                                <div className="text-2xl sm:text-3xl text-primary">{feature.icon}</div>
+                            {/* Icon */}
+                            <div className="text-white opacity-90">
+                                {feature.icon}
                             </div>
-                            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{feature.title}</h3>
-                            <p className="text-base-content/60 text-xs sm:text-sm">{feature.desc}</p>
-                        </motion.div>
+
+                            {/* Title */}
+                            <h3 className="text-lg font-bold uppercase mt-4  leading-tight min-h-[50px] flex items-center justify-center">
+                                {feature.title}
+                            </h3>
+
+                            {/* Divider Line */}
+                            <div className="w-full h-1 bg-white/50 rounded my-3"></div>
+
+                            {/* Description */}
+                            <p className="text-sm text-gray-100 font-light leading-relaxed">
+                                {feature.description}
+                            </p>
+                        </div>
                     ))}
                 </div>
             </div>
-        </section>
+
+            {/* --- Bottom Curve) --- */}
+            <div className='mt-12 -mb-12 rotate-180'>
+            <img src={down} alt="" />
+            </div>
+        </div>
     );
 };
 
