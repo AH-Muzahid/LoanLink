@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaMoneyBillWave, FaUser, FaIdCard, FaMapMarkerAlt, FaFileAlt, FaPhone, FaBriefcase } from 'react-icons/fa';
 
 const ApplyLoan = () => {
     const axiosSecure = useAxiosSecure();
@@ -66,9 +68,6 @@ const ApplyLoan = () => {
                 feeStatus: 'unpaid',
                 feeAmount: selectedLoan.feeAmount || 10,
                 createdAt: new Date().toISOString(),
-                // max: selectedLoan.maxLoanLimit,
-                // min: selectedLoan.minLoanLimit,
-
             };
 
             await axiosSecure.post('/applications', applicationData);
@@ -83,210 +82,265 @@ const ApplyLoan = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6">Apply for Loan</h2>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                    {/* Select Loan */}
-                    <div className="form-control mb-4">
-                        <label className="label">
-                            <span className="label-text font-semibold">Select Loan *</span>
-                        </label>
-                        <select
-                            onChange={handleLoanSelect}
-                            className="select select-bordered"
-                            required
-                            value={selectedLoan?._id || ''}
-                        >
-                            <option value="">Choose a loan</option>
-                            {loans.map(loan => (
-                                <option key={loan._id} value={loan._id}>
-                                    {loan.title} - {loan.interestRate}% Interest
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Auto-filled Fields */}
-                    {selectedLoan && (
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 bg-base-200 rounded-lg">
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text font-semibold">User Email</span>
-                                </label>
-                                <input type="email" value={user?.email} readOnly className="input input-bordered bg-base-300" />
-                            </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text font-semibold">Loan Title</span>
-                                </label>
-                                <input type="text" value={selectedLoan.title} readOnly className="input input-bordered bg-base-300" />
-                            </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text font-semibold">Interest Rate</span>
-                                </label>
-                                <input type="text" value={`${selectedLoan.interestRate}%`} readOnly className="input input-bordered bg-base-300" />
-                            </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text font-semibold">Application Fee</span>
-                                </label>
-                                <input type="text" value={`$${selectedLoan.feeAmount || 10} USD`} readOnly className="input input-bordered bg-base-300" />
-                            </div>
-                        </div>
-                    )}
-                    {/* Max Loan Limit */}
-                    <div className="form-control">
-                        <label className="label"><span className="label-text font-semibold">Max Limit (BDT)</span></label>
-                        <input type="text" value={selectedLoan?.maxLoanLimit || ''} readOnly className="input input-bordered bg-base-300 text-error font-bold" />
-                    </div>
-
-                    {/* User Input Fields */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">First Name *</span>
-                            </label>
-                            <input
-                                {...register('firstName', { required: 'First name is required' })}
-                                type="text"
-                                placeholder="Enter first name"
-                                className="input input-bordered"
-                            />
-                            {errors.firstName && <span className="text-error text-sm">{errors.firstName.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Last Name *</span>
-                            </label>
-                            <input
-                                {...register('lastName', { required: 'Last name is required' })}
-                                type="text"
-                                placeholder="Enter last name"
-                                className="input input-bordered"
-                            />
-                            {errors.lastName && <span className="text-error text-sm">{errors.lastName.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Contact Number *</span>
-                            </label>
-                            <input
-                                {...register('contactNumber', { required: 'Contact number is required' })}
-                                type="tel"
-                                placeholder="01XXXXXXXXX"
-                                className="input input-bordered"
-                            />
-                            {errors.contactNumber && <span className="text-error text-sm">{errors.contactNumber.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">National ID / Passport *</span>
-                            </label>
-                            <input
-                                {...register('nationalId', { required: 'ID is required' })}
-                                type="text"
-                                placeholder="Enter NID or Passport"
-                                className="input input-bordered"
-                            />
-                            {errors.nationalId && <span className="text-error text-sm">{errors.nationalId.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Income Source *</span>
-                            </label>
-                            <select {...register('incomeSource', { required: 'Income source is required' })} className="select select-bordered">
-                                <option value="">Select source</option>
-                                <option value="Salary">Salary</option>
-                                <option value="Business">Business</option>
-                                <option value="Freelance">Freelance</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            {errors.incomeSource && <span className="text-error text-sm">{errors.incomeSource.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Monthly Income (৳) *</span>
-                            </label>
-                            <input
-                                {...register('monthlyIncome', { required: 'Monthly income is required', min: 0 })}
-                                type="number"
-                                placeholder="Enter monthly income"
-                                className="input input-bordered"
-                                onWheel={(e) => e.target.blur()}
-                            />
-                            {errors.monthlyIncome && <span className="text-error text-sm">{errors.monthlyIncome.message}</span>}
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Loan Amount (৳) *</span>
-                            </label>
-                            <input
-                                {...register('amount', {
-                                    required: 'Loan amount is required',
-                                })}
-
-                                type="number"
-                                placeholder="Enter loan amount"
-                                className="input input-bordered"
-                                onWheel={(e) => e.target.blur()}
-                            />
-                            {errors.amount && <span className="text-error text-sm">{errors.amount.message}</span>}
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text font-semibold">Reason for Loan *</span>
-                            </label>
-                            <textarea
-                                {...register('purpose', { required: 'Reason is required' })}
-                                className="textarea textarea-bordered h-20"
-                                placeholder="Explain why you need this loan..."
-                            ></textarea>
-                            {errors.purpose && <span className="text-error text-sm">{errors.purpose.message}</span>}
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text font-semibold">Address *</span>
-                            </label>
-                            <textarea
-                                {...register('address', { required: 'Address is required' })}
-                                className="textarea textarea-bordered h-20"
-                                placeholder="Enter your full address..."
-                            ></textarea>
-                            {errors.address && <span className="text-error text-sm">{errors.address.message}</span>}
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text font-semibold">Extra Notes</span>
-                            </label>
-                            <textarea
-                                {...register('notes')}
-                                className="textarea textarea-bordered h-20"
-                                placeholder="Any additional information..."
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="card-actions justify-end mt-6">
-                        <button type="button" onClick={() => navigate('/dashboard')} className="btn btn-ghost">Cancel</button>
-                        <button type="submit" disabled={loading || !selectedLoan} className="btn btn-primary">
-                            {loading ? <span className="loading loading-spinner"></span> : 'Submit Application'}
-                        </button>
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5">
+                <div className="absolute top-10 left-10 w-32 h-32 bg-[#B91116] rounded-full blur-3xl"></div>
+                <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-purple-500 rounded-full blur-3xl"></div>
+            </div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="max-w-5xl mx-auto relative z-10"
+            >
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Loan Application</h2>
+                    <p className="text-gray-500 max-w-2xl mx-auto">Fill out the form below to apply for your desired loan. Please ensure all information is accurate to speed up the approval process.</p>
+                    <div className="h-1 w-24 bg-[#B91116] mx-auto mt-6 rounded-full"></div>
+                    
                 </div>
-            </form>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-base-200">
+                    {/* Header / Loan Selection */}
+                    <div className="bg-gray-50 p-8 border-b border-gray-100">
+                        <div className="form-control max-w-md mx-auto w-full">
+                            <label className="label">
+                                <span className="label-text font-bold text-gray-700 text-lg">Select Loan Type *</span>
+                            </label>
+                            <select
+                                onChange={handleLoanSelect}
+                                className="select select-bordered select-lg w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116] transition-all"
+                                required
+                                value={selectedLoan?._id || ''}
+                            >
+                                <option value="">-- Choose a Loan --</option>
+                                {loans.map(loan => (
+                                    <option key={loan._id} value={loan._id}>
+                                        {loan.title} - {loan.interestRate}% Interest
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="p-8 md:p-12">
+                        {/* Auto-filled Info Card */}
+                        {selectedLoan && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="bg-red-50 rounded-2xl p-6 mb-10 border border-red-100"
+                            >
+                                <h3 className="text-[#B91116] font-bold mb-4 flex items-center gap-2">
+                                    <FaFileAlt /> Loan Details
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div className="bg-white p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Loan Title</p>
+                                        <p className="font-semibold text-gray-800">{selectedLoan.title}</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Interest Rate</p>
+                                        <p className="font-semibold text-[#B91116]">{selectedLoan.interestRate}%</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Max Limit</p>
+                                        <p className="font-semibold text-green-600">৳{selectedLoan.maxLoanLimit.toLocaleString()}</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Application Fee</p>
+                                        <p className="font-semibold text-gray-800">${selectedLoan.feeAmount || 10} USD</p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Form Fields */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Personal Information */}
+                            <div className="md:col-span-2">
+                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                    <FaUser className="text-[#B91116]" /> Personal Information
+                                </h4>
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">First Name *</span>
+                                </label>
+                                <input
+                                    {...register('firstName', { required: 'First name is required' })}
+                                    type="text"
+                                    placeholder="e.g. John"
+                                    className="input input-bordered input-md w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                />
+                                {errors.firstName && <span className="text-red-500 text-sm mt-1">{errors.firstName.message}</span>}
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Last Name *</span>
+                                </label>
+                                <input
+                                    {...register('lastName', { required: 'Last name is required' })}
+                                    type="text"
+                                    placeholder="e.g. Doe"
+                                    className="input input-bordered input-md w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                />
+                                {errors.lastName && <span className="text-red-500 text-sm mt-1">{errors.lastName.message}</span>}
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Contact Number *</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        {...register('contactNumber', { required: 'Contact number is required' })}
+                                        type="tel"
+                                        placeholder="01XXXXXXXXX"
+                                        className="input input-bordered input-md w-full pl-10 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    />
+                                </div>
+                                {errors.contactNumber && <span className="text-red-500 text-sm mt-1">{errors.contactNumber.message}</span>}
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">National ID / Passport *</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <FaIdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        {...register('nationalId', { required: 'ID is required' })}
+                                        type="text"
+                                        placeholder="Enter NID or Passport Number"
+                                        className="input input-bordered input-md w-full pl-10 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    />
+                                </div>
+                                {errors.nationalId && <span className="text-red-500 text-sm mt-1">{errors.nationalId.message}</span>}
+                            </div>
+
+                            {/* Financial Information */}
+                            <div className="md:col-span-2 mt-6">
+                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                    <FaMoneyBillWave className="text-[#B91116]" /> Financial Details
+                                </h4>
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Income Source *</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <FaBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <select {...register('incomeSource', { required: 'Income source is required' })} className="select select-bordered select-md w-full pl-10 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]">
+                                        <option value="">Select source</option>
+                                        <option value="Salary">Salary</option>
+                                        <option value="Business">Business</option>
+                                        <option value="Freelance">Freelance</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                {errors.incomeSource && <span className="text-red-500 text-sm mt-1">{errors.incomeSource.message}</span>}
+                            </div>
+
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Monthly Income (BDT) *</span>
+                                </label>
+                                <input
+                                    {...register('monthlyIncome', { required: 'Monthly income is required', min: 0 })}
+                                    type="number"
+                                    placeholder="e.g. 50000"
+                                    className="input input-bordered input-md w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    onWheel={(e) => e.target.blur()}
+                                />
+                                {errors.monthlyIncome && <span className="text-red-500 text-sm mt-1">{errors.monthlyIncome.message}</span>}
+                            </div>
+
+                            <div className="form-control md:col-span-2 w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Loan Amount Requested (BDT) *</span>
+                                </label>
+                                <input
+                                    {...register('amount', {
+                                        required: 'Loan amount is required',
+                                    })}
+                                    type="number"
+                                    placeholder="Enter amount"
+                                    className="input input-bordered input-lg w-full font-bold text-[#B91116] focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    onWheel={(e) => e.target.blur()}
+                                />
+                                {errors.amount && <span className="text-red-500 text-sm mt-1">{errors.amount.message}</span>}
+                            </div>
+
+                            {/* Additional Info */}
+                            <div className="md:col-span-2 mt-6">
+                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                    <FaMapMarkerAlt className="text-[#B91116]" /> Additional Information
+                                </h4>
+                            </div>
+
+                            <div className="form-control md:col-span-2 w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Reason for Loan *</span>
+                                </label>
+                                <textarea
+                                    {...register('purpose', { required: 'Reason is required' })}
+                                    className="textarea textarea-bordered h-24 w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    placeholder="Please explain why you need this loan..."
+                                ></textarea>
+                                {errors.purpose && <span className="text-red-500 text-sm mt-1">{errors.purpose.message}</span>}
+                            </div>
+
+                            <div className="form-control md:col-span-2 w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Present Address *</span>
+                                </label>
+                                <textarea
+                                    {...register('address', { required: 'Address is required' })}
+                                    className="textarea textarea-bordered h-24 w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    placeholder="Enter your full present address..."
+                                ></textarea>
+                                {errors.address && <span className="text-red-500 text-sm mt-1">{errors.address.message}</span>}
+                            </div>
+
+                            <div className="form-control md:col-span-2 w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold text-gray-600">Extra Notes (Optional)</span>
+                                </label>
+                                <textarea
+                                    {...register('notes')}
+                                    className="textarea textarea-bordered h-20 w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
+                                    placeholder="Any additional information you want to share..."
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-col-reverse md:flex-row justify-end gap-4 mt-12 pt-6 border-t border-gray-100">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/dashboard')}
+                                className="btn btn-ghost btn-lg text-gray-500 hover:bg-gray-100"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading || !selectedLoan}
+                                className="btn bg-[#B91116] hover:bg-[#900d11] text-white btn-lg px-10 shadow-lg shadow-red-200 hover:shadow-red-300 border-none rounded-xl transition-all transform hover:-translate-y-1"
+                            >
+                                {loading ? <span className="loading loading-spinner"></span> : 'Submit Application'}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </motion.div>
         </div>
     );
 };
