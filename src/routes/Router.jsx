@@ -7,10 +7,9 @@ import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Regiser';
 import AllLoans from '../pages/AllLoans/AllLoans';
 import PersonalLoanDetails from '../pages/Home/PersonalLoanDetails';
-
+import MyLoans from '../pages/dashboard/MyLoans';
 import DashboardLayout from '../Layouts/DashboardLayout/DashboardLayout';
 import PrivateRoute from './PrivateRoute';
-import MyLoans from '../pages/dashboard/MyLoans';
 import ApplyLoan from '../pages/dashboard/ApplyLoan';
 import AddLoan from '../pages/dashboard/AddLoan';
 import ManageUsers from '../pages/dashboard/ManageUsers';

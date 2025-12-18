@@ -93,10 +93,10 @@ const MyLoans = () => {
     if (isError) {
         return (
             <div className="min-h-[50vh] flex items-center justify-center">
-                <div className="text-center p-8  rounded-2xl border border-red-100 max-w-md">
-                    <FaBan className="text-4xl text-red-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold  mb-2">Failed to load loans</h3>
-                    <p className="">{error.message}</p>
+                <div className="text-center p-8 bg-base-100 rounded-2xl border border-error/20 max-w-md shadow-lg">
+                    <FaBan className="text-4xl text-error mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-base-content mb-2">Failed to load loans</h3>
+                    <p className="text-base-content/70">{error.message}</p>
                 </div>
             </div>
         )
@@ -105,16 +105,16 @@ const MyLoans = () => {
     const getStatusBadge = (status) => {
         switch (status) {
             case 'approved':
-                return <span className="badge bg-green-100 text-green-700 border-green-200 gap-1 p-3"><FaCheckCircle /> Approved</span>;
+                return <span className="badge badge-success gap-1 p-3 text-white"><FaCheckCircle /> Approved</span>;
             case 'rejected':
-                return <span className="badge bg-red-100 text-red-700 border-red-200 gap-1 p-3"><FaBan /> Rejected</span>;
+                return <span className="badge badge-error gap-1 p-3 text-white"><FaBan /> Rejected</span>;
             default:
-                return <span className="badge bg-yellow-100 text-yellow-700 border-yellow-200 gap-1 p-3"><FaClock /> Pending</span>;
+                return <span className="badge badge-warning gap-1 p-3 text-white"><FaClock /> Pending</span>;
         }
     };
 
     return (
-        <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-base-200/30">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -123,29 +123,30 @@ const MyLoans = () => {
             >
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                     <div>
-                        <h2 className="text-3xl font-bold ">My Applications</h2>
-                        <p className="t mt-1">Track and manage your loan requests</p>
+                        <h2 className="text-3xl font-bold text-base-content">My Applications</h2>
+                        <p className="text-base-content/60 mt-1">Track and manage your loan requests</p>
                     </div>
-                    <div className=" px-4 py-2 rounded-lg shadow-sm border border-gray-100">
-                        <span className="t text-sm">Total Applications:</span>
+                    <div className="bg-base-100 px-4 py-2 rounded-lg shadow-sm border border-base-300">
+                        <span className="text-base-content/70 text-sm">Total Applications:</span>
                         <span className="text-[#B91116] font-bold text-lg ml-2">{myLoans.length}</span>
                     </div>
                 </div>
 
                 {myLoans.length === 0 ? (
-                    <div className="text-center py-20  rounded-3xl shadow-sm border border-gray-100">
-                        <div className=" w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <FaFileInvoiceDollar className="text-3xl text-gray-400" />
+                    <div className="text-center py-20 bg-base-100 rounded-3xl shadow-sm border border-base-200">
+                        <div className="bg-base-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <FaFileInvoiceDollar className="text-3xl text-base-content/40" />
                         </div>
-                        <h3 className="text-xl font-bold  mb-2">No Applications Found</h3>
-                        <p className="t max-w-md mx-auto">You haven't applied for any loans yet. Browse our available loans and start your journey today.</p>
+                        <h3 className="text-xl font-bold text-base-content mb-2">No Applications Found</h3>
+                        <p className="text-base-content/60 max-w-md mx-auto">You haven't applied for any loans yet. Browse our available loans and start your journey today.</p>
                     </div>
                 ) : (
-                    <div className=" rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                        <div className="overflow-x-auto">
+                    <div className="bg-base-100 rounded-2xl shadow-xl overflow-hidden border border-base-200">
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="table w-full">
                                 <thead>
-                                    <tr className=" text-gray-600 uppercase text-xs tracking-wider">
+                                    <tr className="bg-base-200 text-base-content/70 uppercase text-xs tracking-wider">
                                         <th className="py-4 px-6">Loan Info</th>
                                         <th className="py-4 px-6">Amount</th>
                                         <th className="py-4 px-6">Date</th>
@@ -154,28 +155,28 @@ const MyLoans = () => {
                                         <th className="py-4 px-6 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-base-200">
                                     {myLoans.map((loan) => (
-                                        <tr key={loan._id} className="hover:/50 transition-colors">
+                                        <tr key={loan._id} className="hover:bg-base-200/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="avatar placeholder">
-                                                        <div className=" text-[#B91116] rounded-xl w-10 h-10 flex items-center justify-center">
+                                                        <div className="bg-red-50 text-[#B91116] rounded-xl w-10 h-10 flex items-center justify-center">
                                                             <span className="text-xs font-bold">{loan.loanTitle?.substring(0, 2).toUpperCase()}</span>
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold ">{loan.loanTitle}</div>
-                                                        <div className="text-xs t badge badge-ghost badge-sm">{loan.category}</div>
+                                                        <div className="font-bold text-base-content">{loan.loanTitle}</div>
+                                                        <div className="text-xs text-base-content/60 badge badge-ghost badge-sm">{loan.category}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-bold ">৳{loan.amount?.toLocaleString()}</div>
+                                                <div className="font-bold text-base-content">৳{loan.amount?.toLocaleString()}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-sm t">
-                                                    <FaCalendarAlt className="text-gray-400" />
+                                                <div className="flex items-center gap-2 text-sm text-base-content/60">
+                                                    <FaCalendarAlt className="text-base-content/40" />
                                                     {new Date(loan.createdAt).toLocaleDateString()}
                                                 </div>
                                             </td>
@@ -186,19 +187,19 @@ const MyLoans = () => {
                                                 {loan.feeStatus === 'paid' ? (
                                                     <span
                                                         onClick={() => handleShowDetails(loan)}
-                                                        className="badge bg-green-50 text-green-600 border-green-100 cursor-pointer hover:bg-green-100 transition-colors p-3 font-medium"
+                                                        className="badge badge-success badge-outline cursor-pointer hover:bg-success hover:text-white transition-colors p-3 font-medium"
                                                     >
                                                         Paid
                                                     </span>
                                                 ) : (
-                                                    <span className="badge  text-red-600 border-red-100 p-3 font-medium">Unpaid</span>
+                                                    <span className="badge badge-error badge-outline p-3 font-medium">Unpaid</span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <button
                                                         onClick={() => setSelectedLoan(loan)}
-                                                        className="btn btn-sm btn-ghost rounded-full hover:bg-blue-50 text-blue-600 tooltip"
+                                                        className="btn btn-sm btn-ghost hover:bg-info/10 text-info tooltip"
                                                         data-tip="View Details"
                                                     >
                                                         <FaEye className="text-lg" />
@@ -207,7 +208,7 @@ const MyLoans = () => {
                                                     {loan.status === 'pending' && (
                                                         <button
                                                             onClick={() => { setSelectedLoan(loan); setCancelModal(true); }}
-                                                            className="btn btn-sm btn-ghost hover: text-red-600 tooltip"
+                                                            className="btn btn-sm btn-ghost hover:bg-error/10 text-error tooltip"
                                                             data-tip="Cancel Application"
                                                         >
                                                             <FaTimes className="text-lg" />
@@ -217,7 +218,7 @@ const MyLoans = () => {
                                                     {loan.status === 'approved' && loan.feeStatus !== 'paid' && (
                                                         <button
                                                             onClick={() => handlePay(loan)}
-                                                            className="btn btn-sm bg-[#B91116] hover:bg-[#900d11]  border-none shadow-md "
+                                                            className="btn btn-sm bg-[#B91116] hover:bg-[#900d11] text-white border-none shadow-md shadow-red-200"
                                                         >
                                                             <FaMoneyBillWave /> Pay
                                                         </button>
@@ -228,6 +229,72 @@ const MyLoans = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden grid grid-cols-1 gap-4 p-4">
+                            {myLoans.map((loan) => (
+                                <div key={loan._id} className="bg-base-100 rounded-xl border border-base-200 shadow-sm p-4 space-y-4">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-red-50 text-[#B91116] rounded-lg w-10 h-10 flex items-center justify-center flex-shrink-0">
+                                                <span className="text-xs font-bold">{loan.loanTitle?.substring(0, 2).toUpperCase()}</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-base-content">{loan.loanTitle}</h3>
+                                                <span className="text-xs text-base-content/60 bg-base-200 px-2 py-0.5 rounded-full">{loan.category}</span>
+                                            </div>
+                                        </div>
+                                        {getStatusBadge(loan.status)}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <p className="text-base-content/60 text-xs uppercase">Amount</p>
+                                            <p className="font-bold text-base-content">৳{loan.amount?.toLocaleString()}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-base-content/60 text-xs uppercase">Date</p>
+                                            <p className="font-medium text-base-content/80">{new Date(loan.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-base-content/60 text-xs uppercase">Fee Status</p>
+                                            {loan.feeStatus === 'paid' ? (
+                                                <span onClick={() => handleShowDetails(loan)} className="text-success font-bold text-xs cursor-pointer underline">Paid (View)</span>
+                                            ) : (
+                                                <span className="text-error font-bold text-xs">Unpaid</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2 pt-2 border-t border-base-200">
+                                        <button
+                                            onClick={() => setSelectedLoan(loan)}
+                                            className="btn btn-sm flex-1 btn-ghost  text-base-content/70"
+                                        >
+                                            <FaEye /> Details
+                                        </button>
+
+                                        {loan.status === 'pending' && (
+                                            <button
+                                                onClick={() => { setSelectedLoan(loan); setCancelModal(true); }}
+                                                className="btn btn-sm flex-1 btn-ghost text-error"
+                                            >
+                                                <FaTimes /> Cancel
+                                            </button>
+                                        )}
+
+                                        {loan.status === 'approved' && loan.feeStatus !== 'paid' && (
+                                            <button
+                                                onClick={() => handlePay(loan)}
+                                                className="btn btn-sm flex-1 text-[#B91116]"
+                                            >
+                                                <FaMoneyBillWave /> Pay
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -241,13 +308,13 @@ const MyLoans = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-box max-w-2xl  rounded-2xl shadow-2xl p-0 overflow-hidden"
+                            className="modal-box max-w-2xl bg-base-100 rounded-2xl shadow-2xl p-0 overflow-hidden"
                         >
-                            <div className="bg-[#B91116] p-6  flex justify-between items-center">
+                            <div className="bg-[#B91116] p-6 text-white flex justify-between items-center">
                                 <h3 className="font-bold text-xl flex items-center gap-2">
                                     <FaInfoCircle /> Application Details
                                 </h3>
-                                <button onClick={() => setSelectedLoan(null)} className="btn btn-sm btn-circle btn-ghost  hover:/20">
+                                <button onClick={() => setSelectedLoan(null)} className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20">
                                     <FaTimes />
                                 </button>
                             </div>
@@ -255,41 +322,41 @@ const MyLoans = () => {
                             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Loan Title</p>
-                                        <p className="font-semibold  text-lg">{selectedLoan.loanTitle}</p>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Loan Title</p>
+                                        <p className="font-semibold text-base-content text-lg">{selectedLoan.loanTitle}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Amount</p>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Amount</p>
                                         <p className="font-semibold text-[#B91116] text-lg">৳{selectedLoan.amount?.toLocaleString()}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Category</p>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Category</p>
                                         <span className="badge badge-ghost mt-1">{selectedLoan.category}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Status</p>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Status</p>
                                         <div className="mt-1">{getStatusBadge(selectedLoan.status)}</div>
                                     </div>
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Applied On</p>
-                                        <p className="font-medium ">{new Date(selectedLoan.createdAt).toLocaleDateString()}</p>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Applied On</p>
+                                        <p className="font-medium text-base-content/80">{new Date(selectedLoan.createdAt).toLocaleDateString()}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs t uppercase font-bold tracking-wider">Fee Status</p>
-                                        <p className={`font-bold ${selectedLoan.feeStatus === 'paid' ? 'text-green-600' : 'text-red-500'}`}>
+                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Fee Status</p>
+                                        <p className={`font-bold ${selectedLoan.feeStatus === 'paid' ? 'text-success' : 'text-error'}`}>
                                             {selectedLoan.feeStatus === 'paid' ? 'Paid' : 'Unpaid'}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="col-span-1 md:col-span-2  p-4 rounded-xl">
-                                    <p className="text-xs t uppercase font-bold tracking-wider mb-2">Purpose</p>
-                                    <p className=" italic">"{selectedLoan.purpose}"</p>
+                                <div className="col-span-1 md:col-span-2 bg-base-200 p-4 rounded-xl">
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider mb-2">Purpose</p>
+                                    <p className="text-base-content italic">"{selectedLoan.purpose}"</p>
                                 </div>
                             </div>
-                            <div className="p-4  border-t border-gray-100 flex justify-end">
-                                <button onClick={() => setSelectedLoan(null)} className="btn btn-ghost t hover:bg-gray-200">Close</button>
+                            <div className="p-4 bg-base-200/50 border-t border-base-200 flex justify-end">
+                                <button onClick={() => setSelectedLoan(null)} className="btn btn-ghost text-base-content/70 hover:bg-base-200">Close</button>
                             </div>
                         </motion.div>
                     </dialog>
@@ -304,17 +371,17 @@ const MyLoans = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-box  rounded-2xl shadow-2xl"
+                            className="modal-box bg-base-100 rounded-2xl shadow-2xl"
                         >
                             <div className="text-center">
-                                <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaTimes className="text-3xl text-red-500" />
+                                <div className="bg-error/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <FaTimes className="text-3xl text-error" />
                                 </div>
-                                <h3 className="font-bold text-xl  mb-2">Cancel Application?</h3>
-                                <p className="t mb-6">Are you sure you want to cancel this loan application? This action cannot be undone.</p>
+                                <h3 className="font-bold text-xl text-base-content mb-2">Cancel Application?</h3>
+                                <p className="text-base-content/60 mb-6">Are you sure you want to cancel this loan application? This action cannot be undone.</p>
                                 <div className="flex justify-center gap-4">
-                                    <button onClick={() => { setCancelModal(false); setSelectedLoan(null); }} className="btn btn-ghost t">No, Keep It</button>
-                                    <button onClick={handleCancel} className="btn 0 hover:bg-red-600  border-none">Yes, Cancel Application</button>
+                                    <button onClick={() => { setCancelModal(false); setSelectedLoan(null); }} className="btn btn-ghost text-base-content/70">No, Keep It</button>
+                                    <button onClick={handleCancel} className="btn bg-error hover:bg-red-600 text-white border-none">Yes, Cancel Application</button>
                                 </div>
                             </div>
                         </motion.div>
@@ -324,33 +391,33 @@ const MyLoans = () => {
 
             {/* Payment Details Modal  */}
             <dialog id="payment_modal" className="modal backdrop-blur-sm">
-                <div className="modal-box  rounded-2xl shadow-2xl">
+                <div className="modal-box bg-base-100 rounded-2xl shadow-2xl">
                     <h3 className="font-bold text-xl text-[#B91116] mb-6 flex items-center gap-2">
                         <FaFileInvoiceDollar /> Payment Receipt
                     </h3>
                     {selectedTransaction && (
-                        <div className="space-y-4  p-6 rounded-xl border border-gray-100">
-                            <div className="flex justify-between border-b border-gray-200 pb-2">
-                                <span className="t">Loan Title</span>
-                                <span className="font-semibold ">{selectedTransaction.loanTitle}</span>
+                        <div className="space-y-4 bg-base-200/50 p-6 rounded-xl border border-base-200">
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Loan Title</span>
+                                <span className="font-semibold text-base-content">{selectedTransaction.loanTitle}</span>
                             </div>
-                            <div className="flex justify-between border-b border-gray-200 pb-2">
-                                <span className="t">Transaction ID</span>
-                                <span className="font-mono text-green-600 font-bold text-sm">{selectedTransaction.transactionId}</span>
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Transaction ID</span>
+                                <span className="font-mono text-success font-bold text-sm">{selectedTransaction.transactionId}</span>
                             </div>
-                            <div className="flex justify-between border-b border-gray-200 pb-2">
-                                <span className="t">Amount Paid</span>
-                                <span className="font-bold ">৳{selectedTransaction.feeAmount?.toLocaleString()}</span>
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Amount Paid</span>
+                                <span className="font-bold text-base-content">৳{selectedTransaction.feeAmount?.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="t">Payer Email</span>
-                                <span className="text-sm ">{selectedTransaction.userEmail}</span>
+                                <span className="text-base-content/60">Payer Email</span>
+                                <span className="text-sm text-base-content/80">{selectedTransaction.userEmail}</span>
                             </div>
                         </div>
                     )}
                     <div className="modal-action mt-6">
                         <form method="dialog">
-                            <button className="btn bg-gray-800 hover:bg-gray-900  border-none w-full">Close Receipt</button>
+                            <button className="btn bg-neutral text-neutral-content hover:bg-neutral-focus border-none w-full">Close Receipt</button>
                         </form>
                     </div>
                 </div>
