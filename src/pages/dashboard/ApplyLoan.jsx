@@ -82,13 +82,13 @@ const ApplyLoan = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
             {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-5">
+            {/* <div className="absolute inset-0 opacity-5">
                 <div className="absolute top-10 left-10 w-32 h-32 bg-[#B91116] rounded-full blur-3xl"></div>
                 <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl"></div>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-purple-500 rounded-full blur-3xl"></div>
-            </div>
+            </div> */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -96,18 +96,18 @@ const ApplyLoan = () => {
                 className="max-w-5xl mx-auto relative z-10"
             >
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Loan Application</h2>
-                    <p className="text-gray-500 max-w-2xl mx-auto">Fill out the form below to apply for your desired loan. Please ensure all information is accurate to speed up the approval process.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold  mb-4">Loan Application</h2>
+                    <p className=" max-w-2xl mx-auto">Fill out the form below to apply for your desired loan. Please ensure all information is accurate to speed up the approval process.</p>
                     <div className="h-1 w-24 bg-[#B91116] mx-auto mt-6 rounded-full"></div>
                     
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-base-200">
+                <form onSubmit={handleSubmit(onSubmit)} className=" rounded-3xl shadow-2xl overflow-hidden border border-base-200">
                     {/* Header / Loan Selection */}
-                    <div className="bg-gray-50 p-8 border-b border-gray-100">
+                    <div className=" p-8 border-b border-gray-100">
                         <div className="form-control max-w-md mx-auto w-full">
                             <label className="label">
-                                <span className="label-text font-bold text-gray-700 text-lg">Select Loan Type *</span>
+                                <span className="label-text font-bold text-lg">Select Loan Type *</span>
                             </label>
                             <select
                                 onChange={handleLoanSelect}
@@ -131,27 +131,27 @@ const ApplyLoan = () => {
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
-                                className="bg-red-50 rounded-2xl p-6 mb-10 border border-red-100"
+                                className=" rounded-2xl p-6 mb-10 border border-red-100"
                             >
                                 <h3 className="text-[#B91116] font-bold mb-4 flex items-center gap-2">
                                     <FaFileAlt /> Loan Details
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    <div className="bg-white p-4 rounded-xl shadow-sm">
-                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Loan Title</p>
-                                        <p className="font-semibold text-gray-800">{selectedLoan.title}</p>
+                                    <div className=" p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs  uppercase font-bold tracking-wider mb-1">Loan Title</p>
+                                        <p className="font-semibold ">{selectedLoan.title}</p>
                                     </div>
-                                    <div className="bg-white p-4 rounded-xl shadow-sm">
-                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Interest Rate</p>
+                                    <div className=" p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs  uppercase font-bold tracking-wider mb-1">Interest Rate</p>
                                         <p className="font-semibold text-[#B91116]">{selectedLoan.interestRate}%</p>
                                     </div>
-                                    <div className="bg-white p-4 rounded-xl shadow-sm">
-                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Max Limit</p>
-                                        <p className="font-semibold text-green-600">৳{selectedLoan.maxLoanLimit.toLocaleString()}</p>
+                                    <div className=" p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs  uppercase font-bold tracking-wider mb-1">Max Limit</p>
+                                        <p className="font-semibold text-green-600">{selectedLoan.maxLoanLimit.toLocaleString()} BDT</p>
                                     </div>
-                                    <div className="bg-white p-4 rounded-xl shadow-sm">
-                                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Application Fee</p>
-                                        <p className="font-semibold text-gray-800">${selectedLoan.feeAmount || 10} USD</p>
+                                    <div className=" p-4 rounded-xl shadow-sm">
+                                        <p className="text-xs  uppercase font-bold tracking-wider mb-1">Application Fee</p>
+                                        <p className="font-semibold ">{selectedLoan.feeAmount || 10} BDT</p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -161,14 +161,14 @@ const ApplyLoan = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Personal Information */}
                             <div className="md:col-span-2">
-                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                <h4 className="text-xl font-bold  mb-4 flex items-center gap-2 border-b pb-2">
                                     <FaUser className="text-[#B91116]" /> Personal Information
                                 </h4>
                             </div>
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">First Name *</span>
+                                    <span className="label-text font-semibold ">First Name *</span>
                                 </label>
                                 <input
                                     {...register('firstName', { required: 'First name is required' })}
@@ -181,7 +181,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Last Name *</span>
+                                    <span className="label-text font-semibold ">Last Name *</span>
                                 </label>
                                 <input
                                     {...register('lastName', { required: 'Last name is required' })}
@@ -194,7 +194,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Contact Number *</span>
+                                    <span className="label-text font-semibold ">Contact Number *</span>
                                 </label>
                                 <div className="relative w-full">
                                     <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -210,7 +210,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">National ID / Passport *</span>
+                                    <span className="label-text font-semibold ">National ID / Passport *</span>
                                 </label>
                                 <div className="relative w-full">
                                     <FaIdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -226,14 +226,14 @@ const ApplyLoan = () => {
 
                             {/* Financial Information */}
                             <div className="md:col-span-2 mt-6">
-                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                <h4 className="text-xl font-bold  mb-4 flex items-center gap-2 border-b pb-2">
                                     <FaMoneyBillWave className="text-[#B91116]" /> Financial Details
                                 </h4>
                             </div>
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Income Source *</span>
+                                    <span className="label-text font-semibold ">Income Source *</span>
                                 </label>
                                 <div className="relative w-full">
                                     <FaBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -250,7 +250,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Monthly Income (BDT) *</span>
+                                    <span className="label-text font-semibold ">Monthly Income (BDT) *</span>
                                 </label>
                                 <input
                                     {...register('monthlyIncome', { required: 'Monthly income is required', min: 0 })}
@@ -264,7 +264,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control md:col-span-2 w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Loan Amount Requested (BDT) *</span>
+                                    <span className="label-text font-semibold ">Loan Amount Requested (BDT) *</span>
                                 </label>
                                 <input
                                     {...register('amount', {
@@ -280,14 +280,14 @@ const ApplyLoan = () => {
 
                             {/* Additional Info */}
                             <div className="md:col-span-2 mt-6">
-                                <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                                <h4 className="text-xl font-bold  mb-4 flex items-center gap-2 border-b pb-2">
                                     <FaMapMarkerAlt className="text-[#B91116]" /> Additional Information
                                 </h4>
                             </div>
 
                             <div className="form-control md:col-span-2 w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Reason for Loan *</span>
+                                    <span className="label-text font-semibold ">Reason for Loan *</span>
                                 </label>
                                 <textarea
                                     {...register('purpose', { required: 'Reason is required' })}
@@ -299,7 +299,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control md:col-span-2 w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Present Address *</span>
+                                    <span className="label-text font-semibold ">Present Address *</span>
                                 </label>
                                 <textarea
                                     {...register('address', { required: 'Address is required' })}
@@ -311,7 +311,7 @@ const ApplyLoan = () => {
 
                             <div className="form-control md:col-span-2 w-full">
                                 <label className="label">
-                                    <span className="label-text font-semibold text-gray-600">Extra Notes (Optional)</span>
+                                    <span className="label-text font-semibold ">Extra Notes (Optional)</span>
                                 </label>
                                 <textarea
                                     {...register('notes')}
@@ -326,14 +326,14 @@ const ApplyLoan = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate('/dashboard')}
-                                className="btn btn-ghost btn-lg text-gray-500 hover:bg-gray-100"
+                                className="btn btn-ghost btn-lg rounded-xl"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading || !selectedLoan}
-                                className="btn bg-[#B91116] hover:bg-[#900d11] text-white btn-lg px-10 shadow-lg shadow-red-200 hover:shadow-red-300 border-none rounded-xl transition-all transform hover:-translate-y-1"
+                                className="btn bg-[#B91116] hover:bg-[#900d11] text-white btn-lg px-10 shadow-lg  border-none rounded-xl transition-all transform hover:-translate-y-1"
                             >
                                 {loading ? <span className="loading loading-spinner"></span> : 'Submit Application'}
                             </button>
