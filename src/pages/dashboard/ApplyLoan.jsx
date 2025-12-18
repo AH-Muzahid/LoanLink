@@ -4,12 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ApplyLoan = () => {
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -25,6 +26,13 @@ const ApplyLoan = () => {
             return data;
         }
     });
+
+    useEffect(() => {
+        if (location.state?.loanId && loans.length > 0) {
+            const loan = loans.find(l => l._id === location.state.loanId);
+            if (loan) setSelectedLoan(loan);
+        }
+    }, [location.state, loans]);
 
     const handleLoanSelect = (e) => {
         const loan = loans.find(l => l._id === e.target.value);
@@ -56,7 +64,7 @@ const ApplyLoan = () => {
                 monthlyIncome: parseFloat(data.monthlyIncome),
                 status: 'pending',
                 feeStatus: 'unpaid',
-                feeAmount: selectedLoan.feeAmount || 10, 
+                feeAmount: selectedLoan.feeAmount || 10,
                 createdAt: new Date().toISOString(),
                 // max: selectedLoan.maxLoanLimit,
                 // min: selectedLoan.minLoanLimit,
@@ -89,6 +97,7 @@ const ApplyLoan = () => {
                             onChange={handleLoanSelect}
                             className="select select-bordered"
                             required
+                            value={selectedLoan?._id || ''}
                         >
                             <option value="">Choose a loan</option>
                             {loans.map(loan => (

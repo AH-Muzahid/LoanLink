@@ -6,6 +6,7 @@ import MainLayout from './../Layouts/MainLayout/MainLayout';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Regiser';
 import AllLoans from '../pages/AllLoans/AllLoans';
+import PersonalLoanDetails from '../pages/Home/PersonalLoanDetails';
 
 import DashboardLayout from '../Layouts/DashboardLayout/DashboardLayout';
 import PrivateRoute from './PrivateRoute';
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: "/all-loans",
         element: <AllLoans />,
+      },
+      {
+        path: "/loans/:id",
+        element: <PersonalLoanDetails />,
       },
       {
         path: "/about",
@@ -75,7 +80,7 @@ export const router = createBrowserRouter([
     children: [
       // Dashboard Home
       { index: true, element: <DashboardHome /> },
-      
+
       // Common Route
       { path: "profile", element: <Profile /> },
 
@@ -96,9 +101,9 @@ export const router = createBrowserRouter([
     ],
   },
   // Payment Routes
-  
+
   {
-      path: 'dashboard/payment/success',
-      Comment: <PaymentSuccess />
+    path: 'dashboard/payment/success',
+    Comment: <PaymentSuccess />
   }
 ]);
