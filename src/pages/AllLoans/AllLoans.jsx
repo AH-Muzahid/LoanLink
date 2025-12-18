@@ -28,7 +28,7 @@ const AllLoans = () => {
     const { data: loans = [], isLoading, isError } = useQuery({
         queryKey: ['loans', searchTerm],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:5000/all-loans?search=${searchTerm}`);
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/all-loans?search=${searchTerm}`);
             return data;
         }
     });

@@ -25,7 +25,7 @@ const Register = () => {
                 updateUserProfile(name, photoURL)
                     .then(() => {
                         const userInfo = { name, email, role, photoURL, status: 'active' };
-                        axios.post('http://localhost:5000/users', userInfo)
+                        axios.post(`${import.meta.env.VITE_API_URL}/users`, userInfo)
                             .then(res => {
                                 if (res.data.insertedId) {
                                     toast.success('Registration successful!');

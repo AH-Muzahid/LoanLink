@@ -1,13 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useEffect, useState } from "react";
-import { 
-    GoogleAuthProvider, 
-    createUserWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    signInWithPopup, 
-    signOut, 
-    updateProfile 
+import {
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    updateProfile
 } from "firebase/auth";
 import auth from "../../firebase/firebase.config";
 import axios from "axios";
@@ -57,21 +57,21 @@ const AuthProvider = ({ children }) => {
             console.log('Current User:', currentUser);
             // JWT Token
             if (currentUser) {
-                axios.post('http://localhost:5000/jwt', { email: currentUser.email }, { withCredentials: true })
-                .then(res => {
-                    console.log(res.data);
-                    if (res.data.success) {
-                        console.log("JWT Token Generated");
-                    }
-                })
-            setLoading(false);
-        }
+                axios.post(`${import.meta.env.VITE_API_URL}/jwt`, { email: currentUser.email }, { withCredentials: true })
+                    .then(res => {
+                        console.log(res.data);
+                        if (res.data.success) {
+                            console.log("JWT Token Generated");
+                        }
+                    })
+                setLoading(false);
+            }
             else {
-                axios.post('http://localhost:5000/logout', {}, { withCredentials: true })
-                .then(res => {
-                    console.log('Logged out:', res.data);
-                    setLoading(false);
-                })
+                axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true })
+                    .then(res => {
+                        console.log('Logged out:', res.data);
+                        setLoading(false);
+                    })
             }
 
         });

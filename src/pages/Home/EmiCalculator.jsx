@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const EMICalculator = () => {
@@ -36,7 +37,7 @@ const EMICalculator = () => {
     const COLORS = ['#E31E24', '#D1D5DB']; // Red & Gray
 
     return (
-        <div className="container max-w-6xl mx-auto px-4 py-16 md:py-20">
+        <div id="emi-calculator" className="container max-w-6xl mx-auto px-4 py-16 md:py-20">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 uppercase">
                 EMI Calculator
             </h2>
@@ -116,11 +117,11 @@ const EMICalculator = () => {
                 <div className="w-full lg:w-64 bg-gray-200 rounded-lg flex flex-col justify-center items-center p-6 text-center space-y-4">
                     <h3 className="text-gray-800 font-bold text-lg">Equal Monthly Installment (EMI)</h3>
                     <p className="text-3xl font-bold text-[#E31E24]">{parseInt(emi).toLocaleString()} BDT</p>
-                    <a href="">
+                    <Link to="/apply-loan">
                         <button className="btn bg-[#E31E24] hover:bg-[#B91116] text-white border-none px-8 rounded">
                             Apply Now
                         </button>
-                    </a>
+                    </Link>
                 </div>
 
                 {/*  Right: Breakdown Chart  */}

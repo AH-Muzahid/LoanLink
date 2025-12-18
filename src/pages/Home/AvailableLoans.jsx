@@ -11,8 +11,8 @@ const AvailableLoans = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/all-loans?limit=6&sort=desc')
-          .then(res => {
+        axios.get(`${import.meta.env.VITE_API_URL}/all-loans?limit=6&sort=desc`)
+            .then(res => {
                 setLoans(res.data);
                 setLoading(false);
             })
@@ -20,9 +20,9 @@ const AvailableLoans = () => {
                 console.error(err);
                 setLoading(false);
             });
-        },[]);
+    }, []);
 
-        if (loading) return <LoadingSpinner />;
+    if (loading) return <LoadingSpinner />;
     return (
         <div className=" max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-2xl md:text-4xl font-bold text-center mb-3 ">Available Loans for You</h1>
@@ -31,6 +31,13 @@ const AvailableLoans = () => {
                 {loans.map((loan, index) => (
                     <LoanCard loan={loan} key={index} />
                 ))}
+            </div>
+            <div className="flex justify-center mt-8">
+                <Link to="/all-loans">
+                    <button className="btn bg-[#B91116] hover:bg-[#900d11] text-white gap-2 px-8 rounded-full">
+                        View All Loans <HiArrowRight />
+                    </button>
+                </Link>
             </div>
         </div>
     );
