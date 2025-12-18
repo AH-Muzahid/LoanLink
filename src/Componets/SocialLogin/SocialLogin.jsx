@@ -71,7 +71,7 @@ const SocialLogin = () => {
                 <div className="divider text-sm text-gray-500">OR</div>
                 <button 
                     onClick={handleGoogleSignIn}
-                    className="btn btn-outline w-full flex items-center gap-2 hover:bg-gray-100 transition-all"
+                    className="btn btn-outline w-full flex items-center gap-2 hover:bg-[#B91116] hover:text-white transition-all"
                 >
                     <FcGoogle className="text-2xl" />
                     Continue with Google
