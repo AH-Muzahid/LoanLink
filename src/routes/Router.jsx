@@ -23,6 +23,7 @@ import ApprovedLoans from '../pages/dashboard/ApprovedLoans';
 import PaymentSuccess from '../pages/Payment/PaymentSuccess';
 import AboutUs from '../pages/About/AboutUs';
 import Contact from '../pages/Contact/Contact';
+import Checkout from '../pages/Payment/Checkout';
 
 
 
@@ -97,12 +98,13 @@ export const router = createBrowserRouter([
       { path: "manage-users", element: <ManageUsers /> },
       { path: "all-loans", element: <AllLoansAdmin /> },
       { path: "loan-applications", element: <LoanApplications /> },
+      { path: "payment/checkout", element: <Checkout /> },
     ],
   },
   // Payment Routes
 
   {
     path: 'dashboard/payment/success',
-    Comment: <PaymentSuccess />
+    element: <PaymentSuccess />
   }
 ]);

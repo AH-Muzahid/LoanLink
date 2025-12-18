@@ -15,6 +15,8 @@ const ManageUsers = () => {
     const [suspendReason, setSuspendReason] = useState('');
     const [suspendFeedback, setSuspendFeedback] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const queryClient = useQueryClient();
     const axiosSecure = useAxiosSecure();
 
@@ -65,10 +67,13 @@ const ManageUsers = () => {
         });
     };
 
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredUsers = users.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = roleFilter ? (user.role || 'borrower') === roleFilter : true;
+        const matchesStatus = statusFilter ? (user.status || 'active') === statusFilter : true;
+        return matchesSearch && matchesRole && matchesStatus;
+    });
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -99,8 +104,8 @@ const ManageUsers = () => {
                 </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="bg-base-100 p-4 rounded-2xl shadow-sm border border-base-200 mb-6 flex flex-col sm:flex-row gap-4">
+            {/* Search and Filter Bar */}
+            <div className="bg-base-100 p-4 rounded-2xl shadow-sm border border-base-200 mb-6 flex flex-col lg:flex-row gap-4">
                 <div className="relative flex-1">
                     <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40" />
                     <input
@@ -110,6 +115,27 @@ const ManageUsers = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <select
+                        className="select select-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116] rounded-xl w-full sm:w-auto"
+                        value={roleFilter}
+                        onChange={(e) => setRoleFilter(e.target.value)}
+                    >
+                        <option value="">All Roles</option>
+                        <option value="borrower">Borrower</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select
+                        className="select select-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116] rounded-xl w-full sm:w-auto"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
                 </div>
             </div>
 

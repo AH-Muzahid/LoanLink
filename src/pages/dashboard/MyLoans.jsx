@@ -5,11 +5,13 @@ import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { FaEye, FaTimes, FaMoneyBillWave, FaFileInvoiceDollar, FaCalendarAlt, FaCheckCircle, FaClock, FaBan, FaInfoCircle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MyLoans = () => {
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [cancelModal, setCancelModal] = useState(false);
     const queryClient = useQueryClient();
@@ -50,42 +52,13 @@ const MyLoans = () => {
     };
 
     // Handle Pay Loan Application
-    const handlePay = async (loan) => {
-        let fee = loan.feeAmount;
-        if (!fee || fee <= 0) {
-            toast.warning('Fee amount is missing. Using a temporary fee of ৳10 for testing.', { duration: 5000 });
-            fee = 10;
-        }
-
-        const toastId = toast.loading('Processing payment...');
-
-        try {
-            const paymentInfo = {
-                loanId: loan._id,
-                loanTitle: loan.loanTitle,
-                amount: fee,
-                userName: user?.displayName,
-                userEmail: user?.email
-            };
-            const { data } = await axiosSecure.post('/create-checkout-session', paymentInfo);
-
-            if (data && data.url) {
-                toast.success('Redirecting to payment gateway...', { id: toastId });
-                window.location.href = data.url;
-            } else {
-                toast.error('Failed to get payment URL.', { id: toastId });
-            }
-
-        } catch (error) {
-            console.error('Payment Error:', error);
-            toast.error(error.message || 'Failed to process payment.', { id: toastId });
-        }
+    const handlePay = (loan) => {
+        navigate('/dashboard/payment/checkout', { state: { loan } });
     };
 
     //Handle Paid Badge Click
     const handleShowDetails = (loan) => {
         setSelectedTransaction(loan);
-        document.getElementById('payment_modal').showModal();
     };
 
     if (isLoading) return <LoadingSpinner />;
@@ -390,40 +363,66 @@ const MyLoans = () => {
             </AnimatePresence>
 
             {/* Payment Details Modal  */}
-            <dialog id="payment_modal" className="modal backdrop-blur-sm">
-                <div className="modal-box bg-base-100 rounded-2xl shadow-2xl">
-                    <h3 className="font-bold text-xl text-[#B91116] mb-6 flex items-center gap-2">
-                        <FaFileInvoiceDollar /> Payment Receipt
-                    </h3>
-                    {selectedTransaction && (
-                        <div className="space-y-4 bg-base-200/50 p-6 rounded-xl border border-base-200">
-                            <div className="flex justify-between border-b border-base-300 pb-2">
-                                <span className="text-base-content/60">Loan Title</span>
-                                <span className="font-semibold text-base-content">{selectedTransaction.loanTitle}</span>
+            <AnimatePresence>
+                {selectedTransaction && (
+                    <dialog open className="modal modal-open backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="modal-box bg-base-100 rounded-2xl shadow-2xl"
+                        >
+                            <div className="bg-[#B91116] p-6 text-white flex justify-between items-center -mx-6 -mt-6 mb-6">
+                                <h3 className="font-bold text-xl flex items-center gap-2">
+                                    <FaFileInvoiceDollar /> Payment Receipt
+                                </h3>
+                                <button
+                                    onClick={() => setSelectedTransaction(null)}
+                                    className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20"
+                                >
+                                    <FaTimes />
+                                </button>
                             </div>
-                            <div className="flex justify-between border-b border-base-300 pb-2">
-                                <span className="text-base-content/60">Transaction ID</span>
-                                <span className="font-mono text-success font-bold text-sm">{selectedTransaction.transactionId}</span>
+
+                            <div className="space-y-4 bg-base-200/50 p-6 rounded-xl border border-base-200">
+                                <div className="flex justify-between border-b border-base-300 pb-2">
+                                    <span className="text-base-content/60">Loan ID</span>
+                                    <span className="font-mono text-xs text-base-content">{selectedTransaction._id}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-base-300 pb-2">
+                                    <span className="text-base-content/60">Loan Title</span>
+                                    <span className="font-semibold text-base-content">{selectedTransaction.loanTitle}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-base-300 pb-2">
+                                    <span className="text-base-content/60 mr-10">Transaction ID</span>
+                                    <span className="font-mono text-success font-bold text-sm break-all">{selectedTransaction.transactionId}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-base-300 pb-2">
+                                    <span className="text-base-content/60">Amount Paid</span>
+                                    <span className="font-bold text-base-content">$10.00</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-base-content/60">Payer Email</span>
+                                    <span className="text-sm text-base-content/80">{selectedTransaction.userEmail}</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between border-b border-base-300 pb-2">
-                                <span className="text-base-content/60">Amount Paid</span>
-                                <span className="font-bold text-base-content">৳{selectedTransaction.feeAmount?.toLocaleString()}</span>
+
+                            <div className="modal-action mt-6">
+                                <button
+                                    onClick={() => setSelectedTransaction(null)}
+                                    className="btn bg-neutral text-neutral-content hover:bg-neutral-focus border-none w-full"
+                                >
+                                    Close Receipt
+                                </button>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-base-content/60">Payer Email</span>
-                                <span className="text-sm text-base-content/80">{selectedTransaction.userEmail}</span>
-                            </div>
-                        </div>
-                    )}
-                    <div className="modal-action mt-6">
-                        <form method="dialog">
-                            <button className="btn bg-neutral text-neutral-content hover:bg-neutral-focus border-none w-full">Close Receipt</button>
-                        </form>
-                    </div>
-                </div>
-            </dialog>
+                        </motion.div>
+                    </dialog>
+                )}
+            </AnimatePresence>
         </div>
     );
+    // ... existing export
+
 };
 
 export default MyLoans;

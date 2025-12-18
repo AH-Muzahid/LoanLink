@@ -67,6 +67,7 @@ const ApplyLoan = () => {
                 status: 'pending',
                 feeStatus: 'unpaid',
                 feeAmount: selectedLoan.feeAmount || 10,
+                loanImage: selectedLoan.image,
                 createdAt: new Date().toISOString(),
             };
 
@@ -99,7 +100,7 @@ const ApplyLoan = () => {
                     <h2 className="text-3xl md:text-4xl font-bold  mb-4">Loan Application</h2>
                     <p className=" max-w-2xl mx-auto">Fill out the form below to apply for your desired loan. Please ensure all information is accurate to speed up the approval process.</p>
                     <div className="h-1 w-24 bg-[#B91116] mx-auto mt-6 rounded-full"></div>
-                    
+
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className=" rounded-3xl shadow-2xl overflow-hidden border border-base-200">
