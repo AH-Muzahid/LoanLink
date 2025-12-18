@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { FaEye, FaSearch, FaFilter, FaFileAlt, FaCheckCircle, FaTimesCircle, FaClock, FaUser } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import Modal from '../../Componets/Modal/Modal';
 
 const LoanApplications = () => {
     useEffect(() => {
@@ -90,8 +91,8 @@ const LoanApplications = () => {
                             key={status}
                             onClick={() => setFilter(status)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 capitalize ${filter === status
-                                    ? 'bg-[#B91116] text-white shadow-md'
-                                    : 'text-base-content/70 hover:bg-base-200 hover:text-[#B91116]'
+                                ? 'bg-[#B91116] text-white shadow-md'
+                                : 'text-base-content/70 hover:bg-base-200 hover:text-[#B91116]'
                                 }`}
                         >
                             {status}
@@ -259,85 +260,73 @@ const LoanApplications = () => {
             )}
 
             {/* Enhanced Modal */}
-            <AnimatePresence>
+            {/* Enhanced Modal */}
+            <Modal
+                isOpen={!!selectedApp}
+                onClose={() => setSelectedApp(null)}
+                title={
+                    <div>
+                        <h3 className="font-bold text-xl">Application Details</h3>
+                        {selectedApp && <p className="text-white/80 text-sm mt-1">ID: {selectedApp.loanId}</p>}
+                    </div>
+                }
+            >
                 {selectedApp && (
-                    <dialog className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="modal-box max-w-2xl bg-base-100 shadow-2xl border border-base-200 p-0 overflow-hidden"
-                        >
-                            {/* Modal Header */}
-                            <div className="bg-[#B91116] p-6 text-white flex justify-between items-center">
+                    <>
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 p-3 bg-base-200/50 rounded-xl">
+                                    <div className="bg-white p-2 rounded-full shadow-sm">
+                                        <FaUser className="text-[#B91116]" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-base-content/50 uppercase font-bold">Applicant</p>
+                                        <p className="font-medium">{selectedApp.userName}</p>
+                                        <p className="text-xs text-base-content/60">{selectedApp.userEmail}</p>
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <h3 className="font-bold text-xl">Application Details</h3>
-                                    <p className="text-white/80 text-sm mt-1">ID: {selectedApp.loanId}</p>
-                                </div>
-                                <button onClick={() => setSelectedApp(null)} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/20">
-                                    <FaTimesCircle className="text-xl" />
-                                </button>
-                            </div>
-
-                            {/* Modal Body */}
-                            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3 p-3 bg-base-200/50 rounded-xl">
-                                        <div className="bg-white p-2 rounded-full shadow-sm">
-                                            <FaUser className="text-[#B91116]" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-base-content/50 uppercase font-bold">Applicant</p>
-                                            <p className="font-medium">{selectedApp.userName}</p>
-                                            <p className="text-xs text-base-content/60">{selectedApp.userEmail}</p>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Loan Category</p>
-                                        <p className="text-lg font-medium">{selectedApp.category}</p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Requested Amount</p>
-                                        <p className="text-2xl font-bold text-[#B91116]">৳{selectedApp.amount?.toLocaleString()}</p>
-                                    </div>
+                                    <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Loan Category</p>
+                                    <p className="text-lg font-medium">{selectedApp.category}</p>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Current Status</p>
-                                        <div className={`badge gap-2 font-medium border-none py-3 px-4 ${getStatusColor(selectedApp.status)}`}>
-                                            {getStatusIcon(selectedApp.status)}
-                                            <span className="capitalize">{selectedApp.status}</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Application Date</p>
-                                        <p className="font-medium">{new Date(selectedApp.createdAt).toLocaleDateString()}</p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Purpose</p>
-                                        <div className="bg-base-200/50 p-3 rounded-xl text-sm leading-relaxed">
-                                            {selectedApp.purpose || "No purpose specified."}
-                                        </div>
-                                    </div>
+                                <div>
+                                    <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Requested Amount</p>
+                                    <p className="text-2xl font-bold text-[#B91116]">৳{selectedApp.amount?.toLocaleString()}</p>
                                 </div>
                             </div>
 
-                            {/* Modal Footer */}
-                            <div className="p-4 bg-base-200/30 border-t border-base-200 flex justify-end gap-2">
-                                <button onClick={() => setSelectedApp(null)} className="btn btn-ghost hover:bg-base-200">Close</button>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Current Status</p>
+                                    <div className={`badge gap-2 font-medium border-none py-3 px-4 ${getStatusColor(selectedApp.status)}`}>
+                                        {getStatusIcon(selectedApp.status)}
+                                        <span className="capitalize">{selectedApp.status}</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Application Date</p>
+                                    <p className="font-medium">{new Date(selectedApp.createdAt).toLocaleDateString()}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Purpose</p>
+                                    <div className="bg-base-200/50 p-3 rounded-xl text-sm leading-relaxed">
+                                        {selectedApp.purpose || "No purpose specified."}
+                                    </div>
+                                </div>
                             </div>
-                        </motion.div>
-                        <form method="dialog" className="modal-backdrop">
-                            <button onClick={() => setSelectedApp(null)}>close</button>
-                        </form>
-                    </dialog>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 bg-base-200/30 border-t border-base-200 flex justify-end gap-2">
+                            <button onClick={() => setSelectedApp(null)} className="btn btn-ghost hover:bg-base-200">Close</button>
+                        </div>
+                    </>
                 )}
-            </AnimatePresence>
+            </Modal>
         </div>
     );
 };

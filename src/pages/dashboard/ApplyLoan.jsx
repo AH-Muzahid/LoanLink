@@ -6,6 +6,8 @@ import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 import { FaMoneyBillWave, FaUser, FaIdCard, FaMapMarkerAlt, FaFileAlt, FaPhone, FaBriefcase } from 'react-icons/fa';
 
 const ApplyLoan = () => {
@@ -15,6 +17,8 @@ const ApplyLoan = () => {
     const location = useLocation();
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const [selectedLoan, setSelectedLoan] = useState(null);
+    const { width, height } = useWindowSize();
+    const [showConfetti, setShowConfetti] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -72,8 +76,11 @@ const ApplyLoan = () => {
             };
 
             await axiosSecure.post('/applications', applicationData);
+            setShowConfetti(true);
             toast.success('Loan application submitted successfully!');
-            navigate('/dashboard/my-loans');
+            setTimeout(() => {
+                navigate('/dashboard/my-loans');
+            }, 5000);
         } catch (error) {
             toast.error('Failed to submit application');
             console.error(error);
@@ -84,6 +91,7 @@ const ApplyLoan = () => {
 
     return (
         <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {showConfetti && <Confetti width={width} height={height} />}
             {/* Background Pattern */}
             {/* <div className="absolute inset-0 opacity-5">
                 <div className="absolute top-10 left-10 w-32 h-32 bg-[#B91116] rounded-full blur-3xl"></div>

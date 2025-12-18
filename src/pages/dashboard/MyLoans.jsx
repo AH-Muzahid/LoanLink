@@ -6,7 +6,9 @@ import { FaEye, FaTimes, FaMoneyBillWave, FaFileInvoiceDollar, FaCalendarAlt, Fa
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import Modal from '../../Componets/Modal/Modal';
+import ConfirmationModal from '../../Componets/Modal/ConfirmationModal';
 
 const MyLoans = () => {
     const axiosSecure = useAxiosSecure();
@@ -274,154 +276,123 @@ const MyLoans = () => {
             </motion.div>
 
             {/* View Details Modal */}
-            <AnimatePresence>
-                {selectedLoan && !cancelModal && (
-                    <dialog open className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-box max-w-2xl bg-base-100 rounded-2xl shadow-2xl p-0 overflow-hidden"
-                        >
-                            <div className="bg-[#B91116] p-6 text-white flex justify-between items-center">
-                                <h3 className="font-bold text-xl flex items-center gap-2">
-                                    <FaInfoCircle /> Application Details
-                                </h3>
-                                <button onClick={() => setSelectedLoan(null)} className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20">
-                                    <FaTimes />
-                                </button>
-                            </div>
-
-                            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Loan Title</p>
-                                        <p className="font-semibold text-base-content text-lg">{selectedLoan.loanTitle}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Amount</p>
-                                        <p className="font-semibold text-[#B91116] text-lg">৳{selectedLoan.amount?.toLocaleString()}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Category</p>
-                                        <span className="badge badge-ghost mt-1">{selectedLoan.category}</span>
-                                    </div>
+            {/* View Details Modal */}
+            <Modal
+                isOpen={!!selectedLoan && !cancelModal}
+                onClose={() => setSelectedLoan(null)}
+                title={
+                    <span className="flex items-center gap-2">
+                        <FaInfoCircle /> Application Details
+                    </span>
+                }
+            >
+                {selectedLoan && (
+                    <>
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Loan Title</p>
+                                    <p className="font-semibold text-base-content text-lg">{selectedLoan.loanTitle}</p>
                                 </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Status</p>
-                                        <div className="mt-1">{getStatusBadge(selectedLoan.status)}</div>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Applied On</p>
-                                        <p className="font-medium text-base-content/80">{new Date(selectedLoan.createdAt).toLocaleDateString()}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Fee Status</p>
-                                        <p className={`font-bold ${selectedLoan.feeStatus === 'paid' ? 'text-success' : 'text-error'}`}>
-                                            {selectedLoan.feeStatus === 'paid' ? 'Paid' : 'Unpaid'}
-                                        </p>
-                                    </div>
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Amount</p>
+                                    <p className="font-semibold text-[#B91116] text-lg">৳{selectedLoan.amount?.toLocaleString()}</p>
                                 </div>
-                                <div className="col-span-1 md:col-span-2 bg-base-200 p-4 rounded-xl">
-                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider mb-2">Purpose</p>
-                                    <p className="text-base-content italic">"{selectedLoan.purpose}"</p>
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Category</p>
+                                    <span className="badge badge-ghost mt-1">{selectedLoan.category}</span>
                                 </div>
                             </div>
-                            <div className="p-4 bg-base-200/50 border-t border-base-200 flex justify-end">
-                                <button onClick={() => setSelectedLoan(null)} className="btn btn-ghost text-base-content/70 hover:bg-base-200">Close</button>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Status</p>
+                                    <div className="mt-1">{getStatusBadge(selectedLoan.status)}</div>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Applied On</p>
+                                    <p className="font-medium text-base-content/80">{new Date(selectedLoan.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider">Fee Status</p>
+                                    <p className={`font-bold ${selectedLoan.feeStatus === 'paid' ? 'text-success' : 'text-error'}`}>
+                                        {selectedLoan.feeStatus === 'paid' ? 'Paid' : 'Unpaid'}
+                                    </p>
+                                </div>
                             </div>
-                        </motion.div>
-                    </dialog>
+                            <div className="col-span-1 md:col-span-2 bg-base-200 p-4 rounded-xl">
+                                <p className="text-xs text-base-content/60 uppercase font-bold tracking-wider mb-2">Purpose</p>
+                                <p className="text-base-content italic">"{selectedLoan.purpose}"</p>
+                            </div>
+                        </div>
+                        <div className="p-4 bg-base-200/50 border-t border-base-200 flex justify-end">
+                            <button onClick={() => setSelectedLoan(null)} className="btn btn-ghost text-base-content/70 hover:bg-base-200">Close</button>
+                        </div>
+                    </>
                 )}
-            </AnimatePresence>
+            </Modal>
 
             {/* Cancel Confirmation Modal */}
-            <AnimatePresence>
-                {cancelModal && (
-                    <dialog open className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-box bg-base-100 rounded-2xl shadow-2xl"
-                        >
-                            <div className="text-center">
-                                <div className="bg-error/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaTimes className="text-3xl text-error" />
-                                </div>
-                                <h3 className="font-bold text-xl text-base-content mb-2">Cancel Application?</h3>
-                                <p className="text-base-content/60 mb-6">Are you sure you want to cancel this loan application? This action cannot be undone.</p>
-                                <div className="flex justify-center gap-4">
-                                    <button onClick={() => { setCancelModal(false); setSelectedLoan(null); }} className="btn btn-ghost text-base-content/70">No, Keep It</button>
-                                    <button onClick={handleCancel} className="btn bg-error hover:bg-red-600 text-white border-none">Yes, Cancel Application</button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </dialog>
-                )}
-            </AnimatePresence>
+            <ConfirmationModal
+                isOpen={cancelModal}
+                onClose={() => { setCancelModal(false); setSelectedLoan(null); }}
+                onConfirm={handleCancel}
+                title="Cancel Application?"
+                message="Are you sure you want to cancel this loan application? This action cannot be undone."
+                confirmText="Yes, Cancel Application"
+                cancelText="No, Keep It"
+                icon={FaTimes}
+            />
 
             {/* Payment Details Modal  */}
-            <AnimatePresence>
+            <Modal
+                isOpen={!!selectedTransaction}
+                onClose={() => setSelectedTransaction(null)}
+                title={
+                    <span className="flex items-center gap-2">
+                        <FaFileInvoiceDollar /> Payment Receipt
+                    </span>
+                }
+                maxWidth="max-w-md"
+            >
                 {selectedTransaction && (
-                    <dialog open className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-box bg-base-100 rounded-2xl shadow-2xl"
-                        >
-                            <div className="bg-[#B91116] p-6 text-white flex justify-between items-center -mx-6 -mt-6 mb-6">
-                                <h3 className="font-bold text-xl flex items-center gap-2">
-                                    <FaFileInvoiceDollar /> Payment Receipt
-                                </h3>
-                                <button
-                                    onClick={() => setSelectedTransaction(null)}
-                                    className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20"
-                                >
-                                    <FaTimes />
-                                </button>
+                    <>
+                        <div className="space-y-4 bg-base-200/50 p-6 m-6 rounded-xl border border-base-200">
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Loan ID</span>
+                                <span className="font-mono text-xs text-base-content">{selectedTransaction._id}</span>
                             </div>
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Loan Title</span>
+                                <span className="font-semibold text-base-content">{selectedTransaction.loanTitle}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60 mr-10">Transaction ID</span>
+                                <span className="font-mono text-success font-bold text-sm break-all">{selectedTransaction.transactionId}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-base-300 pb-2">
+                                <span className="text-base-content/60">Amount Paid</span>
+                                <span className="font-bold text-base-content">$10.00</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-base-content/60">Payer Email</span>
+                                <span className="text-sm text-base-content/80">{selectedTransaction.userEmail}</span>
+                            </div>
+                        </div>
 
-                            <div className="space-y-4 bg-base-200/50 p-6 rounded-xl border border-base-200">
-                                <div className="flex justify-between border-b border-base-300 pb-2">
-                                    <span className="text-base-content/60">Loan ID</span>
-                                    <span className="font-mono text-xs text-base-content">{selectedTransaction._id}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-base-300 pb-2">
-                                    <span className="text-base-content/60">Loan Title</span>
-                                    <span className="font-semibold text-base-content">{selectedTransaction.loanTitle}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-base-300 pb-2">
-                                    <span className="text-base-content/60 mr-10">Transaction ID</span>
-                                    <span className="font-mono text-success font-bold text-sm break-all">{selectedTransaction.transactionId}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-base-300 pb-2">
-                                    <span className="text-base-content/60">Amount Paid</span>
-                                    <span className="font-bold text-base-content">$10.00</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-base-content/60">Payer Email</span>
-                                    <span className="text-sm text-base-content/80">{selectedTransaction.userEmail}</span>
-                                </div>
-                            </div>
-
-                            <div className="modal-action mt-6">
-                                <button
-                                    onClick={() => setSelectedTransaction(null)}
-                                    className="btn bg-neutral text-neutral-content hover:bg-neutral-focus border-none w-full"
-                                >
-                                    Close Receipt
-                                </button>
-                            </div>
-                        </motion.div>
-                    </dialog>
+                        <div className="p-6 pt-0">
+                            <button
+                                onClick={() => setSelectedTransaction(null)}
+                                className="btn bg-neutral text-neutral-content hover:bg-neutral-focus border-none w-full"
+                            >
+                                Close Receipt
+                            </button>
+                        </div>
+                    </>
                 )}
-            </AnimatePresence>
+            </Modal>
         </div>
     );
-    // ... existing export
+    
 
 };
 

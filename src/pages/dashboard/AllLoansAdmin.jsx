@@ -4,7 +4,9 @@ import { FaEdit, FaTrash, FaPlus, FaMoneyBillWave, FaSearch, FaTimesCircle, FaSa
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import Modal from '../../Componets/Modal/Modal';
+import ConfirmationModal from '../../Componets/Modal/ConfirmationModal';
 import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { useForm } from 'react-hook-form';
 
@@ -283,97 +285,71 @@ const AllLoansAdmin = () => {
             )}
 
             {/* Edit Modal */}
-            <AnimatePresence>
+            {/* Edit Modal */}
+            <Modal
+                isOpen={!!editingLoan}
+                onClose={() => setEditingLoan(null)}
+                title="Edit Loan Package"
+                maxWidth="max-w-3xl"
+            >
                 {editingLoan && (
-                    <dialog className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="modal-box w-11/12 max-w-3xl bg-base-100 shadow-2xl border border-base-200 p-0 overflow-hidden"
-                        >
-                            <div className="bg-[#B91116] p-4 text-white flex justify-between items-center">
-                                <h3 className="font-bold text-lg">Edit Loan Package</h3>
-                                <button onClick={() => setEditingLoan(null)} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/20">
-                                    <FaTimesCircle className="text-xl" />
-                                </button>
+                    <form onSubmit={handleSubmit(onUpdateSubmit)} className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="form-control">
+                                <label className="label"><span className="label-text font-semibold">Loan Title</span></label>
+                                <input {...register('title', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
                             </div>
-
-                            <form onSubmit={handleSubmit(onUpdateSubmit)} className="p-6 max-h-[80vh] overflow-y-auto">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="form-control">
-                                        <label className="label"><span className="label-text font-semibold">Loan Title</span></label>
-                                        <input {...register('title', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
-                                    </div>
-                                    <div className="form-control">
-                                        <label className="label"><span className="label-text font-semibold">Category</span></label>
-                                        <select {...register('category', { required: true })} className="select select-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]">
-                                            <option value="Personal Loan">Personal Loan</option>
-                                            <option value="Business Loan">Business Loan</option>
-                                            <option value="Home Loan">Home Loan</option>
-                                            <option value="Car Loan">Car Loan</option>
-                                            <option value="Education Loan">Education Loan</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-control">
-                                        <label className="label"><span className="label-text font-semibold">Interest Rate (%)</span></label>
-                                        <input type="number" step="0.1" {...register('interestRate', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
-                                    </div>
-                                    <div className="form-control">
-                                        <label className="label"><span className="label-text font-semibold">Max Loan Limit</span></label>
-                                        <input type="number" {...register('maxLoanLimit', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
-                                    </div>
-                                    <div className="form-control md:col-span-2">
-                                        <label className="label"><span className="label-text font-semibold">Image URL</span></label>
-                                        <input type="url" {...register('image', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
-                                    </div>
-                                    <div className="form-control md:col-span-2">
-                                        <label className="label"><span className="label-text font-semibold">Description</span></label>
-                                        <textarea {...register('description', { required: true })} className="textarea textarea-bordered h-24 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"></textarea>
-                                    </div>
-                                </div>
-                                <div className="modal-action">
-                                    <button type="button" onClick={() => setEditingLoan(null)} className="btn btn-ghost">Cancel</button>
-                                    <button type="submit" className="btn bg-[#B91116] hover:bg-[#900d11] text-white gap-2">
-                                        <FaSave /> Update Loan
-                                    </button>
-                                </div>
-                            </form>
-                        </motion.div>
-                    </dialog>
+                            <div className="form-control">
+                                <label className="label"><span className="label-text font-semibold">Category</span></label>
+                                <select {...register('category', { required: true })} className="select select-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]">
+                                    <option value="Personal Loan">Personal Loan</option>
+                                    <option value="Business Loan">Business Loan</option>
+                                    <option value="Home Loan">Home Loan</option>
+                                    <option value="Car Loan">Car Loan</option>
+                                    <option value="Education Loan">Education Loan</option>
+                                </select>
+                            </div>
+                            <div className="form-control">
+                                <label className="label"><span className="label-text font-semibold">Interest Rate (%)</span></label>
+                                <input type="number" step="0.1" {...register('interestRate', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
+                            </div>
+                            <div className="form-control">
+                                <label className="label"><span className="label-text font-semibold">Max Loan Limit</span></label>
+                                <input type="number" {...register('maxLoanLimit', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
+                            </div>
+                            <div className="form-control md:col-span-2">
+                                <label className="label"><span className="label-text font-semibold">Image URL</span></label>
+                                <input type="url" {...register('image', { required: true })} className="input input-bordered focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]" />
+                            </div>
+                            <div className="form-control md:col-span-2">
+                                <label className="label"><span className="label-text font-semibold">Description</span></label>
+                                <textarea {...register('description', { required: true })} className="textarea textarea-bordered h-24 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"></textarea>
+                            </div>
+                        </div>
+                        <div className="modal-action">
+                            <button type="button" onClick={() => setEditingLoan(null)} className="btn btn-ghost">Cancel</button>
+                            <button type="submit" className="btn bg-[#B91116] hover:bg-[#900d11] text-white gap-2">
+                                <FaSave /> Update Loan
+                            </button>
+                        </div>
+                    </form>
                 )}
-            </AnimatePresence>
+            </Modal>
 
             {/* Delete Confirmation Modal */}
-            <AnimatePresence>
-                {deletingLoan && (
-                    <dialog className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="modal-box max-w-sm bg-base-100 shadow-2xl border border-base-200 text-center p-8"
-                        >
-                            <div className="mx-auto w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
-                                <FaExclamationTriangle className="text-3xl" />
-                            </div>
-                            <h3 className="font-bold text-xl mb-2">Delete Loan?</h3>
-                            <p className="text-base-content/60 mb-6">
-                                Are you sure you want to delete <span className="font-bold text-base-content">{deletingLoan.title}</span>? This action cannot be undone.
-                            </p>
-                            <div className="flex justify-center gap-3">
-                                <button onClick={() => setDeletingLoan(null)} className="btn btn-ghost">Cancel</button>
-                                <button
-                                    onClick={() => deleteMutation.mutate(deletingLoan._id)}
-                                    className="btn btn-error text-white"
-                                >
-                                    Yes, Delete It
-                                </button>
-                            </div>
-                        </motion.div>
-                    </dialog>
-                )}
-            </AnimatePresence>
+            <ConfirmationModal
+                isOpen={!!deletingLoan}
+                onClose={() => setDeletingLoan(null)}
+                onConfirm={() => deleteMutation.mutate(deletingLoan._id)}
+                title="Delete Loan?"
+                message={
+                    <span>
+                        Are you sure you want to delete <span className="font-bold text-base-content">{deletingLoan?.title}</span>? This action cannot be undone.
+                    </span>
+                }
+                confirmText="Yes, Delete It"
+                icon={FaExclamationTriangle}
+            />
         </div>
     );
 };
