@@ -1,16 +1,127 @@
-# React + Vite
+# LoanLink - Loan Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, full-stack loan management application built with React and Express.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend**: [Deployed on Vercel](https://your-app.vercel.app)
+- **Backend**: [Deployed on Render](https://loanlink-server-lyh1.onrender.com)
 
-## React Compiler
+## 📋 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **User Authentication**: Firebase authentication with email/password and Google login
+- **Role-Based Access**: Borrower, Manager, and Admin roles
+- **Loan Management**: Browse, apply, and manage loans
+- **Payment Integration**: Stripe payment gateway for application fees
+- **Dashboard**: Comprehensive dashboard for users and administrators
+- **Responsive Design**: Mobile-friendly interface with DaisyUI and Tailwind CSS
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+- React 19
+- React Router DOM
+- TanStack Query (React Query)
+- Framer Motion
+- DaisyUI + Tailwind CSS
+- Firebase Authentication
+- Axios
+- React Hook Form
+- Recharts
+
+### Backend
+- Node.js + Express
+- MongoDB
+- JWT Authentication
+- Stripe Payment API
+- Cookie Parser
+- CORS
+
+## 🔧 Environment Variables
+
+### Client (.env.local)
+```env
+VITE_apiKey=your_firebase_api_key
+VITE_authDomain=your_firebase_auth_domain
+VITE_projectId=your_firebase_project_id
+VITE_storageBucket=your_firebase_storage_bucket
+VITE_messagingSenderId=your_firebase_messaging_sender_id
+VITE_appId=your_firebase_app_id
+VITE_API_URL=your_backend_api_url
+```
+
+### Server (.env)
+```env
+PORT=5000
+MongoURI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+CLIENT_URL=your_frontend_url
+NODE_ENV=production
+```
+
+## 📦 Installation
+
+### Clone the repository
+```bash
+git clone https://github.com/AH-Muzahid/LoanLink.git
+cd LoanLink
+```
+
+### Install Client Dependencies
+```bash
+cd "LoanLinks clients"
+npm install
+```
+
+### Install Server Dependencies
+```bash
+cd ../Server
+npm install
+```
+
+## 🏃 Running Locally
+
+### Start the Backend Server
+```bash
+cd Server
+npm run dev
+```
+
+### Start the Frontend
+```bash
+cd "LoanLinks clients"
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## 🚢 Deployment
+
+### Frontend (Vercel)
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Set environment variables in Vercel dashboard
+4. Deploy
+
+### Backend (Render/Railway/Heroku)
+1. Push your code to GitHub
+2. Create new web service
+3. Set environment variables
+4. Deploy
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+**AH Muzahid**
+- GitHub: [@AH-Muzahid](https://github.com/AH-Muzahid)
+
+## 🙏 Acknowledgments
+
+- Firebase for authentication
+- Stripe for payment processing
+- MongoDB for database
+- Vercel for hosting
