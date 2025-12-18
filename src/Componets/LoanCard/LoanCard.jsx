@@ -7,17 +7,17 @@ const LoanCard = ({ loan }) => {
     const { _id, title, category, image, interestRate, maxLoanLimit, description } = loan;
 
     return (
-        <div className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 group border border-base-300 hover:border-primary/50">
-            
+        <div className="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 group border border-base-300 hover:border-[#B91116]/50">
+
             {/* Image */}
             <figure className="relative h-44 overflow-hidden">
-                <img 
-                    src={image} 
-                    alt={title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                <img
+                    src={image}
+                    alt={title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
-                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+
                 {/* Category Badge */}
                 <div className="absolute top-3 right-3">
                     <span className="badge badge-warning font-bold shadow-lg">
@@ -34,7 +34,7 @@ const LoanCard = ({ loan }) => {
 
             {/* Content */}
             <div className="card-body p-5">
-                
+
                 <h3 className="font-bold text-lg line-clamp-1 group-hover:text-[#cf282] transition-colors">{title}</h3>
                 <p className="text-sm text-base-content/70 mb-2 h-10 overflow-auto">{description}</p>
                 {/* Stats Grid */}
@@ -51,20 +51,20 @@ const LoanCard = ({ loan }) => {
                             <FaHandHoldingUsd className="text-success text-xs" />
                             <p className="text-xs text-base-content/60 font-semibold">Max Loan Limit</p>
                         </div>
-                        <p className="text-xl font-bold text-success">৳{(maxLoanLimit/1000).toFixed(0)}K</p>
+                        <p className="text-xl font-bold text-success">৳{(maxLoanLimit / 1000).toFixed(0)}K</p>
                     </div>
                 </div>
 
                 {/* Button */}
                 <Link to={`/loans/${_id}`}>
                     <button className="btn bg-[#B91116] text-white w-full group/btn">
-                        View Details 
+                        View Details
                         <FaArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
                     </button>
                 </Link>
             </div>
         </div>
-    );}
-;
+    );
+};
 
 export default LoanCard;

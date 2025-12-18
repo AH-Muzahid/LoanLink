@@ -77,7 +77,7 @@ const WhyChooseUs = () => {
             </div>
 
             {/* --- Bottom Curve) --- */}
-            <div className='mt-12 -mb-12 rotate-180'>
+            <div className='mt-12 -mb-13 rotate-180'>
             <img src={down} alt="" />
             </div>
         </div>
