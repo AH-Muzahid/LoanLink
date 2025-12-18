@@ -9,12 +9,12 @@ const Feedback = () => {
     const testimonials = [
         { name: 'John Doe', role: 'Small Business Owner', feedback: 'LoanLink helped me get funding quickly for my business expansion. Highly recommended!', rating: 5, img: 'https://i.pravatar.cc/150?img=1' },
         { name: 'Sarah Khan', role: 'Entrepreneur', feedback: 'The process was smooth and transparent. Got my loan approved within 24 hours!', rating: 5, img: 'https://i.pravatar.cc/150?img=5' },
-        { name: 'Mike Johnson', role: 'Freelancer', feedback: 'Best microloan service I have used. Simple application and fast approval.', rating: 4, img: 'https://i.pravatar.cc/150?img=3' },
-        { name: 'Ayesha Rahman', role: 'Shop Owner', feedback: 'Great customer support and flexible repayment options. Thank you LoanLink!', rating: 5, img: 'https://i.pravatar.cc/150?img=9' }
+        { name: 'Mike Johnson', role: 'Freelancer', feedback: 'Best microloan service I have used. Simple application and fast approval process.', rating: 4, img: 'https://i.pravatar.cc/150?img=3' },
+        { name: 'Ayesha Rahman', role: 'Shop Owner', feedback: 'Great customer support and flexible repayment options make LoanLink a top choice.', rating: 5, img: 'https://i.pravatar.cc/150?img=2' },
     ];
 
     return (
-        <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-base-200">
+        <section className="max-w-6xl mx-auto py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
             <div className="max-w-8xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

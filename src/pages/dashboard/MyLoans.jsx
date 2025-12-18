@@ -1,32 +1,40 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { useState, useEffect } from 'react';
+import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { FaEye, FaTimes, FaMoneyBillWave } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
 
 const MyLoans = () => {
+    const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [cancelModal, setCancelModal] = useState(false);
     const queryClient = useQueryClient();
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     useEffect(() => {
         document.title = 'My Loans - Dashboard | LoanLink';
     }, []);
 
-    const { data: myLoans = [], isLoading } = useQuery({
+    const { data: myLoans = [], isLoading, isError, error } = useQuery({
         queryKey: ['my-loans', user?.email],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:5000/my-applications/${user?.email}`);
+            const { data } = await axiosSecure.get(`/my-applications/${user?.email}`);
             return data;
         },
         enabled: !!user?.email
     });
 
+    console.log("Auth User in MyLoans:", user);
+    console.log("Loan data:", { isLoading, isError, error, myLoans });
+
+
+    // Cancel Loan Application 
     const cancelMutation = useMutation({
         mutationFn: async (id) => {
-            const { data } = await axios.delete(`http://localhost:5000/applications/${id}`);
+            const { data } = await axiosSecure.delete(`/applications/${id}`);
             return data;
         },
         onSuccess: () => {
@@ -36,14 +44,73 @@ const MyLoans = () => {
             setSelectedLoan(null);
         }
     });
-
+    // Handle Cancel Loan Application
     const handleCancel = () => {
         if (selectedLoan) {
             cancelMutation.mutate(selectedLoan._id);
         }
     };
 
-    if (isLoading) return <div className="flex justify-center p-8"><span className="loading loading-spinner loading-lg"></span></div>;
+    // Handle Pay Loan Application
+    const handlePay = async (loan) => {
+        console.log("Initiating payment for loan:", loan);
+        toast.info("Initiating payment...");
+
+        let fee = loan.feeAmount;
+
+        if (!fee || fee <= 0) {
+            toast.warning('Fee amount is missing. Using a temporary fee of ৳10 for testing.', { duration: 5000 });
+            console.warn("Fee amount is missing or invalid for loan:", loan, "Using temporary fee of 10.");
+            fee = 10;
+        }
+
+        const toastId = toast.loading('Processing payment...');
+
+        try {
+            const paymentInfo = {
+                loanId: loan._id,
+                loanTitle: loan.loanTitle,
+                amount: fee,
+                userName: user?.displayName,
+                userEmail: user?.email
+            };
+            console.log("Sending payment info:", paymentInfo);
+            const { data } = await axiosSecure.post('/create-checkout-session', paymentInfo);
+            console.log("Received response from server:", data);
+
+            if (data && data.url) {
+                toast.success('Redirecting to payment gateway...', { id: toastId });
+                window.location.href = data.url;
+            } else {
+                toast.error('Failed to get payment URL.', { id: toastId });
+                console.error("Invalid response from server:", data);
+            }
+
+        } catch (error) {
+            console.error('Payment Error:', error);
+            toast.error(error.message || 'Failed to process payment.', { id: toastId });
+        }
+    };
+
+    //Handle Paid Badge Click
+    const handleShowDetails = (loan) => {
+        setSelectedTransaction(loan);
+        document.getElementById('payment_modal').showModal();
+    };
+
+    if (isLoading) return <LoadingSpinner />;
+
+    if (isError) {
+        console.error("Error fetching loans:", error);
+        return (
+            <div className="card bg-base-100 shadow-xl">
+                <div className="card-body text-center">
+                    <h3 className="text-xl font-bold text-error">Failed to load loan applications</h3>
+                    <p className="text-base-content/80">{error.message}</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -80,41 +147,45 @@ const MyLoans = () => {
                                     </td>
                                     <td className="font-bold">৳{loan.amount?.toLocaleString()}</td>
                                     <td>
-                                        <span className={`badge ${
-                                            loan.status === 'approved' ? 'badge-success' : 
+                                        <span className={`badge ${loan.status === 'approved' ? 'badge-success' :
                                             loan.status === 'rejected' ? 'badge-error' : 'badge-warning'
-                                        }`}>
+                                            }`}>
                                             {loan.status || 'pending'}
                                         </span>
                                     </td>
                                     <td>
                                         {loan.feeStatus === 'paid' ? (
-                                            <span className="badge badge-success">Paid</span>
+                                            <span onClick={() => handleShowDetails(loan)} className="badge badge-success cursor-pointer">Paid</span>
                                         ) : (
                                             <span className="badge badge-error">Unpaid</span>
                                         )}
                                     </td>
                                     <td>
                                         <div className="flex gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedLoan(loan)}
                                                 className="btn btn-sm btn-info"
                                             >
                                                 <FaEye />
                                             </button>
                                             {loan.status === 'pending' && (
-                                                <button 
+                                                <button
                                                     onClick={() => { setSelectedLoan(loan); setCancelModal(true); }}
                                                     className="btn btn-sm btn-error"
                                                 >
                                                     <FaTimes />
                                                 </button>
                                             )}
-                                            {loan.feeStatus !== 'paid' && (
-                                                <button className="btn btn-sm btn-success">
+                                            {loan.status === 'approved' && loan.feeStatus !== 'paid' && (
+                                                <button
+                                                    onClick={() => handlePay(loan)}
+                                                    className="btn btn-sm btn-success"
+                                                >
                                                     <FaMoneyBillWave /> Pay
                                                 </button>
                                             )}
+
+
                                         </div>
                                     </td>
                                 </tr>
@@ -159,6 +230,27 @@ const MyLoans = () => {
                     </div>
                 </dialog>
             )}
+
+            {/* Payment Details Modal  */}
+            <dialog id="payment_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg text-primary mb-4">Payment Details</h3>
+                    {selectedTransaction && (
+                        <div className="space-y-2">
+                            <p><strong>Loan ID:</strong> {selectedTransaction._id}</p>
+                            <p><strong>Loan Title:</strong> {selectedTransaction.loanTitle}</p>
+                            <p><strong>Transaction ID:</strong> <span className="text-green-600 font-mono">{selectedTransaction.transactionId}</span></p>
+                            <p><strong>Email:</strong> {selectedTransaction.userEmail}</p>
+                            <p><strong>Amount Paid:</strong> ৳{selectedTransaction.feeAmount?.toLocaleString()}</p>
+                        </div>
+                    )}
+                    <div className="modal-action">
+                        <form method="dialog">
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
         </div>
     );
 };

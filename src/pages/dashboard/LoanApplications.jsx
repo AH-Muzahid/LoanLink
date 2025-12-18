@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { useState, useEffect } from 'react';
 import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const LoanApplications = () => {
     useEffect(() => {
@@ -12,18 +13,19 @@ const LoanApplications = () => {
     const [filter, setFilter] = useState('all');
     const [selectedApp, setSelectedApp] = useState(null);
     const queryClient = useQueryClient();
+    const axiosSecure = useAxiosSecure();
 
     const { data: applications = [], isLoading } = useQuery({
         queryKey: ['loan-applications'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/applications');
+            const { data } = await axiosSecure.get('/applications');
             return data;
         }
     });
 
     const updateStatusMutation = useMutation({
         mutationFn: async ({ id, status }) => {
-            const { data } = await axios.patch(`http://localhost:5000/applications/${id}`, { status });
+            const { data } = await axiosSecure.patch(`/applications/${id}`, { status });
             return data;
         },
         onSuccess: () => {
@@ -32,11 +34,10 @@ const LoanApplications = () => {
         }
     });
 
-    const filteredApps = filter === 'all' 
-        ? applications 
+    const filteredApps = filter === 'all'
+        ? applications
         : applications.filter(app => app.status === filter);
 
-    if (isLoading) return <div className="flex justify-center p-8"><span className="loading loading-spinner loading-lg"></span></div>;
 
     return (
         <div className="p-6">
@@ -49,6 +50,7 @@ const LoanApplications = () => {
                 <button onClick={() => setFilter('approved')} className={`btn btn-sm ${filter === 'approved' ? 'btn-success' : 'btn-outline'}`}>Approved</button>
                 <button onClick={() => setFilter('rejected')} className={`btn btn-sm ${filter === 'rejected' ? 'btn-error' : 'btn-outline'}`}>Rejected</button>
             </div>
+
 
             <div className="overflow-x-auto bg-base-100 rounded-lg shadow-lg">
                 <table className="table">
@@ -78,10 +80,9 @@ const LoanApplications = () => {
                                     <select
                                         value={app.status || 'pending'}
                                         onChange={(e) => updateStatusMutation.mutate({ id: app._id, status: e.target.value })}
-                                        className={`select select-bordered select-sm ${
-                                            app.status === 'approved' ? 'select-success' : 
-                                            app.status === 'rejected' ? 'select-error' : 'select-warning'
-                                        }`}
+                                        className={`select select-bordered select-sm ${app.status === 'approved' ? 'select-success' :
+                                                app.status === 'rejected' ? 'select-error' : 'select-warning'
+                                            }`}
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="approved">Approved</option>
@@ -89,7 +90,7 @@ const LoanApplications = () => {
                                     </select>
                                 </td>
                                 <td>
-                                    <button 
+                                    <button
                                         onClick={() => setSelectedApp(app)}
                                         className="btn btn-sm btn-info"
                                     >
@@ -100,6 +101,8 @@ const LoanApplications = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {isLoading && <LoadingSpinner />}
             </div>
 
             {/* View Modal */}

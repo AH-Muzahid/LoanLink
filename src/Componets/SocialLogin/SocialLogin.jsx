@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../Hooks/useAuth/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure/useAxiosSecure";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
-import axios from "axios";
+
 
 const SocialLogin = () => {
+    const axiosSecure = useAxiosSecure();
     const { googleSignIn } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,7 +24,7 @@ const SocialLogin = () => {
             const user = result.user;
             
             // Check if user exists in database
-            const { data: existingUser } = await axios.get(`http://localhost:5000/user/${user.email}`);
+            const { data: existingUser } = await axiosSecure.get(`/user/${user.email}`);
             
             if (!existingUser) {
                 // New user - show role selection modal
@@ -46,7 +48,7 @@ const SocialLogin = () => {
         
         try {
             // Save user to database with role
-            await axios.post('http://localhost:5000/users', {
+            await axiosSecure.post('/users', {
                 name: tempUser.displayName,
                 email: tempUser.email,
                 photoURL: tempUser.photoURL,

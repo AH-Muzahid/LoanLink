@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { useNavigate } from 'react-router-dom';
 
 const ApplyLoan = () => {
+    const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors }, } = useForm();
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ const ApplyLoan = () => {
     const { data: loans = [] } = useQuery({
         queryKey: ['available-loans'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/all-loans');
+            const { data } = await axiosSecure.get('/all-loans');
             return data;
         }
     });
@@ -33,6 +34,11 @@ const ApplyLoan = () => {
     const onSubmit = async (data) => {
         if (!selectedLoan) {
             toast.error('Please select a loan');
+            return;
+        }
+
+        if (parseFloat(data.amount) > selectedLoan.maxLoanLimit) {
+            toast.error(`Maximum limit for this loan is ${selectedLoan.maxLoanLimit} BDT`);
             return;
         }
 
@@ -50,10 +56,14 @@ const ApplyLoan = () => {
                 monthlyIncome: parseFloat(data.monthlyIncome),
                 status: 'pending',
                 feeStatus: 'unpaid',
-                createdAt: new Date().toISOString()
+                feeAmount: selectedLoan.feeAmount || 10, 
+                createdAt: new Date().toISOString(),
+                // max: selectedLoan.maxLoanLimit,
+                // min: selectedLoan.minLoanLimit,
+
             };
 
-            await axios.post('http://localhost:5000/applications', applicationData);
+            await axiosSecure.post('/applications', applicationData);
             toast.success('Loan application submitted successfully!');
             navigate('/dashboard/my-loans');
         } catch (error) {
@@ -75,7 +85,7 @@ const ApplyLoan = () => {
                         <label className="label">
                             <span className="label-text font-semibold">Select Loan *</span>
                         </label>
-                        <select 
+                        <select
                             onChange={handleLoanSelect}
                             className="select select-bordered"
                             required
@@ -91,7 +101,7 @@ const ApplyLoan = () => {
 
                     {/* Auto-filled Fields */}
                     {selectedLoan && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-base-200 rounded-lg">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 bg-base-200 rounded-lg">
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text font-semibold">User Email</span>
@@ -110,8 +120,19 @@ const ApplyLoan = () => {
                                 </label>
                                 <input type="text" value={`${selectedLoan.interestRate}%`} readOnly className="input input-bordered bg-base-300" />
                             </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-semibold">Application Fee</span>
+                                </label>
+                                <input type="text" value={`$${selectedLoan.feeAmount || 10} USD`} readOnly className="input input-bordered bg-base-300" />
+                            </div>
                         </div>
                     )}
+                    {/* Max Loan Limit */}
+                    <div className="form-control">
+                        <label className="label"><span className="label-text font-semibold">Max Limit (BDT)</span></label>
+                        <input type="text" value={selectedLoan?.maxLoanLimit || ''} readOnly className="input input-bordered bg-base-300 text-error font-bold" />
+                    </div>
 
                     {/* User Input Fields */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,11 +140,11 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">First Name *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('firstName', { required: 'First name is required' })}
-                                type="text" 
-                                placeholder="Enter first name" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="Enter first name"
+                                className="input input-bordered"
                             />
                             {errors.firstName && <span className="text-error text-sm">{errors.firstName.message}</span>}
                         </div>
@@ -132,11 +153,11 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Last Name *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('lastName', { required: 'Last name is required' })}
-                                type="text" 
-                                placeholder="Enter last name" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="Enter last name"
+                                className="input input-bordered"
                             />
                             {errors.lastName && <span className="text-error text-sm">{errors.lastName.message}</span>}
                         </div>
@@ -145,11 +166,11 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Contact Number *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('contactNumber', { required: 'Contact number is required' })}
-                                type="tel" 
-                                placeholder="01XXXXXXXXX" 
-                                className="input input-bordered" 
+                                type="tel"
+                                placeholder="01XXXXXXXXX"
+                                className="input input-bordered"
                             />
                             {errors.contactNumber && <span className="text-error text-sm">{errors.contactNumber.message}</span>}
                         </div>
@@ -158,11 +179,11 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">National ID / Passport *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('nationalId', { required: 'ID is required' })}
-                                type="text" 
-                                placeholder="Enter NID or Passport" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="Enter NID or Passport"
+                                className="input input-bordered"
                             />
                             {errors.nationalId && <span className="text-error text-sm">{errors.nationalId.message}</span>}
                         </div>
@@ -185,11 +206,12 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Monthly Income (৳) *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('monthlyIncome', { required: 'Monthly income is required', min: 0 })}
-                                type="number" 
-                                placeholder="Enter monthly income" 
-                                className="input input-bordered" 
+                                type="number"
+                                placeholder="Enter monthly income"
+                                className="input input-bordered"
+                                onWheel={(e) => e.target.blur()}
                             />
                             {errors.monthlyIncome && <span className="text-error text-sm">{errors.monthlyIncome.message}</span>}
                         </div>
@@ -198,11 +220,15 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Loan Amount (৳) *</span>
                             </label>
-                            <input 
-                                {...register('amount', { required: 'Loan amount is required', min: 0 })}
-                                type="number" 
-                                placeholder="Enter loan amount" 
-                                className="input input-bordered" 
+                            <input
+                                {...register('amount', {
+                                    required: 'Loan amount is required',
+                                })}
+
+                                type="number"
+                                placeholder="Enter loan amount"
+                                className="input input-bordered"
+                                onWheel={(e) => e.target.blur()}
                             />
                             {errors.amount && <span className="text-error text-sm">{errors.amount.message}</span>}
                         </div>
@@ -211,9 +237,9 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Reason for Loan *</span>
                             </label>
-                            <textarea 
+                            <textarea
                                 {...register('purpose', { required: 'Reason is required' })}
-                                className="textarea textarea-bordered h-20" 
+                                className="textarea textarea-bordered h-20"
                                 placeholder="Explain why you need this loan..."
                             ></textarea>
                             {errors.purpose && <span className="text-error text-sm">{errors.purpose.message}</span>}
@@ -223,9 +249,9 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Address *</span>
                             </label>
-                            <textarea 
+                            <textarea
                                 {...register('address', { required: 'Address is required' })}
-                                className="textarea textarea-bordered h-20" 
+                                className="textarea textarea-bordered h-20"
                                 placeholder="Enter your full address..."
                             ></textarea>
                             {errors.address && <span className="text-error text-sm">{errors.address.message}</span>}
@@ -235,9 +261,9 @@ const ApplyLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Extra Notes</span>
                             </label>
-                            <textarea 
+                            <textarea
                                 {...register('notes')}
-                                className="textarea textarea-bordered h-20" 
+                                className="textarea textarea-bordered h-20"
                                 placeholder="Any additional information..."
                             ></textarea>
                         </div>

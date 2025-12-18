@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect } from 'react';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const ApprovedLoans = () => {
     useEffect(() => {
         document.title = 'Approved Applications - Dashboard | LoanLink';
     }, []);
 
+    const axiosSecure = useAxiosSecure();
+
     const { data: applications = [], isLoading } = useQuery({
         queryKey: ['approved-applications'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/applications?status=approved');
+            const { data } = await axiosSecure.get('/applications?status=approved');
             return data;
         }
     });

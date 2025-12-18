@@ -1,15 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth/useAuth';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const ManageLoans = () => {
     const { user } = useAuth();
     const [search, setSearch] = useState('');
     const queryClient = useQueryClient();
+    const axiosSecure = useAxiosSecure();
 
     useEffect(() => {
         document.title = 'Manage Loans - Dashboard | LoanLink';
@@ -18,7 +19,7 @@ const ManageLoans = () => {
     const { data: loans = [], isLoading } = useQuery({
         queryKey: ['manager-loans', user?.email],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:5000/my-added-loans/${user?.email}`);
+            const { data } = await axiosSecure.get(`/my-added-loans/${user?.email}`);
             return data;
         },
         enabled: !!user?.email
@@ -26,7 +27,7 @@ const ManageLoans = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
-            const { data } = await axios.delete(`http://localhost:5000/loans/${id}`);
+            const { data } = await axiosSecure.delete(`/loans/${id}`);
             return data;
         },
         onSuccess: () => {
@@ -41,7 +42,7 @@ const ManageLoans = () => {
         }
     };
 
-    const filteredLoans = loans.filter(loan => 
+    const filteredLoans = loans.filter(loan =>
         loan.title?.toLowerCase().includes(search.toLowerCase()) ||
         loan.category?.toLowerCase().includes(search.toLowerCase())
     );
@@ -58,9 +59,9 @@ const ManageLoans = () => {
             {/* Search */}
             <div className="form-control mb-6">
                 <div className="input-group">
-                    <input 
-                        type="text" 
-                        placeholder="Search by title or category..." 
+                    <input
+                        type="text"
+                        placeholder="Search by title or category..."
                         className="input input-bordered w-full"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}

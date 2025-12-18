@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useUserData from '../../Hooks/useUserData';
 import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle } from 'react-icons/fa';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const DashboardHome = () => {
     useEffect(() => {
@@ -13,14 +13,15 @@ const DashboardHome = () => {
     const { user } = useAuth();
     const userData = useUserData();
     const role = userData?.role;
+    const axiosSecure = useAxiosSecure();
 
     const { data: stats = {} } = useQuery({
         queryKey: ['dashboard-stats'],
         queryFn: async () => {
             const [users, loans, applications] = await Promise.all([
-                axios.get('http://localhost:5000/users'),
-                axios.get('http://localhost:5000/all-loans'),
-                axios.get('http://localhost:5000/applications')
+                axiosSecure.get('/users'),
+                axiosSecure.get('/all-loans'),
+                axiosSecure.get('/applications')
             ]);
             return {
                 totalUsers: users.data.length,

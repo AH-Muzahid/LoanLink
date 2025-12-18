@@ -20,6 +20,9 @@ import DashboardHome from '../pages/dashboard/DashboardHome';
 import ManageLoans from '../pages/dashboard/ManageLoans';
 import PendingLoans from '../pages/dashboard/PendingLoans';
 import ApprovedLoans from '../pages/dashboard/ApprovedLoans';
+import PaymentSuccess from '../pages/Payment/PaymentSuccess';
+import AboutUs from '../pages/About/AboutUs';
+import Contact from '../pages/Contact/Contact';
 
 
 
@@ -36,6 +39,14 @@ export const router = createBrowserRouter([
       {
         path: "/all-loans",
         element: <AllLoans />,
+      },
+      {
+        path: "/about",
+        element: <AboutUs />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
       {
         path: "/login",
@@ -84,4 +95,10 @@ export const router = createBrowserRouter([
       { path: "loan-applications", element: <LoanApplications /> },
     ],
   },
+  // Payment Routes
+  
+  {
+      path: 'dashboard/payment/success',
+      Comment: <PaymentSuccess />
+  }
 ]);

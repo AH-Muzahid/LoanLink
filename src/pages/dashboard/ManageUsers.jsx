@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { FaEdit, FaBan, FaCheckCircle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const ManageUsers = () => {
     useEffect(() => {
@@ -13,18 +14,21 @@ const ManageUsers = () => {
     const [suspendReason, setSuspendReason] = useState('');
     const [suspendFeedback, setSuspendFeedback] = useState('');
     const queryClient = useQueryClient();
+    const axiosSecure = useAxiosSecure();
 
     const { data: users = [], isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/users');
+            const { data } = await axiosSecure.get('/users');
+            console.log(data);
             return data;
         }
     });
 
+
     const updateUserMutation = useMutation({
         mutationFn: async ({ id, updates }) => {
-            const { data } = await axios.patch(`http://localhost:5000/users/${id}`, updates);
+            const { data } = await axiosSecure.patch(`/users/${id}`, updates);
             return data;
         },
         onSuccess: () => {
@@ -55,13 +59,12 @@ const ManageUsers = () => {
             toast.error('Please provide reason and feedback');
             return;
         }
-        updateUserMutation.mutate({ 
-            id: selectedUser._id, 
-            updates: { status: 'suspended', suspendReason, suspendFeedback } 
+        updateUserMutation.mutate({
+            id: selectedUser._id,
+            updates: { status: 'suspended', suspendReason, suspendFeedback }
         });
     };
 
-    if (isLoading) return <div className="flex justify-center p-8"><span className="loading loading-spinner loading-lg"></span></div>;
 
     return (
         <div className="p-6">
@@ -78,6 +81,7 @@ const ManageUsers = () => {
                             <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {users.map((user) => (
                             <tr key={user._id}>
@@ -112,6 +116,8 @@ const ManageUsers = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {isLoading && <LoadingSpinner />}
             </div>
 
             {/* Suspend Modal */}
@@ -119,13 +125,13 @@ const ManageUsers = () => {
                 <dialog open className="modal">
                     <div className="modal-box">
                         <h3 className="font-bold text-lg mb-4">Suspend User: {selectedUser?.name}</h3>
-                        
+
                         <div className="form-control mb-4">
                             <label className="label">
                                 <span className="label-text font-semibold">Suspend Reason *</span>
                             </label>
-                            <select 
-                                value={suspendReason} 
+                            <select
+                                value={suspendReason}
                                 onChange={(e) => setSuspendReason(e.target.value)}
                                 className="select select-bordered"
                             >
@@ -142,7 +148,7 @@ const ManageUsers = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Feedback/Details *</span>
                             </label>
-                            <textarea 
+                            <textarea
                                 value={suspendFeedback}
                                 onChange={(e) => setSuspendFeedback(e.target.value)}
                                 className="textarea textarea-bordered h-24"

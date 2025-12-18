@@ -14,7 +14,7 @@ const DashboardLayout = () => {
             
             <div className="drawer-content flex flex-col">
                 {/* Top Navbar */}
-                <div className="navbar bg-gradient-to-r from-[#E31E24] to-[#B91116] text-white shadow-lg">
+                <div className="navbar bg-liner-to-r from-[#E31E24] to-[#B91116] text-white shadow-lg">
                     <div className="flex-1">
                         <label htmlFor="my-drawer-2" className="btn btn-ghost drawer-button lg:hidden">
                             <FaBars className="text-xl" />
@@ -28,7 +28,7 @@ const DashboardLayout = () => {
                                     <img src={user?.photoURL || "https://i.ibb.co/hYSMYwX/placeholder.jpg"} alt="User" />
                                 </div>
                             </div>
-                            <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-base-content">
+                            <ul tabIndex={0} className="mt-3 z-1 p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-base-content">
                                 <li className="px-4 py-2 font-bold border-b">{user?.displayName}</li>
                                 <li><Link to="/dashboard/profile">Profile</Link></li>
                                 <li><Link to="/">Home</Link></li>
@@ -47,7 +47,7 @@ const DashboardLayout = () => {
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
                 <div className="w-64 md:w-72 min-h-full bg-base-100 shadow-xl">
                     {/* User Profile Section */}
-                    <div className="bg-gradient-to-br from-[#E31E24] to-[#B91116] p-6 text-white">
+                    <div className="bg-linert-to-br from-[#E31E24] to-[#B91116] p-6 text-white">
                         <div className="flex flex-col items-center">
                             <div className="avatar">
                                 <div className="w-20 rounded-full ring ring-[#FDB913] ring-offset-2">

@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const AllLoansAdmin = () => {
     useEffect(() => {
@@ -11,18 +11,19 @@ const AllLoansAdmin = () => {
     }, []);
 
     const queryClient = useQueryClient();
+    const axiosSecure = useAxiosSecure();
 
     const { data: loans = [], isLoading } = useQuery({
         queryKey: ['admin-loans'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/all-loans');
+            const { data } = await axiosSecure.get('/all-loans');
             return data;
         }
     });
 
     const toggleHomeMutation = useMutation({
         mutationFn: async ({ id, showOnHome }) => {
-            const { data } = await axios.patch(`http://localhost:5000/loans/${id}`, { showOnHome });
+            const { data } = await axiosSecure.patch(`/loans/${id}`, { showOnHome });
             return data;
         },
         onSuccess: () => {
@@ -33,7 +34,7 @@ const AllLoansAdmin = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
-            const { data } = await axios.delete(`http://localhost:5000/loans/${id}`);
+            const { data } = await axiosSecure.delete(`/loans/${id}`);
             return data;
         },
         onSuccess: () => {

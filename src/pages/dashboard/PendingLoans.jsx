@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { FaEye, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const PendingLoans = () => {
     const [selectedApp, setSelectedApp] = useState(null);
     const queryClient = useQueryClient();
+    const axiosSecure = useAxiosSecure();
 
     useEffect(() => {
         document.title = 'Pending Applications - Dashboard | LoanLink';
@@ -15,18 +16,18 @@ const PendingLoans = () => {
     const { data: applications = [], isLoading } = useQuery({
         queryKey: ['pending-applications'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/applications?status=pending');
+            const { data } = await axiosSecure.get('/applications?status=pending');
             return data;
         }
     });
 
     const updateStatusMutation = useMutation({
         mutationFn: async ({ id, status }) => {
-            const updates = { 
+            const updates = {
                 status,
                 ...(status === 'approved' && { approvedAt: new Date().toISOString() })
             };
-            const { data } = await axios.patch(`http://localhost:5000/applications/${id}`, updates);
+            const { data } = await axiosSecure.patch(`/applications/${id}`, updates);
             return data;
         },
         onSuccess: () => {
@@ -66,19 +67,19 @@ const PendingLoans = () => {
                                 <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                                 <td>
                                     <div className="flex gap-2">
-                                        <button 
+                                        <button
                                             onClick={() => setSelectedApp(app)}
                                             className="btn btn-sm btn-info"
                                         >
                                             <FaEye />
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'approved' })}
                                             className="btn btn-sm btn-success"
                                         >
                                             <FaCheck /> Approve
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'rejected' })}
                                             className="btn btn-sm btn-error"
                                         >

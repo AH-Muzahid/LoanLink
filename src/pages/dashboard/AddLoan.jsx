@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import axios from 'axios';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AddLoan = () => {
+    const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -22,12 +23,13 @@ const AddLoan = () => {
                 ...data,
                 interestRate: parseFloat(data.interestRate),
                 maxLoanLimit: parseFloat(data.maxLoanLimit),
+                feeAmount: parseFloat(data.feeAmount) || 10,
                 showOnHome: data.showOnHome || false,
                 addedBy: user?.email,
                 createdAt: new Date().toISOString()
             };
 
-            await axios.post('http://localhost:5000/loans', loanData);
+            await axiosSecure.post('/loans', loanData);
             toast.success('Loan added successfully!');
             reset();
             navigate('/dashboard/manage-loans');
@@ -51,11 +53,11 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Loan Title *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('title', { required: 'Title is required' })}
-                                type="text" 
-                                placeholder="e.g., Personal Loan" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="e.g., Personal Loan"
+                                className="input input-bordered"
                             />
                             {errors.title && <span className="text-error text-sm">{errors.title.message}</span>}
                         </div>
@@ -65,9 +67,9 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Description *</span>
                             </label>
-                            <textarea 
+                            <textarea
                                 {...register('description', { required: 'Description is required' })}
-                                className="textarea textarea-bordered h-24" 
+                                className="textarea textarea-bordered h-24"
                                 placeholder="Loan description..."
                             ></textarea>
                             {errors.description && <span className="text-error text-sm">{errors.description.message}</span>}
@@ -94,12 +96,12 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Interest Rate (%) *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('interestRate', { required: 'Interest rate is required', min: 0 })}
-                                type="number" 
+                                type="number"
                                 step="0.01"
-                                placeholder="e.g., 8.5" 
-                                className="input input-bordered" 
+                                placeholder="e.g., 8.5"
+                                className="input input-bordered"
                             />
                             {errors.interestRate && <span className="text-error text-sm">{errors.interestRate.message}</span>}
                         </div>
@@ -109,25 +111,38 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Max Loan Limit (৳) *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('maxLoanLimit', { required: 'Max limit is required', min: 0 })}
-                                type="number" 
-                                placeholder="e.g., 500000" 
-                                className="input input-bordered" 
+                                type="number"
+                                placeholder="e.g., 500000"
+                                className="input input-bordered"
                             />
                             {errors.maxLoanLimit && <span className="text-error text-sm">{errors.maxLoanLimit.message}</span>}
                         </div>
 
-                        {/* Duration */}
+                        {/* Application Fee */}
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text font-semibold">Application Fee (USD) *</span>
+                            </label>
+                            <input
+                                {...register('feeAmount', { required: 'Fee is required', min: 0 })}
+                                type="number"
+                                step="0.01"
+                                placeholder="e.g., 10"
+                                className="input input-bordered"
+                            />
+                            {errors.feeAmount && <span className="text-error text-sm">{errors.feeAmount.message}</span>}
+                        </div>
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text font-semibold">Duration (Years)</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('duration')}
-                                type="text" 
-                                placeholder="e.g., 1-5" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="e.g., 1-5"
+                                className="input input-bordered"
                             />
                         </div>
 
@@ -136,11 +151,11 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Required Documents</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('requiredDocuments')}
-                                type="text" 
-                                placeholder="e.g., NID, Bank Statement, Salary Slip" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="e.g., NID, Bank Statement, Salary Slip"
+                                className="input input-bordered"
                             />
                         </div>
 
@@ -149,11 +164,11 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">EMI Plans</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('emiPlans')}
-                                type="text" 
-                                placeholder="e.g., 12 months, 24 months, 36 months" 
-                                className="input input-bordered" 
+                                type="text"
+                                placeholder="e.g., 12 months, 24 months, 36 months"
+                                className="input input-bordered"
                             />
                         </div>
 
@@ -162,11 +177,11 @@ const AddLoan = () => {
                             <label className="label">
                                 <span className="label-text font-semibold">Image URL *</span>
                             </label>
-                            <input 
+                            <input
                                 {...register('image', { required: 'Image URL is required' })}
-                                type="url" 
-                                placeholder="https://example.com/image.jpg" 
-                                className="input input-bordered" 
+                                type="url"
+                                placeholder="https://example.com/image.jpg"
+                                className="input input-bordered"
                             />
                             {errors.image && <span className="text-error text-sm">{errors.image.message}</span>}
                         </div>
