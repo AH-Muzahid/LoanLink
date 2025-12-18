@@ -136,7 +136,7 @@ const AllLoansAdmin = () => {
                     {/* Desktop Table View */}
                     <motion.div
                         variants={containerVariants}
-                        initial="hidden"
+                        // initial="hidden"
                         animate="visible"
                         className="hidden md:block bg-base-100 rounded-2xl shadow-xl border border-base-200 overflow-hidden"
                     >

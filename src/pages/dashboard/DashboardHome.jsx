@@ -98,7 +98,7 @@ const DashboardHome = () => {
     return (
         <motion.div
             variants={containerVariants}
-            initial="hidden"
+            // initial="hidden"
             animate="visible"
             className="min-h-[80vh]"
         >
