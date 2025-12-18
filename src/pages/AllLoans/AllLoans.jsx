@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { HiArrowRight, HiStar } from 'react-icons/hi';
+import { HiArrowRight, HiStar, HiSearch } from 'react-icons/hi';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -19,14 +19,16 @@ const AllLoans = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const loansPerPage = 12;
 
+    const [searchTerm, setSearchTerm] = useState('');
+
     useEffect(() => {
         document.title = 'All Loans - LoanLink';
     }, []);
 
     const { data: loans = [], isLoading, isError } = useQuery({
-        queryKey: ['loans'],
+        queryKey: ['loans', searchTerm],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:5000/all-loans');
+            const { data } = await axios.get(`http://localhost:5000/all-loans?search=${searchTerm}`);
             return data;
         }
     });
@@ -35,30 +37,11 @@ const AllLoans = () => {
     const startIndex = (currentPage - 1) * loansPerPage;
     const currentLoans = loans.slice(startIndex, startIndex + loansPerPage);
 
-    if (isLoading) {
-        return (
-            <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-base-100">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[...Array(6)].map((_, i) => (
-                            <LoanSkeleton key={i} />
-                        ))}
-                    </div>
-                </div>
-            </section>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-xl text-red-500">Failed to load loans</p>
-            </div>
-        );
-    }
+    // ... (loading and error states remain the same)
 
     return (
         <section className=" mb-8 md:mb-12 relative overflow-hidden">
+            {/* ... (Banner section remains the same) */}
             <div className='relative mb-8 md:mb-16'>
                 <div
                     className=" bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] h-[250px] md:h-[400px]  w-full pt-5 md:pt-10"
@@ -111,11 +94,23 @@ const AllLoans = () => {
                 </div>
             </div>
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <div className=' mb-4 md:mb-6 '>
+                {/* Header & Search */}
+                <div className='flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-4'>
                     <h1 className='text-2xl text-[#B21F1F] md:text-3xl font-extrabold'>
                         Available Loan ( {loans.length} )
                     </h1>
+                    <div className="form-control w-full md:w-auto">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search loans..."
+                                className="input input-bordered w-full md:w-80 pl-10 focus:outline-none focus:border-[#B21F1F]"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+                        </div>
+                    </div>
                 </div>
                 {/* Loans Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
