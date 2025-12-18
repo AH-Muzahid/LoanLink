@@ -9,6 +9,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination, Autoplay } from 'swiper/modules';
 import LoanCard from '../../Componets/LoanCard/LoanCard';
+import LoanSkeleton from './LoanSkeleton';
 
 import img4 from '../../assets/imgi_57_home-loan-2021-01-19-6006ae651fe5c.jpg'
 import img5 from '../../assets/imgi_58_home-loan-2021-01-19-6006ae7bd1c58.jpg'
@@ -36,22 +37,11 @@ const AllLoans = () => {
 
     if (isLoading) {
         return (
-            <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-idlc-bg">
-                <div className="max-w-7xl mx-auto">
+            <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-base-100">
+                <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[...Array(6)].map((_, i) => (
-                            <div key={i} className="card bg-white shadow-xl animate-pulse rounded-2xl overflow-hidden">
-                                <div className="h-48 bg-gray-300"></div>
-                                <div className="p-6">
-                                    <div className="h-6 bg-gray-300 rounded w-3/4 mb-3"></div>
-                                    <div className="grid grid-cols-2 gap-4 mb-4">
-                                        <div className="h-16 bg-gray-300 rounded-lg"></div>
-                                        <div className="h-16 bg-gray-300 rounded-lg"></div>
-                                    </div>
-                                    <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
-                                    <div className="h-12 bg-gray-300 rounded-lg"></div>
-                                </div>
-                            </div>
+                            <LoanSkeleton key={i} />
                         ))}
                     </div>
                 </div>
@@ -76,21 +66,21 @@ const AllLoans = () => {
                         clipPath: "ellipse(100% 100% at 50% 0%)"
                     }}
                 >
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-center mb-16"
-                        >
-                            <h1 className="text-3xl sm:text-5xl font-bold text-white mb-2">
-                                All Available Loans
-                            </h1>
-                            <p className="text-lg text-white max-w-2xl mx-auto">
-                                Browse through our comprehensive collection of loan options tailored for your needs
-                            </p>
-                        </motion.div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center mb-16"
+                    >
+                        <h1 className="text-3xl sm:text-5xl font-bold text-white mb-2">
+                            All Available Loans
+                        </h1>
+                        <p className="text-lg text-white max-w-2xl mx-auto">
+                            Browse through our comprehensive collection of loan options tailored for your needs
+                        </p>
+                    </motion.div>
 
-                    </div>
-                    <div className="max-w-7xl mx-auto px-4 ">
+                </div>
+                <div className="max-w-7xl mx-auto px-4 ">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 absolte z-10 -mt-30 md:-mt-60">
                         <Swiper
                             modules={[Autoplay, Pagination]}
@@ -120,7 +110,7 @@ const AllLoans = () => {
                     </div>
                 </div>
             </div>
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className=' mb-4 md:mb-6 '>
                     <h1 className='text-2xl text-[#B21F1F] md:text-3xl font-extrabold'>

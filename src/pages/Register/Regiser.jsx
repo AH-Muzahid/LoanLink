@@ -135,7 +135,7 @@ const Register = () => {
                                     placeholder="Password"
                                     className="input input-bordered w-full pr-12 focus:border-[#B91116] focus:outline-none"
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-[52px] text-gray-500 hover:text-[#B91116]">
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-[39px] text-gray-500 hover:text-[#B91116]">
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                                 {errors.password && <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>}
