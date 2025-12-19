@@ -55,27 +55,36 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
             console.log('Current User:', currentUser);
+
             // JWT Token
             if (currentUser) {
                 axios.post(`${import.meta.env.VITE_API_URL}/jwt`, { email: currentUser.email }, { withCredentials: true })
                     .then(res => {
-                        console.log(res.data);
+                        console.log('JWT Response:', res.data);
                         if (res.data.success) {
-                            console.log("JWT Token Generated");
+                            console.log("JWT Token Generated Successfully");
                         }
                     })
-                setLoading(false);
+                    .catch(error => {
+                        console.error('JWT Token Generation Error:', error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
             }
             else {
                 axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true })
                     .then(res => {
                         console.log('Logged out:', res.data);
-                        setLoading(false);
                     })
+                    .catch(error => {
+                        console.error('Logout Error:', error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
             }
-
         });
-
 
         return () => {
             return unsubscribe();

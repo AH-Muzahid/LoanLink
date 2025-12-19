@@ -33,7 +33,7 @@ const SocialLogin = () => {
             } else {
                 // Existing user - login directly
                 toast.success("Login Successful!");
-                navigate(from, { replace: true });
+                navigate(from, { replace: true })|| navigate("/");
             }
         } catch (error) {
             toast.error(error.message);
