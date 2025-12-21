@@ -60,8 +60,8 @@ const AuthProvider = ({ children }) => {
             if (currentUser) {
                 axios.post(`${import.meta.env.VITE_API_URL}/jwt`, { email: currentUser.email }, { withCredentials: true })
                     .then(res => {
-                        console.log('JWT Response:', res.data);
-                        if (res.data.success) {
+                        console.log('JWT Response:', res?.data);
+                        if (res?.data?.success) {
                             console.log("JWT Token Generated Successfully");
                         }
                     })
