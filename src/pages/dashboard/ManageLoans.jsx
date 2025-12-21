@@ -94,7 +94,7 @@ const ManageLoans = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
                         <FaMoneyBillWave className="text-[#B91116]" /> Manage Loans
                     </h2>
                     <p className="text-base-content/60 mt-1">Manage the loans you have created</p>

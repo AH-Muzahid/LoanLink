@@ -54,9 +54,9 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-base-200/30 pb-20">
             {/* Hero Background */}
-            <div className="relative h-[280px] w-full bg-gradient-to-r from-gray-900 via-[#1a1a1a] to-[#2d0506] overflow-hidden">
+            <div className="relative h-[280px] w-full bg-linear-to-r from-gray-900 via-[#1a1a1a] to-[#2d0506] overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-base-200/30 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-base-200/30 to-transparent"></div>
 
                 <div className="container mx-auto px-4 h-full flex items-center justify-between relative z-10 pb-10">
                     <motion.div
@@ -93,7 +93,7 @@ const Profile = () => {
                         className="lg:col-span-4"
                     >
                         <div className="bg-base-100 rounded-3xl shadow-xl border border-base-200 overflow-hidden sticky top-24">
-                            <div className="h-32 bg-gradient-to-r from-[#B91116] to-[#900d11]"></div>
+                            <div className="h-32 bg-linear-to-r from-[#B91116] to-[#900d11]"></div>
                             <div className="px-8 pb-8 text-center -mt-16">
                                 <div className="relative inline-block group">
                                     <div className="avatar">
@@ -166,7 +166,7 @@ const Profile = () => {
                                 {!isEditing ? (
                                     <button
                                         onClick={() => setIsEditing(true)}
-                                        className="btn bg-[#B91116] hover:bg-[#900d11] text-white border-none shadow-md shadow-red-200 gap-2"
+                                        className="btn bg-[#B91116] hover:bg-[#900d11] text-white border-none shadow-md gap-2"
                                     >
                                         <FaEdit /> Edit Profile
                                     </button>

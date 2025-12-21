@@ -12,6 +12,8 @@ const ManageUsers = () => {
     }, []);
     const [selectedUser, setSelectedUser] = useState(null);
     const [suspendModal, setSuspendModal] = useState(false);
+    const [updateRoleModal, setUpdateRoleModal] = useState(false);
+    const [newRole, setNewRole] = useState('');
     const [suspendReason, setSuspendReason] = useState('');
     const [suspendFeedback, setSuspendFeedback] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -43,8 +45,20 @@ const ManageUsers = () => {
         }
     });
 
-    const handleRoleChange = (user, newRole) => {
-        updateUserMutation.mutate({ id: user._id, updates: { role: newRole } });
+    const handleOpenRoleModal = (user) => {
+        setSelectedUser(user);
+        setNewRole(user.role || 'borrower');
+        setUpdateRoleModal(true);
+    };
+
+    const handleRoleUpdate = () => {
+        if (!newRole) {
+            toast.error('Please select a role');
+            return;
+        }
+        updateUserMutation.mutate({ id: selectedUser._id, updates: { role: newRole } });
+        setUpdateRoleModal(false);
+        setNewRole('');
     };
 
     const handleStatusToggle = (user) => {
@@ -97,7 +111,7 @@ const ManageUsers = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
                         <FaUsers className="text-[#B91116]" /> Manage Users
                     </h2>
                     <p className="text-base-content/60 mt-1">Monitor and manage user accounts and roles</p>
@@ -157,7 +171,7 @@ const ManageUsers = () => {
                                         <th className="py-4 pl-6">User</th>
                                         <th>Role</th>
                                         <th>Status</th>
-                                        <th className="pr-6 text-right">Actions</th>
+                                        <th className="pr-6 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -182,29 +196,32 @@ const ManageUsers = () => {
                                                 </div>
                                             </td>
                                             <td>
-                                                <select
-                                                    value={user.role || 'borrower'}
-                                                    onChange={(e) => handleRoleChange(user, e.target.value)}
-                                                    className="select select-bordered select-sm w-32 focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
-                                                >
-                                                    <option value="borrower">Borrower</option>
-                                                    <option value="manager">Manager</option>
-                                                    <option value="admin">Admin</option>
-                                                </select>
+                                                <span className="badge badge-ghost font-medium py-3 px-4 capitalize">
+                                                    {user.role || 'borrower'}
+                                                </span>
                                             </td>
                                             <td>
                                                 <span className={`badge font-medium border-none py-3 px-4 ${user.status === 'suspended' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
                                                     {user.status || 'active'}
                                                 </span>
                                             </td>
-                                            <td className="pr-6 text-right">
-                                                <button
-                                                    onClick={() => handleStatusToggle(user)}
-                                                    className={`btn btn-sm gap-2 ${user.status === 'suspended' ? 'btn-success text-white' : 'btn-outline btn-error'}`}
-                                                >
-                                                    {user.status === 'suspended' ? <FaCheckCircle /> : <FaBan />}
-                                                    {user.status === 'suspended' ? 'Activate' : 'Suspend'}
-                                                </button>
+                                            <td className="pr-6">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <button
+                                                        onClick={() => handleOpenRoleModal(user)}
+                                                        className="btn btn-sm btn-ghost  hover:bg-[#B12A11]/80"
+                                                        title="Update Role"
+                                                    >
+                                                        <FaEdit /> Update
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusToggle(user)}
+                                                        className={`btn btn-sm gap-2 ${user.status === 'suspended' ? 'btn-success text-white' : 'btn-outline btn-error'}`}
+                                                    >
+                                                        {user.status === 'suspended' ? <FaCheckCircle /> : <FaBan />}
+                                                        {user.status === 'suspended' ? 'Activate' : 'Suspend'}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </motion.tr>
                                     ))}
@@ -247,15 +264,9 @@ const ManageUsers = () => {
                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <p className="text-xs text-base-content/50 mb-1">Role</p>
-                                        <select
-                                            value={user.role || 'borrower'}
-                                            onChange={(e) => handleRoleChange(user, e.target.value)}
-                                            className="select select-bordered select-sm w-full focus:border-[#B91116] focus:ring-1 focus:ring-[#B91116]"
-                                        >
-                                            <option value="borrower">Borrower</option>
-                                            <option value="manager">Manager</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
+                                        <span className="badge badge-ghost font-medium w-full py-3 capitalize">
+                                            {user.role || 'borrower'}
+                                        </span>
                                     </div>
                                     <div>
                                         <p className="text-xs text-base-content/50 mb-1">Status</p>
@@ -265,18 +276,75 @@ const ManageUsers = () => {
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={() => handleStatusToggle(user)}
-                                    className={`btn btn-sm w-full gap-2 ${user.status === 'suspended' ? 'btn-success text-white' : 'btn-outline btn-error'}`}
-                                >
-                                    {user.status === 'suspended' ? <FaCheckCircle /> : <FaBan />}
-                                    {user.status === 'suspended' ? 'Activate Account' : 'Suspend Account'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleOpenRoleModal(user)}
+                                        className="btn btn-sm flex-1 btn-ghost text-blue-500 border border-blue-200 hover:bg-blue-50"
+                                    >
+                                        <FaEdit /> Update Role
+                                    </button>
+                                    <button
+                                        onClick={() => handleStatusToggle(user)}
+                                        className={`btn btn-sm flex-1 gap-2 ${user.status === 'suspended' ? 'btn-success text-white' : 'btn-outline btn-error'}`}
+                                    >
+                                        {user.status === 'suspended' ? <FaCheckCircle /> : <FaBan />}
+                                        {user.status === 'suspended' ? 'Activate' : 'Suspend'}
+                                    </button>
+                                </div>
                             </motion.div>
                         ))}
                     </motion.div>
                 </>
             )}
+
+            {/* Update Role Modal */}
+            <AnimatePresence>
+                {updateRoleModal && (
+                    <dialog className="modal modal-open backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="modal-box bg-base-100 shadow-2xl border border-base-200 p-0 overflow-hidden"
+                        >
+                            <div className="bg-[#B12A11] p-4 text-white flex justify-between items-center">
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                    <FaEdit /> Update User Role
+                                </h3>
+                                <button onClick={() => setUpdateRoleModal(false)} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/20">
+                                    <FaTimesCircle className="text-xl" />
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                <p className="mb-4 text-base-content/70">
+                                    You are updating the role for <span className="font-bold text-base-content">{selectedUser?.name}</span>.
+                                </p>
+
+                                <div className="form-control mb-6">
+                                    <label className="label font-semibold">Select New Role *</label>
+                                    <select
+                                        value={newRole}
+                                        onChange={(e) => setNewRole(e.target.value)}
+                                        className="select select-bordered focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full"
+                                    >
+                                        <option value="borrower">Borrower</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex justify-end gap-3">
+                                    <button onClick={() => setUpdateRoleModal(false)} className="btn btn-ghost">Cancel</button>
+                                    <button onClick={handleRoleUpdate} className="btn bg-[#B12A11] hover:bg-[#B12A11]/80 text-white border-none">
+                                        <FaCheckCircle /> Update Role
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </dialog>
+                )}
+            </AnimatePresence>
 
             {/* Suspend Modal */}
             <AnimatePresence>

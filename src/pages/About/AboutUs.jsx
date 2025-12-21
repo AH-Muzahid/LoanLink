@@ -34,10 +34,10 @@ const AboutUs = () => {
     ];
 
     return (
-        <div className="min-h-screen max-w-6xl mx-auto bg-base-100">
+        <div className="min-h-screen max-w-8xl mx-auto bg-base-100">
             {/* Hero Section */}
             <div className="relative py-20 lg:py-32 bg-base-200/50 overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#B91116]/5 to-transparent -z-10"></div>
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-[#B91116]/5 to-transparent -z-10"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B91116]/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 -z-10"></div>
 
                 <div className="container mx-auto px-4 text-center">
@@ -61,8 +61,8 @@ const AboutUs = () => {
             </div>
 
             {/* Stats Section */}
-            <div className="py-12 bg-[#B91116] max-w-100vw mx-auto text-white">
-                <div className="container mx-auto px-4">
+            <div className="py-12 bg-[#B91116] max-w-8xl mx-auto text-white">
+                <div className="container max-w-6xl mx-auto px-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         {stats.map((stat, index) => (
                             <motion.div
@@ -81,7 +81,7 @@ const AboutUs = () => {
             </div>
 
             {/* Our Story Section */}
-            <div className="py-20 container mx-auto px-4">
+            <div className="py-20 container max-w-6xl mx-auto px-4">
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
@@ -138,7 +138,7 @@ const AboutUs = () => {
 
             {/* Core Values */}
             <div className="py-20 bg-base-200/30">
-                <div className="container mx-auto px-4">
+                <div className="container max-w-6xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <span className="text-[#B91116] font-bold tracking-wider uppercase text-sm mb-2 block">Our Values</span>
                         <h2 className="text-3xl md:text-4xl font-bold">What Drives Us</h2>

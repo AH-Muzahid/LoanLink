@@ -16,7 +16,7 @@ const LoanCard = ({ loan }) => {
                     alt={title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
 
                 {/* Category Badge */}
                 <div className="absolute top-3 right-3">

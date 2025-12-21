@@ -42,7 +42,7 @@ const HowItWorks = () => {
                 >
                     <span className="text-[#B91116] font-bold tracking-wider uppercase text-sm mb-2 block">Simple Process</span>
                     <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                        How It <span className="bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">Works</span>
+                        How It <span className="bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">Works</span>
                     </h2>
                     <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
                         Get your loan approved and funded in 4 simple steps. We've streamlined the process to be fast, transparent, and hassle-free.
@@ -51,7 +51,7 @@ const HowItWorks = () => {
 
                 <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Connecting Line (Desktop) */}
-                    <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-base-300 via-[#B91116]/30 to-base-300 -z-10"></div>
+                    <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-linear-to-r from-base-300 via-[#B91116]/30 to-base-300 -z-10"></div>
 
                     {steps.map((step, index) => (
                         <motion.div
@@ -68,7 +68,7 @@ const HowItWorks = () => {
                                     {index + 1}
                                 </div>
 
-                                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#B91116]/5 to-[#B91116]/10 rounded-2xl flex items-center justify-center text-[#B91116] text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-20 h-20 mx-auto bg-linear-to-br from-[#B91116]/5 to-[#B91116]/10 rounded-2xl flex items-center justify-center text-[#B91116] text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
                                     {step.icon}
                                 </div>
 

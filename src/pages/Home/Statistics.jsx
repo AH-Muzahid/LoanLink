@@ -31,8 +31,8 @@ const Statistics = () => {
 
     return (
         <section className="py-20 relative overflow-hidden">
-            {/* Background with Gradient and Pattern */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#B91116] to-[#900d11]">
+            {/* Background with linear and Pattern */}
+            <div className="absolute inset-0 bg-linear-to-r from-[#B91116] to-[#900d11]">
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             </div>
 

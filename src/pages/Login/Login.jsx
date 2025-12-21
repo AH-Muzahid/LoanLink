@@ -30,7 +30,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen py-10 flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-base-200 via-base-100 to-base-200">
+        <div className="min-h-screen py-10 flex items-center justify-center relative overflow-hidden bg-linear-to-br from-base-200 via-base-100 to-base-200">
             {/* Animated Background Shapes */}
             <motion.div
                 animate={{
@@ -130,7 +130,7 @@ const Login = () => {
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className="btn bg-[#B91116] hover:bg-[#900d11] text-white text-lg border-none shadow-lg shadow-[#B91116]/20 h-12"
+                                className="btn w-full bg-[#B91116] hover:bg-[#900d11] text-white text-lg border-none shadow-lg shadow-[#B91116]/20 h-12"
                             >
                                 Login
                             </motion.button>

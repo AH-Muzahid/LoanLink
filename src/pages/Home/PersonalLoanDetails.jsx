@@ -37,7 +37,7 @@ const PersonalLoanDetails = () => {
         <div className="min-h-screen bg-base-100 pb-20">
             {/* Hero Section */}
             <div className="relative h-[400px] lg:h-[500px] w-full overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent z-10" />
+                <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/70 to-transparent z-10" />
                 <img
                     src={loan.image}
                     alt={loan.title}

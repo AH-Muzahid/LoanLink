@@ -69,10 +69,10 @@ const Navbar = () => {
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B91116] to-[#ff4d4d] flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:shadow-[#B91116]/30 transition-all duration-300">
+                        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#B91116] to-[#ff4d4d] flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:shadow-[#B91116]/30 transition-all duration-300">
                             L
                         </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">
                             LoanLink
                         </span>
                     </Link>

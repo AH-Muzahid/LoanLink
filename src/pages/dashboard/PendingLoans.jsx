@@ -60,7 +60,7 @@ const PendingLoans = () => {
         <div className="min-h-screen bg-base-200/30 p-4 md:p-8">
             {/* Header */}
             <div className="mb-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
                     <FaClock className="text-[#B91116]" /> Pending Applications
                 </h2>
                 <p className="text-base-content/60 mt-1">Review and manage loan requests awaiting approval</p>

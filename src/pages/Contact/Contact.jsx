@@ -163,7 +163,7 @@ const Contact = () => {
             </div>
 
             {/* Map Section */}
-            <div className="h-96 w-full bg-base-200 relative">
+            <div className="h-110 w-full bg-base-200 relative">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58144.97576596356!2d88.57095034863281!3d24.374649733232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fb24671e935495%3A0x2f8774066315c8ba!2sRajshahi!5e0!3m2!1sen!2sbd!4v1708320000000!5m2!1sen!2sbd"
                     width="100%"

@@ -59,7 +59,7 @@ const Feedback = () => {
                 >
                     <span className="text-[#B91116] font-bold tracking-wider uppercase text-sm mb-2 block">Testimonials</span>
                     <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                        What Our <span className="bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">Clients Say</span>
+                        What Our <span className="bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent">Clients Say</span>
                     </h2>
                     <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
                         Trusted by thousands of satisfied customers who have achieved their financial goals with LoanLink.

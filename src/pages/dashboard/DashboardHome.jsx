@@ -104,7 +104,7 @@ const DashboardHome = () => {
         >
             {/* Welcome Section */}
             <motion.div variants={itemVariants} className="mb-10">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-[#B91116] to-[#900d11] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-linear-to-r from-[#B91116] to-[#900d11] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden">
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-4xl font-bold mb-2">

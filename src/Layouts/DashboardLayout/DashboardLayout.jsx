@@ -67,7 +67,7 @@ const DashboardLayout = () => {
                 className={({ isActive }) => `
                     flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300
                     ${isActive
-                        ? 'bg-[#B91116] text-white shadow-md shadow-red-200'
+                        ? 'bg-[#B91116] text-white shadow-md'
                         : 'text-base-content/70 hover:bg-base-200 hover:text-[#B91116]'
                     }
                     ${isCollapsed && !isMobile ? 'justify-center px-2' : ''}
@@ -92,7 +92,7 @@ const DashboardLayout = () => {
                         <label htmlFor="my-drawer-2" className="btn btn-ghost btn-circle lg:hidden">
                             <FaBars className="text-xl text-base-content" />
                         </label>
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-[#B91116] to-[#E31E24] bg-clip-text text-transparent hidden sm:block">
+                        <h1 className="text-xl font-bold bg-linear-to-r from-[#B91116] to-[#E31E24] bg-clip-text text-transparent hidden sm:block">
                             LoanLink Dashboard
                         </h1>
                     </div>

@@ -9,7 +9,7 @@ const ErrorPage = () => {
     }, []);
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-base-200 via-base-100 to-base-200">
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-linear-to-br from-base-200 via-base-100 to-base-200">
             {/* Background Elements */}
             <motion.div
                 animate={{

@@ -57,7 +57,8 @@ const LoanApplications = () => {
         }
     };
 
-    const getStatusColor = (status) => {
+    const getStatusColor = (status, feeStatus) => {
+        if (feeStatus === 'paid') return 'text-blue-500 bg-blue-100 dark:bg-blue-900/30';
         switch (status) {
             case 'approved': return 'text-green-500 bg-green-100 dark:bg-green-900/30';
             case 'rejected': return 'text-red-500 bg-red-100 dark:bg-red-900/30';
@@ -65,7 +66,8 @@ const LoanApplications = () => {
         }
     };
 
-    const getStatusIcon = (status) => {
+    const getStatusIcon = (status, feeStatus) => {
+        if (feeStatus === 'paid') return <FaCheckCircle />;
         switch (status) {
             case 'approved': return <FaCheckCircle />;
             case 'rejected': return <FaTimesCircle />;
@@ -78,7 +80,7 @@ const LoanApplications = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
                         <FaFileAlt className="text-[#B91116]" /> Loan Applications
                     </h2>
                     <p className="text-base-content/60 mt-1">Manage and review all loan requests</p>
@@ -156,9 +158,9 @@ const LoanApplications = () => {
                                                 {new Date(app.createdAt).toLocaleDateString()}
                                             </td>
                                             <td>
-                                                <div className={`badge gap-2 font-medium  border-none py-3 px-4 ${getStatusColor(app.status)}`}>
-                                                    {getStatusIcon(app.status)}
-                                                    <span className="capitalize">{app.status}</span>
+                                                <div className={`badge gap-2 font-medium  border-none py-3 px-4 ${getStatusColor(app.status, app.feeStatus)}`}>
+                                                    {getStatusIcon(app.status, app.feeStatus)}
+                                                    <span className="capitalize">{app.feeStatus === 'paid' ? 'Paid' : app.status}</span>
                                                 </div>
                                             </td>
                                             <td className="pr-6 text-right">
@@ -219,9 +221,9 @@ const LoanApplications = () => {
                                             <p className="text-xs text-base-content/50">{app.category}</p>
                                         </div>
                                     </div>
-                                    <div className={`badge gap-1 font-medium border-none ${getStatusColor(app.status)}`}>
-                                        {getStatusIcon(app.status)}
-                                        <span className="capitalize text-xs">{app.status}</span>
+                                    <div className={`badge gap-1 font-medium border-none ${getStatusColor(app.status, app.feeStatus)}`}>
+                                        {getStatusIcon(app.status, app.feeStatus)}
+                                        <span className="capitalize text-xs">{app.feeStatus === 'paid' ? 'Paid' : app.status}</span>
                                     </div>
                                 </div>
 
@@ -300,9 +302,9 @@ const LoanApplications = () => {
                             <div className="space-y-4">
                                 <div>
                                     <p className="text-xs text-base-content/50 uppercase font-bold mb-1">Current Status</p>
-                                    <div className={`badge gap-2 font-medium border-none py-3 px-4 ${getStatusColor(selectedApp.status)}`}>
-                                        {getStatusIcon(selectedApp.status)}
-                                        <span className="capitalize">{selectedApp.status}</span>
+                                    <div className={`badge gap-2 font-medium border-none py-3 px-4 ${getStatusColor(selectedApp.status, selectedApp.feeStatus)}`}>
+                                        {getStatusIcon(selectedApp.status, selectedApp.feeStatus)}
+                                        <span className="capitalize">{selectedApp.feeStatus === 'paid' ? 'Paid' : selectedApp.status}</span>
                                     </div>
                                 </div>
 

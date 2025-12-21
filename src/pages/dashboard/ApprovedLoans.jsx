@@ -49,7 +49,7 @@ const ApprovedLoans = () => {
         <div className="min-h-screen bg-base-200/30 p-4 md:p-8">
             {/* Header */}
             <div className="mb-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
                     <FaCheckCircle className="text-[#B91116]" /> Approved Applications
                 </h2>
                 <p className="text-base-content/60 mt-1">View history of all approved loan requests</p>
@@ -120,7 +120,7 @@ const ApprovedLoans = () => {
                                             <td>
                                                 <div className="flex items-center gap-2 text-sm">
                                                     <FaCalendarAlt className="text-base-content/40" />
-                                                    {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : 'N/A'}
+                                                    {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A')}
                                                 </div>
                                             </td>
                                             <td className="pr-6 text-right">
@@ -181,7 +181,7 @@ const ApprovedLoans = () => {
                                 <div className="flex justify-between items-center text-sm text-base-content/60 mb-4">
                                     <span>Approved Date:</span>
                                     <span className="font-medium text-base-content">
-                                        {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : 'N/A'}
+                                        {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A')}
                                     </span>
                                 </div>
 
@@ -247,7 +247,7 @@ const ApprovedLoans = () => {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-sm">Approved Date:</span>
-                                                    <span className="font-medium">{selectedApp.approvedAt ? new Date(selectedApp.approvedAt).toLocaleDateString() : 'N/A'}</span>
+                                                    <span className="font-medium">{selectedApp.approvedAt ? new Date(selectedApp.approvedAt).toLocaleDateString() : (selectedApp.createdAt ? new Date(selectedApp.createdAt).toLocaleDateString() : 'N/A')}</span>
                                                 </div>
                                             </div>
                                         </div>

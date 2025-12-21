@@ -53,7 +53,7 @@ const AddLoan = () => {
             >
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent inline-flex items-center gap-3">
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent inline-flex items-center gap-3">
                         <FaPlus className="text-[#B91116]" /> Add New Loan Package
                     </h2>
                     <p className="text-base-content/60 mt-2">Create a new loan option for your customers</p>
