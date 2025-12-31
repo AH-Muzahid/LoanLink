@@ -4,8 +4,7 @@ A modern, full-stack loan management application built with React and Express.
 
 ## 🚀 Live Demo
 
-- **Frontend**: [Deployed on Vercel](https://your-app.vercel.app)
-- **Backend**: [Deployed on Render](https://loanlink-server-lyh1.onrender.com)
+**[Visit Live Site →](https://loan-link-two.vercel.app/)**
 
 ## 📋 Features
 
