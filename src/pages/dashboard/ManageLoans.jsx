@@ -17,7 +17,7 @@ const ManageLoans = () => {
     const queryClient = useQueryClient();
     const axiosSecure = useAxiosSecure();
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
     useEffect(() => {
         document.title = 'Manage Loans - Dashboard | LoanLink';

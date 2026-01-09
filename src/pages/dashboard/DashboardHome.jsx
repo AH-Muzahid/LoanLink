@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useUserData from '../../Hooks/useUserData';
-import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaPlus, FaList, FaArrowRight, FaChartLine } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaPlus, FaList, FaChartLine } from 'react-icons/fa';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { motion } from 'framer-motion';
 
@@ -56,7 +56,7 @@ const DashboardHome = () => {
         }
     };
 
-    const StatCard = ({ title, value, icon: Icon, color, delay }) => (
+    const StatCard = ({ title, value, icon: Icon, color }) => (
         <motion.div
             variants={itemVariants}
             className="stat bg-base-100 shadow-xl rounded-2xl border border-base-200 overflow-hidden relative group"

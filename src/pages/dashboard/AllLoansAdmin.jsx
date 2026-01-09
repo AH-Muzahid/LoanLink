@@ -21,7 +21,7 @@ const AllLoansAdmin = () => {
     const [editingLoan, setEditingLoan] = useState(null);
     const [deletingLoan, setDeletingLoan] = useState(null);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
     const { data: loans = [], isLoading } = useQuery({
         queryKey: ['admin-loans'],

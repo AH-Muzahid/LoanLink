@@ -1,9 +1,13 @@
 import React from 'react';
 import { FaUniversity, FaAward, FaCalendarAlt, FaFileInvoiceDollar } from 'react-icons/fa';
 import down from '../../assets/downwad.png'
+import Container from '../../Componets/Shared/Container';
+import SectionTitle from '../../Componets/Shared/SectionTitle';
+import Reveal from '../../Componets/Shared/Reveal';
+
 const WhyChooseUs = () => {
 
-    
+
     const features = [
         {
             id: 1,
@@ -36,51 +40,56 @@ const WhyChooseUs = () => {
             <div className='-mt-12
             
             '>
-            <img src={down} alt="" />
+                <img src={down} alt="" />
             </div>
-            
-        
-            
-            <div className="container max-w-6xl mx-auto px-4 relative z-10">
+
+
+
+            <Container className="relative z-10">
                 {/* --- Title --- */}
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 mt-5 uppercase tracking-wide">
-                    Why Choose LoanLink?
-                </h2>
+                <Reveal>
+                    <SectionTitle
+                        heading={<span className="text-white">Why Choose LoanLink?</span>}
+                        align="center"
+                    />
+                </Reveal>
 
                 {/* --- Grid Cards --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {features.map((feature) => (
-                        <div 
-                            key={feature.id} 
-                            className="bg-white/10 hover:bg-white/20 transition-all duration-300 rounded-lg p-8 flex flex-col items-center text-center border border-white/10 shadow-lg"
-                        >
-                            {/* Icon */}
-                            <div className="text-white opacity-90">
-                                {feature.icon}
+                    {features.map((feature, index) => (
+                        <Reveal key={feature.id} delay={index * 0.1}>
+                            <div
+                                className="bg-white/10 hover:bg-white/20 transition-all duration-300 rounded-lg p-8 flex flex-col items-center text-center border border-white/10 shadow-lg h-full"
+                            >
+                                {/* Icon */}
+                                <div className="text-white opacity-90">
+                                    {feature.icon}
+                                </div>
+
+                                {/* Title */}
+                                <h3 className="text-lg font-bold uppercase mt-4  leading-tight min-h-[50px] flex items-center justify-center">
+                                    {feature.title}
+                                </h3>
+
+                                {/* Divider Line */}
+                                <div className="w-full h-1 bg-white/50 rounded my-3"></div>
+
+                                {/* Description */}
+                                <p className="text-sm text-gray-100 font-light leading-relaxed">
+                                    {feature.description}
+                                </p>
                             </div>
-
-                            {/* Title */}
-                            <h3 className="text-lg font-bold uppercase mt-4  leading-tight min-h-[50px] flex items-center justify-center">
-                                {feature.title}
-                            </h3>
-
-                            {/* Divider Line */}
-                            <div className="w-full h-1 bg-white/50 rounded my-3"></div>
-
-                            {/* Description */}
-                            <p className="text-sm text-gray-100 font-light leading-relaxed">
-                                {feature.description}
-                            </p>
-                        </div>
+                        </Reveal>
                     ))}
                 </div>
-            </div>
+            </Container>
+
 
             {/* --- Bottom Curve) --- */}
             <div className='mt-12 -mb-13 rotate-180'>
-            <img src={down} alt="" />
+                <img src={down} alt="" />
             </div>
-        </div>
+        </div >
     );
 };
 

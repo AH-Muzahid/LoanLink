@@ -15,7 +15,7 @@ const Banner = () => {
 
 
             <div
-                className="bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] h-[250px] md:h-[400px]  w-full pt-5 md:pt-10"
+                className="bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] min-h-[350px] md:min-h-[500px] w-full pt-24 md:pt-30 pb-10"
                 style={{
                     clipPath: "ellipse(100% 100% at 50% 0%)"
                 }}

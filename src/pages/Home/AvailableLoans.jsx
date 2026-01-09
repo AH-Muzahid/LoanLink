@@ -1,10 +1,12 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { HiArrowRight } from 'react-icons/hi';
-import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import axios from 'axios';
+import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import LoanCard from '../../Componets/LoanCard/LoanCard';
+import Container from '../../Componets/Shared/Container';
+import SectionTitle from '../../Componets/Shared/SectionTitle';
+import Reveal from '../../Componets/Shared/Reveal';
 
 const AvailableLoans = () => {
     const [loans, setLoans] = useState([]);
@@ -24,22 +26,31 @@ const AvailableLoans = () => {
 
     if (loading) return <LoadingSpinner />;
     return (
-        <div className=" max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl md:text-4xl font-bold text-center mb-3 ">Available Loans for You</h1>
-            <p className='text-md text-center mb-4 md:mb-10'>Browse through our comprehensive collection of loan options tailored for your needs</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Container className="py-16 md:py-24">
+            <Reveal>
+                <SectionTitle
+                    heading="Available Loans for You"
+                    subHeading="Loan Options"
+                />
+            </Reveal>
+            <Reveal delay={0.1}>
+                <p className='text-md text-center max-w-2xl mx-auto mb-10 md:mb-16 -mt-10 text-gray-500'>Browse through our comprehensive collection of loan options tailored for your needs</p>
+            </Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loans.map((loan, index) => (
-                    <LoanCard loan={loan} key={index} />
+                    <Reveal key={index} delay={index * 0.1}>
+                        <LoanCard loan={loan} />
+                    </Reveal>
                 ))}
             </div>
-            <div className="flex justify-center mt-8">
+            <Reveal delay={0.2} className="flex justify-center mt-12">
                 <Link to="/all-loans">
-                    <button className="btn bg-[#B91116] hover:bg-[#900d11] text-white gap-2 px-8 rounded-full">
+                    <button className="btn bg-[#B91116] hover:bg-[#900d11] text-white gap-2 px-8 rounded-full shadow-lg shadow-[#B91116]/20">
                         View All Loans <HiArrowRight />
                     </button>
                 </Link>
-            </div>
-        </div>
+            </Reveal>
+        </Container>
     );
 };
 
