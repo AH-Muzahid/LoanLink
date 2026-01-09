@@ -26,3 +26,35 @@ html.lenis body {
 .lenis.lenis-scrolling iframe {
     pointer-events: none;
 }
+
+/* Custom Premium Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #B91116;
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cccccc #f1f1f1;
+}
+
+/* Premium Background Pattern */
+.bg-dot-pattern {
+    background-color: oklch(var(--b1));
+    background-image: radial-gradient(oklch(var(--bc)/0.2) 1px, transparent 1px);
+    background-size: 20px 20px;
+}

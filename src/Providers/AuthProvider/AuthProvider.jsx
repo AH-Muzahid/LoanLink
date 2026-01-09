@@ -54,13 +54,12 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
-            console.log('Current User:', currentUser);
+            // console.log('Current User:', currentUser);
 
             // JWT Token
             if (currentUser) {
                 axios.post(`${import.meta.env.VITE_API_URL}/jwt`, { email: currentUser.email }, { withCredentials: true })
                     .then(res => {
-                        console.log('JWT Response:', res?.data);
                         if (res?.data?.success) {
                             console.log("JWT Token Generated Successfully");
                         }
@@ -75,7 +74,7 @@ const AuthProvider = ({ children }) => {
             else {
                 axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true })
                     .then(res => {
-                        console.log('Logged out:', res.data);
+                        // console.log('Logged out:', res.data);
                     })
                     .catch(error => {
                         console.error('Logout Error:', error);

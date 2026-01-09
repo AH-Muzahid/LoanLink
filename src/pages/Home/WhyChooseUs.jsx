@@ -49,7 +49,8 @@ const WhyChooseUs = () => {
                 {/* --- Title --- */}
                 <Reveal>
                     <SectionTitle
-                        heading={<span className="text-white">Why Choose LoanLink?</span>}
+                        style={{ paddingTop: '5rem' }}
+                        heading={<span className="text-white ">Why Choose LoanLink?</span>}
                         align="center"
                     />
                 </Reveal>

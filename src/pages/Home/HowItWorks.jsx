@@ -28,21 +28,16 @@ const HowItWorks = () => {
     ];
 
     return (
-        <section className="py-20 lg:py-28 relative overflow-hidden">
-            {/* Background Elements */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-30">
-                <div className="absolute top-1/4 left-0 w-72 h-72 bg-[#B91116]/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#B91116]/5 rounded-full blur-3xl"></div>
-            </div>
-
+        <section className="py-24 relative overflow-hidden">
             <Container>
                 <Reveal>
-                    <div className="text-center">
+                    <div className="text-center mb-20">
                         <SectionTitle
-                            heading={<>How It <span className="text-[#cf2829]">Works</span></>}
+                            heading={<>How It <span className="text-[#B91116]">Works</span></>}
                             subHeading="Simple Process"
+                            align="center"
                         />
-                        <p className="text-lg text-base-content/60 max-w-2xl mx-auto -mt-10 mb-20">
+                        <p className="text-lg text-base-content/60 max-w-2xl mx-auto -mt-6">
                             Get your loan approved and funded in 4 simple steps. We've streamlined the process to be fast, transparent, and hassle-free.
                         </p>
                     </div>
@@ -54,27 +49,32 @@ const HowItWorks = () => {
 
                     {steps.map((step, index) => (
                         <Reveal key={index} delay={index * 0.15}>
-                            <div className="relative group">
+                            <div className="relative group h-full">
                                 <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-lg hover:shadow-2xl hover:shadow-[#B91116]/10 transition-all duration-300 h-full text-center relative z-10">
-                                    {/* Step Number Badge */}
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-[#B91116] text-white rounded-full flex items-center justify-center font-bold text-sm shadow-lg ring-4 ring-base-100">
-                                        {index + 1}
+                                    {/* Number Badge with Pulse Effect */}
+                                    <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                                        <div className="relative flex items-center justify-center">
+                                            <div className="absolute w-10 h-10 bg-[#B91116]/20 rounded-full animate-ping opacity-75"></div>
+                                            <div className="relative w-10 h-10 bg-[#B91116] text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg ring-4 ring-white">
+                                                {index + 1}
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="w-20 h-20 mx-auto bg-linear-to-br from-[#B91116]/5 to-[#B91116]/10 rounded-2xl flex items-center justify-center text-[#B91116] text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-20 h-20 mx-auto bg-base-100 rounded-full flex items-center justify-center text-[#B91116] text-3xl mb-6 shadow-sm group-hover:bg-[#B91116] group-hover:text-white transition-colors duration-300 mt-4">
                                         {step.icon}
                                     </div>
 
-                                    <h3 className="text-xl font-bold mb-3 group-hover:text-[#B91116] transition-colors">
+                                    <h3 className="text-xl font-bold mb-3 text-base-content group-hover:text-[#B91116] transition-colors">
                                         {step.title}
                                     </h3>
-                                    <p className="text-base-content/60 leading-relaxed">
+                                    <p className="text-base-content/60 leading-relaxed text-sm">
                                         {step.desc}
                                     </p>
 
-                                    {/* Mobile Arrow (except last item) */}
+                                    {/* Mobile Arrow */}
                                     {index < steps.length - 1 && (
-                                        <div className="lg:hidden absolute -bottom-4 left-1/2 -translate-x-1/2 text-base-content/20 text-2xl">
+                                        <div className="lg:hidden absolute -bottom-4 left-1/2 -translate-x-1/2 text-[#B91116]/20 text-2xl z-20">
                                             <FaArrowRight className="rotate-90" />
                                         </div>
                                     )}

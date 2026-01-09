@@ -19,7 +19,7 @@ const Login = () => {
 
         signIn(email, password)
             .then(result => {
-                console.log(result.user);
+                // console.log(result.user);
                 toast.success("Welcome Back!");
                 navigate(from, { replace: true });
             })

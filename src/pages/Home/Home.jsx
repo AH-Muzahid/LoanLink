@@ -13,13 +13,13 @@ const Home = () => {
     }, []);
 
     return (
-        <div>
+        <div className="bg-dot-pattern min-h-screen">
             <Banner />
-            <AvailableLoans />
-            <HowItWorks />
-            <WhyChooseUs />
-            <EmiCalculator />
             <Statistics />
+            <AvailableLoans />
+            <WhyChooseUs />
+            <HowItWorks />
+            <EmiCalculator />
             <Feedback />
         </div>
     );

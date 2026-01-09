@@ -34,7 +34,7 @@ const AvailableLoans = () => {
                 />
             </Reveal>
             <Reveal delay={0.1}>
-                <p className='text-md text-center max-w-2xl mx-auto mb-10 md:mb-16 -mt-10 text-gray-500'>Browse through our comprehensive collection of loan options tailored for your needs</p>
+                <p className='text-md text-center max-w-2xl mx-auto mb-10 md:mb-16 -mt-10 text-base-content/60'>Browse through our comprehensive collection of loan options tailored for your needs</p>
             </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loans.map((loan, index) => (

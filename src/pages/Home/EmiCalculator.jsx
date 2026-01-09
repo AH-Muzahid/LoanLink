@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { FaCalendarAlt } from 'react-icons/fa';
+import { calculateAmortizationSchedule } from '../../utils/loanUtils';
+import AmortizationModal from '../../Componets/LoanCalculator/AmortizationModal';
 
 const EMICalculator = () => {
     // Initial States
@@ -11,6 +14,21 @@ const EMICalculator = () => {
     const [emi, setEmi] = useState(0);
     const [totalInterest, setTotalInterest] = useState(0);
     const [totalPayment, setTotalPayment] = useState(0);
+
+    // Type conversion to ensure numbers
+    const principalAmount = parseFloat(amount);
+    const loanYears = parseFloat(years);
+    const interestRate = parseFloat(rate);
+
+    // Amortization State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [schedule, setSchedule] = useState([]);
+
+    const handleViewSchedule = () => {
+        const scheduleData = calculateAmortizationSchedule(principalAmount, interestRate, loanYears);
+        setSchedule(scheduleData);
+        setIsModalOpen(true);
+    };
 
     // Calculation Logic (Formula)
     useEffect(() => {
@@ -45,7 +63,7 @@ const EMICalculator = () => {
             <div className="flex flex-col lg:flex-row gap-8  p-6 rounded-lg shadow-xl">
 
                 {/*  Left Side: Input Sliders  */}
-                <div className="flex-1 space-y-8">
+                <div className="flex-1 space-y-8 border border-gray-200 p-4 rounded-lg">
                     {/* Amount Input */}
                     <div>
                         <div className="flex justify-between mb-2">
@@ -117,11 +135,18 @@ const EMICalculator = () => {
                 <div className="w-full lg:w-64 bg-gray-200 rounded-lg flex flex-col justify-center items-center p-6 text-center space-y-4">
                     <h3 className="text-gray-800 font-bold text-lg">Equal Monthly Installment (EMI)</h3>
                     <p className="text-3xl font-bold text-[#E31E24]">{parseInt(emi).toLocaleString()} BDT</p>
-                    <Link to="/apply-loan">
-                        <button className="btn bg-[#E31E24] hover:bg-[#B91116] text-white border-none px-8 rounded">
+                    <Link to="dashboard/apply-loan" className="w-full">
+                        <button className="btn bg-[#B91116] hover:bg-[#900d11] text-white border-none w-full rounded-lg mb-3">
                             Apply Now
                         </button>
                     </Link>
+
+                    <button
+                        onClick={handleViewSchedule}
+                        className="btn btn-outline border-[#B91116] text-[#B91116] hover:bg-[#B91116] hover:text-white w-full rounded-lg"
+                    >
+                        <FaCalendarAlt />Repayment Schedule
+                    </button>
                 </div>
 
                 {/*  Right: Breakdown Chart  */}
@@ -129,13 +154,13 @@ const EMICalculator = () => {
                     <h3 className="text-xl  mb-4">Break-down of <span className="font-light">Total Payment</span></h3>
 
                     {/* Donut Chart */}
-                    <div className="h-40 relative">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-40 w-full relative">
+                        <ResponsiveContainer width="100%" height={160}>
                             <PieChart>
                                 <Pie
                                     data={data}
                                     cx="50%"
-                                    cy="100%" // Half circle look
+                                    cy="100%"
                                     startAngle={180}
                                     endAngle={0}
                                     innerRadius={60}
@@ -175,6 +200,21 @@ const EMICalculator = () => {
                 </div>
 
             </div>
+
+            {/* Amortization Modal */}
+            <AmortizationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                schedule={schedule}
+                loanDetails={{
+                    amount: principalAmount,
+                    rate: interestRate,
+                    years: loanYears,
+                    emi: emi,
+                    totalPayment: totalPayment,
+                    totalInterest: totalInterest
+                }}
+            />
         </div>
     );
 };
