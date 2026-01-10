@@ -162,7 +162,9 @@ const NotificationBell = () => {
 
             <div
                 tabIndex={0}
-                className="dropdown-content z-[999] menu p-0 shadow-2xl bg-base-100 rounded-box w-96 border border-base-200 mt-4 overflow-hidden"
+                className="dropdown-content z-[999] menu p-0 shadow-2xl bg-base-100 rounded-box border border-base-200 mt-4 overflow-hidden 
+                           fixed left-0 right-0 mx-auto top-20 w-[90vw] max-w-sm 
+                           md:absolute md:left-auto md:right-0 md:top-full md:w-96 md:mx-0"
             >
                 <div className="p-4 border-b border-base-200 flex justify-between items-center bg-base-200/50">
                     <h3 className="font-bold text-lg text-base-content">Notifications</h3>
