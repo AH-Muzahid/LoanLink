@@ -6,7 +6,7 @@ import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 
 const NotificationBell = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const [prevCount, setPrevCount] = useState(0);
@@ -20,7 +20,7 @@ const NotificationBell = () => {
             const res = await axiosSecure.get(`/notifications/${user?.email}`);
             return res.data;
         },
-        enabled: !!user?.email,
+        enabled: !!user?.email && !loading, // Wait for JWT token
         refetchInterval: 5000,
     });
 
