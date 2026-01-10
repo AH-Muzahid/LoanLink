@@ -1,11 +1,12 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './../../Componets/Navbar/Navbar';
 import Footer from './../../Componets/Footer/Footer';
+import LoanAdvisor from './../../Componets/Chatbot/LoanAdvisor';
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 
 const Root = () => {
-
+    // ... (lenis effect)
     useEffect(() => {
         const lenis = new Lenis({
             duration: 1.2,
@@ -41,6 +42,7 @@ const Root = () => {
             <Navbar />
             <Outlet />
             <Footer />
+            <LoanAdvisor />
         </div>
     );
 };

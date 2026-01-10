@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { HiArrowRight, HiStar, HiSearch } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -16,10 +16,18 @@ import img5 from '../../assets/imgi_58_home-loan-2021-01-19-6006ae7bd1c58.jpg'
 import img6 from '../../assets/imgi_57_car-loan-2021-01-21-60096723c3137.jpg'
 
 const AllLoans = () => {
+    const [searchParams] = useSearchParams();
+    const initialSearch = searchParams.get('search') || '';
+
     const [currentPage, setCurrentPage] = useState(1);
     const loansPerPage = 12;
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(initialSearch);
+
+    // Sync searchTerm with URL when searchParams change (e.g., clicking a link from Chatbot)
+    useEffect(() => {
+        setSearchTerm(searchParams.get('search') || '');
+    }, [searchParams]);
 
     useEffect(() => {
         document.title = 'All Loans - LoanLink';

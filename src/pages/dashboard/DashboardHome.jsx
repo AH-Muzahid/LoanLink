@@ -6,6 +6,7 @@ import useUserData from '../../Hooks/useUserData';
 import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaPlus, FaList, FaChartLine } from 'react-icons/fa';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { motion } from 'framer-motion';
+import AdminAnalytics from './AdminAnalytics';
 
 const DashboardHome = () => {
     useEffect(() => {
@@ -28,7 +29,8 @@ const DashboardHome = () => {
                 totalUsers: users.data.length,
                 totalLoans: loans.data.length,
                 totalApplications: applications.data.length,
-                approvedApplications: applications.data.filter(app => app.status === 'approved').length
+                approvedApplications: applications.data.filter(app => app.status === 'approved').length,
+                applications: applications.data
             };
         },
         enabled: role === 'admin'
@@ -155,6 +157,8 @@ const DashboardHome = () => {
                             color="text-purple-500"
                         />
                     </div>
+                    {/* Analytics Charts */}
+                    <AdminAnalytics applications={stats.applications} />
                 </div>
             )}
 

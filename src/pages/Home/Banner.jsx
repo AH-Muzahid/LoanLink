@@ -25,16 +25,20 @@ const Banner = () => {
                         <h1 className="text-3xl md:text-5xl text-white font-bold text-center md:text-left">
                             Welcome to LoanLinks
                         </h1>
-                        <p className="mt-2  text-sm md:text-lg text-center md:text-left text-white max-w-2xl  px-2">
+                        <p className="mt-2 text-sm md:text-lg text-center md:text-left text-white max-w-2xl px-2">
                             Your trusted partner for seamless loan management and financial solutions.
                         </p>
                     </div>
                     <div className="-mt-3 md:mt-0 flex gap-4">
                         <Link to="/dashboard/apply-loan">
-                            <button className="mt-4 md:mt-8 bg-[#cf7171] text-white text-sm md:text-lg font-medium py-2 px-4 rounded-full hover:bg-[#B21F1F] transition-all">Apply Now</button>
+                            <button className="mt-4 md:mt-8 bg-[#cf7171] text-white text-sm md:text-lg font-medium py-2 px-4 rounded-full hover:bg-[#B21F1F] transition-all">
+                                Apply Now
+                            </button>
                         </Link>
                         <a href="#emi-calculator">
-                            <button className="mt-4 md:mt-8 bg-[#cf7171] text-white text-sm md:text-lg font-medium py-2 px-4 rounded-full hover:bg-[#B21F1F] transition-all" >EMI Calculator</button>
+                            <button className="mt-4 md:mt-8 bg-[#cf7171] text-white text-sm md:text-lg font-medium py-2 px-4 rounded-full hover:bg-[#B21F1F] transition-all">
+                                Learn More
+                            </button>
                         </a>
                     </div>
                 </div>

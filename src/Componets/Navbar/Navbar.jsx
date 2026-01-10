@@ -4,13 +4,29 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, LayoutDashboard, User, HandCoins } from "lucide-react";
+import { LogOut, LayoutDashboard, User, HandCoins, Bell } from "lucide-react";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
+import useAxiosSecure from "../../Hooks/useAxiosSecure/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
     const { user, logOut } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const location = useLocation();
+    const axiosSecure = useAxiosSecure();
+
+    // Fetch Notifications
+    const { data: notifications = [] } = useQuery({
+        queryKey: ['notifications', user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/notifications/${user.email}`);
+            return res.data;
+        },
+        refetchInterval: 10000,
+    });
+
+    const unreadCount = notifications.filter(n => !n.read).length;
 
     // Close mobile menu on route change
     useEffect(() => {
@@ -66,13 +82,13 @@ const Navbar = () => {
                         <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform duration-300">
                             <HandCoins className="w-6 h-6" />
                         </div>
-                        <span className={`text-xl font-bold tracking-tight `}>
+                        <span className={`text-xl font-bold tracking-tight text-base-content`}>
                             LoanLink
                         </span>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden lg:flex items-center gap-2 bg-slate-100/50 p-1.5 rounded-full backdrop-blur-sm border border-white/20">
+                    <div className="hidden lg:flex items-center gap-2 bg-base-200/50 p-1.5 rounded-full backdrop-blur-sm border border-base-300/20">
                         {navLinks.map((link) => (
                             <NavLink
                                 key={link.path}
@@ -80,8 +96,8 @@ const Navbar = () => {
                                 className={({ isActive }) => `
                                     px-5 py-2 rounded-full text-sm font-medium transition-all duration-300
                                     ${isActive
-                                        ? 'bg-white text-red-600 shadow-sm'
-                                        : 'text-slate-600 hover:text-red-600 hover:bg-white/50'
+                                        ? 'bg-base-100 text-red-600 shadow-sm'
+                                        : 'text-base-content/70 hover:text-red-600 hover:bg-base-100/50'
                                     }
                                 `}
                             >
@@ -90,10 +106,42 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* Right Section */}
-                    <div className="hidden lg:flex items-center gap-4">
-                        {/* Theme Toggle */}
-                        <label className="swap swap-rotate btn btn-ghost btn-circle btn-sm hover:bg-slate-100 text-slate-600">
+                    {/* Right Section - Unified for Mobile & Desktop */}
+                    <div className="flex items-center gap-2 lg:gap-4">
+
+                        {/* Notification Bell (Visible on both) */}
+                        {user && (
+                            <div className="dropdown dropdown-end">
+                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle btn-sm">
+                                    <div className="indicator">
+                                        <Bell className="w-5 h-5 text-base-content/70" />
+                                        {unreadCount > 0 && (
+                                            <span className="badge badge-sm badge-primary indicator-item">{unreadCount}</span>
+                                        )}
+                                    </div>
+                                </div>
+                                <div tabIndex={0} className="mt-3 z-[2000] card card-compact dropdown-content bg-base-100 shadow-xl border border-base-200 fixed top-[65px] left-2 right-2 w-auto md:absolute md:right-0 md:left-auto md:top-full md:w-80">
+                                    <div className="card-body">
+                                        <h3 className="font-bold text-lg">Notifications</h3>
+                                        <div className="max-h-64 overflow-y-auto space-y-2">
+                                            {notifications.length > 0 ? (
+                                                notifications.map((notif, idx) => (
+                                                    <div key={idx} className={`p-3 rounded-lg ${notif.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} text-sm`}>
+                                                        {notif.message}
+                                                        <div className="text-xs opacity-70 mt-1">{new Date(notif.timestamp).toLocaleDateString()}</div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-center text-gray-400 py-4">No notifications</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Theme Toggle (Visible on both) */}
+                        <label className="swap swap-rotate btn btn-ghost btn-circle btn-sm hover:bg-base-200 text-base-content/70">
                             <input
                                 type="checkbox"
                                 onChange={handleToggle}
@@ -102,61 +150,65 @@ const Navbar = () => {
                             <MdLightMode className="swap-off w-5 h-5 text-amber-500" />
                             <MdDarkMode className="swap-on w-5 h-5 text-blue-500" />
                         </label>
-                        {user ? (
-                            <div className="dropdown dropdown-end">
-                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ring-2 ring-red-100 ring-offset-2 hover:ring-red-300 transition-all">
-                                    <div className="w-10 rounded-full">
-                                        <img alt="User" src={user?.photoURL || "https://i.ibb.co/hYSMYwX/placeholder.jpg"} />
-                                    </div>
-                                </div>
-                                <ul tabIndex={0} className="mt-4 p-2 shadow-xl menu menu-sm dropdown-content bg-white rounded-2xl w-64 border border-slate-100 z-[1000]">
-                                    <li className="px-4 py-3 border-b border-slate-100 mb-2">
-                                        <p className="font-bold text-slate-800 truncate">{user.displayName}</p>
-                                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                                    </li>
-                                    <li>
-                                        <Link to="/dashboard/profile" onClick={closeDropdown} className="py-2.5 hover:bg-red-50 hover:text-red-700 rounded-lg">
-                                            <User className="w-4 h-4" /> Profile
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/dashboard" onClick={closeDropdown} className="py-2.5 hover:bg-red-50 hover:text-red-700 rounded-lg">
-                                            <LayoutDashboard className="w-4 h-4" /> Dashboard
-                                        </Link>
-                                    </li>
-                                    <div className="divider my-1"></div>
-                                    <li>
-                                        <button onClick={() => { handleLogOut(); closeDropdown(); }} className="py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
-                                            <LogOut className="w-4 h-4" /> Logout
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-3">
-                                <Link to="/login" className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-red-600 transition-colors">
-                                    Login
-                                </Link>
-                                <Link to="/register">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-full shadow-lg hover:bg-red-700 hover:shadow-red-300 transition-all"
-                                    >
-                                        Get Started
-                                    </motion.button>
-                                </Link>
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
-                    >
-                        {mobileMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
-                    </button>
+                        {/* Desktop User Dropdown / Login Buttons */}
+                        <div className="hidden lg:block">
+                            {user ? (
+                                <div className="dropdown dropdown-end">
+                                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ring-2 ring-red-100 ring-offset-2 hover:ring-red-300 transition-all">
+                                        <div className="w-10 rounded-full">
+                                            <img alt="User" src={user?.photoURL || "https://i.ibb.co/hYSMYwX/placeholder.jpg"} />
+                                        </div>
+                                    </div>
+                                    <ul tabIndex={0} className="mt-4 p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-2xl w-64 border border-base-200 z-[1000]">
+                                        <li className="px-4 py-3 border-b border-base-200 mb-2">
+                                            <p className="font-bold text-base-content truncate">{user.displayName}</p>
+                                            <p className="text-xs text-base-content/50 truncate">{user.email}</p>
+                                        </li>
+                                        <li>
+                                            <Link to="/dashboard/profile" onClick={closeDropdown} className="py-2.5 hover:bg-red-50 hover:text-red-700 rounded-lg">
+                                                <User className="w-4 h-4" /> Profile
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/dashboard" onClick={closeDropdown} className="py-2.5 hover:bg-red-50 hover:text-red-700 rounded-lg">
+                                                <LayoutDashboard className="w-4 h-4" /> Dashboard
+                                            </Link>
+                                        </li>
+                                        <div className="divider my-1"></div>
+                                        <li>
+                                            <button onClick={() => { handleLogOut(); closeDropdown(); }} className="py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
+                                                <LogOut className="w-4 h-4" /> Logout
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-3">
+                                    <Link to="/login" className="px-4 py-2 text-sm font-medium text-base-content/70 hover:text-red-600 transition-colors">
+                                        Login
+                                    </Link>
+                                    <Link to="/register">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-full shadow-lg hover:bg-red-700 hover:shadow-red-300 transition-all"
+                                        >
+                                            Get Started
+                                        </motion.button>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mobile Menu Button - Moved Inside Group */}
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="lg:hidden p-2 text-base-content/70 hover:bg-base-200 rounded-full transition-colors"
+                        >
+                            {mobileMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -167,7 +219,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="lg:hidden bg-white border-t border-slate-100 overflow-hidden shadow-xl"
+                        className="lg:hidden bg-base-100 border-t border-base-200 overflow-hidden shadow-xl"
                     >
                         <div className="px-4 py-6 space-y-3">
                             {navLinks.map((link) => (
@@ -178,7 +230,7 @@ const Navbar = () => {
                                         block px-4 py-3 rounded-xl font-medium transition-all duration-300
                                         ${isActive
                                             ? 'bg-red-50 text-red-700'
-                                            : 'text-slate-600 hover:bg-slate-50'
+                                            : 'text-base-content/70 hover:bg-base-200'
                                         }
                                     `}
                                 >
@@ -186,7 +238,7 @@ const Navbar = () => {
                                 </NavLink>
                             ))}
 
-                            <div className="h-px bg-slate-100 my-4"></div>
+                            <div className="h-px bg-base-200 my-4"></div>
 
                             {!user ? (
                                 <div className="grid grid-cols-2 gap-4">
@@ -194,16 +246,16 @@ const Navbar = () => {
                                     <Link to="/register" className="btn bg-red-600 text-white w-full hover:bg-red-700 border-none">Get Started</Link>
                                 </div>
                             ) : (
-                                <div className="p-4 bg-slate-50 rounded-2xl">
+                                <div className="p-4 bg-base-200/50 rounded-2xl">
                                     <div className="flex items-center gap-3 mb-4">
                                         <img src={user?.photoURL} alt="" className="w-10 h-10 rounded-full" />
                                         <div>
-                                            <p className="font-semibold text-slate-900">{user.displayName}</p>
-                                            <p className="text-xs text-slate-500">{user.email}</p>
+                                            <p className="font-semibold text-base-content">{user.displayName}</p>
+                                            <p className="text-xs text-base-content/60">{user.email}</p>
                                         </div>
                                     </div>
-                                    <button onClick={handleLogOut} className="w-full py-2 bg-white text-red-600 rounded-xl text-sm font-medium border border-slate-200">
-                                        Sign Out
+                                    <button onClick={handleLogOut} className="w-full py-2 bg-base-100 text-red-600 rounded-xl text-sm font-medium border border-base-200 hover:bg-red-50">
+                                        Logout
                                     </button>
                                 </div>
                             )}
