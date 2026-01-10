@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
+import NotificationBell from "../../Componets/Shared/NotificationBell";
 
 const DashboardLayout = () => {
     const userData = useUserData();
@@ -96,7 +97,7 @@ const DashboardLayout = () => {
                             LoanLink Dashboard
                         </h1>
                     </div>
-                    <div className="flex-none gap-8">
+                    <div className="flex-none flex items-center gap-4 sm:gap-6">
                         <label className="swap swap-rotate btn btn-ghost btn-circle">
                             <input
                                 type="checkbox"
@@ -106,6 +107,10 @@ const DashboardLayout = () => {
                             <MdLightMode className="swap-off fill-current w-6 h-6 text-yellow-500" />
                             <MdDarkMode className="swap-on fill-current w-6 h-6 text-blue-500" />
                         </label>
+
+                        {/* Notification Bell */}
+                        <NotificationBell />
+
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ring-2 ring-base-200 ring-offset-2 ring-offset-base-100">
                                 <div className="w-10 rounded-full">
