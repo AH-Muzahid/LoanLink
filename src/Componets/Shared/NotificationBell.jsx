@@ -183,7 +183,7 @@ const NotificationBell = () => {
 
                 </div>
 
-                <div className="overflow-y-auto max-h-[60vh] custom-scrollbar bg-base-100">
+                <div className="overflow-y-auto max-h-[60vh] custom-scrollbar bg-base-100" data-lenis-prevent>
                     {notifications.length === 0 ? (
                         <div className="p-8 text-center text-base-content/50 flex flex-col items-center">
                             <FaBell className="text-4xl mb-3 opacity-20" />

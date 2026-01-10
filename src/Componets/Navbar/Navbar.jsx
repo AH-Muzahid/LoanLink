@@ -4,29 +4,16 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, LayoutDashboard, User, HandCoins, Bell } from "lucide-react";
+import { LogOut, LayoutDashboard, User, HandCoins } from "lucide-react"; // Removed Bell
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import useAxiosSecure from "../../Hooks/useAxiosSecure/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
+import NotificationBell from "../Shared/NotificationBell"; // Added Import
 
 const Navbar = () => {
     const { user, logOut } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const location = useLocation();
-    const axiosSecure = useAxiosSecure();
 
-    // Fetch Notifications
-    const { data: notifications = [] } = useQuery({
-        queryKey: ['notifications', user?.email],
-        enabled: !!user?.email,
-        queryFn: async () => {
-            const res = await axiosSecure.get(`/notifications/${user.email}`);
-            return res.data;
-        },
-        refetchInterval: 10000,
-    });
-
-    const unreadCount = notifications.filter(n => !n.read).length;
+    // Removed redundant notification fetching logic
 
     // Close mobile menu on route change
     useEffect(() => {
@@ -111,33 +98,7 @@ const Navbar = () => {
 
                         {/* Notification Bell (Visible on both) */}
                         {user && (
-                            <div className="dropdown dropdown-end">
-                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle btn-sm">
-                                    <div className="indicator">
-                                        <Bell className="w-5 h-5 text-base-content/70" />
-                                        {unreadCount > 0 && (
-                                            <span className="badge badge-sm badge-primary indicator-item">{unreadCount}</span>
-                                        )}
-                                    </div>
-                                </div>
-                                <div tabIndex={0} className="mt-3 z-[2000] card card-compact dropdown-content bg-base-100 shadow-xl border border-base-200 fixed top-[65px] left-2 right-2 w-auto md:absolute md:right-0 md:left-auto md:top-full md:w-80">
-                                    <div className="card-body">
-                                        <h3 className="font-bold text-lg">Notifications</h3>
-                                        <div className="max-h-64 overflow-y-auto space-y-2">
-                                            {notifications.length > 0 ? (
-                                                notifications.map((notif, idx) => (
-                                                    <div key={idx} className={`p-3 rounded-lg ${notif.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} text-sm`}>
-                                                        {notif.message}
-                                                        <div className="text-xs opacity-70 mt-1">{new Date(notif.timestamp).toLocaleDateString()}</div>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p className="text-center text-gray-400 py-4">No notifications</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <NotificationBell />
                         )}
 
                         {/* Theme Toggle (Visible on both) */}
