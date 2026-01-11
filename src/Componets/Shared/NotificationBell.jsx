@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { FaBell, FaCheckDouble, FaTrash } from 'react-icons/fa';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ const NotificationBell = () => {
     const queryClient = useQueryClient();
     const isInitialized = useRef(false);
     const lastNotificationTimestamp = useRef(0);
+    const navigate = useNavigate();
 
     // Fetch Notifications Polling every 5 seconds
     const { data: rawNotifications = [], isLoading } = useQuery({
@@ -153,6 +155,26 @@ const NotificationBell = () => {
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    const handleNotificationClick = (notif) => {
+        // Simple keyword-based routing
+        const msg = notif.message?.toLowerCase() || "";
+
+        if (msg.includes('approved') || msg.includes('rejected') || msg.includes('status')) {
+            navigate('/dashboard/my-loans');
+        } else if (msg.includes('payment') || msg.includes('transaction') || msg.includes('paid')) {
+            navigate('/dashboard/my-loans');
+        } else if (msg.includes('new loan') || msg.includes('available') || msg.includes('offer')) {
+            navigate('/all-loans');
+        } else if (msg.includes('admin') || msg.includes('profile')) {
+            navigate('/dashboard/profile');
+        }
+
+        // Optionally mark as read when clicked
+        if (!notif.read) {
+            markReadMutation.mutate(notif._id);
+        }
+    };
+
     return (
         <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -198,7 +220,11 @@ const NotificationBell = () => {
                     ) : (
                         <ul className="flex flex-col">
                             {notifications.map((notif) => (
-                                <li key={notif._id} className={`border-b border-base-200 last:border-none hover:bg-base-200/50 transition-colors ${!notif.read ? 'bg-red-50/10' : ''}`}>
+                                <li
+                                    key={notif._id}
+                                    onClick={() => handleNotificationClick(notif)}
+                                    className={`border-b border-base-200 last:border-none hover:bg-base-200/50 transition-colors cursor-pointer ${!notif.read ? 'bg-red-50/10' : ''}`}
+                                >
                                     <div className="flex gap-3 p-4 items-start relative group">
                                         <div className={`mt-2 h-2.5 w-2.5 rounded-full shrink-0 ${!notif.read ? 'bg-[#B91116]' : 'bg-transparent'}`}></div>
                                         <div className="flex-1 space-y-1">
