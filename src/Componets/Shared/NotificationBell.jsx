@@ -156,17 +156,22 @@ const NotificationBell = () => {
     };
 
     const handleNotificationClick = (notif) => {
-        // Simple keyword-based routing
-        const msg = notif.message?.toLowerCase() || "";
+        // Priority: specific path from server
+        if (notif.path) {
+            navigate(notif.path);
+        } else {
+            // Simple keyword-based routing fallback
+            const msg = notif.message?.toLowerCase() || "";
 
-        if (msg.includes('approved') || msg.includes('rejected') || msg.includes('status')) {
-            navigate('/dashboard/my-loans');
-        } else if (msg.includes('payment') || msg.includes('transaction') || msg.includes('paid')) {
-            navigate('/dashboard/my-loans');
-        } else if (msg.includes('new loan') || msg.includes('available') || msg.includes('offer')) {
-            navigate('/all-loans');
-        } else if (msg.includes('admin') || msg.includes('profile')) {
-            navigate('/dashboard/profile');
+            if (msg.includes('approved') || msg.includes('rejected') || msg.includes('status')) {
+                navigate('/dashboard/my-loans');
+            } else if (msg.includes('payment') || msg.includes('transaction') || msg.includes('paid')) {
+                navigate('/dashboard/my-loans');
+            } else if (msg.includes('new loan') || msg.includes('available') || msg.includes('offer')) {
+                navigate('/all-loans');
+            } else if (msg.includes('admin') || msg.includes('profile')) {
+                navigate('/dashboard/profile');
+            }
         }
 
         // Optionally mark as read when clicked
