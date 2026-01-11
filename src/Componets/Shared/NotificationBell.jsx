@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { FaBell, FaCheckDouble, FaTrash } from 'react-icons/fa';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAuth from '../../Hooks/useAuth/useAuth';
@@ -9,11 +9,11 @@ const NotificationBell = () => {
     const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
-    const [prevCount, setPrevCount] = useState(0);
     const isInitialized = useRef(false);
+    const lastNotificationId = useRef(null);
 
     // Fetch Notifications Polling every 5 seconds
-    const { data: notifications = [], isLoading } = useQuery({
+    const { data: rawNotifications = [], isLoading } = useQuery({
         queryKey: ['notifications', user?.email],
         queryFn: async () => {
             if (!user?.email) return [];
@@ -24,20 +24,28 @@ const NotificationBell = () => {
         refetchInterval: 5000,
     });
 
+    // Ensure sorting by time descending (newest first)
+    const notifications = [...rawNotifications].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     const unreadCount = notifications.filter(n => !n.read).length;
 
     useEffect(() => {
-        if (isLoading) return;
+        if (isLoading || notifications.length === 0) return;
+
+        const newestItem = notifications[0];
 
         if (!isInitialized.current) {
-            setPrevCount(notifications.length);
+            // First load: just sync the ID, don't notify
+            lastNotificationId.current = newestItem._id;
             isInitialized.current = true;
             return;
         }
 
-        if (notifications.length > prevCount) {
-            // New notification arrived
-            const newNotif = notifications[0];
+        // Check if the newest item is different from what we last saw
+        if (newestItem._id !== lastNotificationId.current) {
+            // New notification detected!
+
+            // Update tracker immediately to prevent double-firing
+            lastNotificationId.current = newestItem._id;
 
             // Play "Cool" Notification Sound (Modern Pop/Pluck)
             try {
@@ -65,7 +73,7 @@ const NotificationBell = () => {
                                     New Update!
                                 </p>
                                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                    {newNotif?.message || "You have a new notification"}
+                                    {newestItem?.message || "You have a new notification"}
                                 </p>
                             </div>
                         </div>
@@ -84,11 +92,7 @@ const NotificationBell = () => {
                 position: 'top-right',
             });
         }
-
-        // Always sync prevCount to current length to handle deletions/updates
-        setPrevCount(notifications.length);
-
-    }, [notifications, prevCount, isLoading]);
+    }, [notifications, isLoading]);
 
     const markReadMutation = useMutation({
         mutationFn: async (id) => {

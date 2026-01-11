@@ -5,14 +5,16 @@ import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { FaEye, FaTimes, FaMoneyBillWave, FaFileInvoiceDollar, FaCalendarAlt, FaCheckCircle, FaClock, FaBan, FaInfoCircle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
+import useRole from '../../Hooks/useRole/useRole';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import Modal from '../../Componets/Modal/Modal';
 import ConfirmationModal from '../../Componets/Modal/ConfirmationModal';
+import AccessRestricted from '../../Componets/Shared/AccessRestricted';
 
 const MyLoans = () => {
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
+    const [role, isRoleLoading] = useRole();
     const navigate = useNavigate();
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [cancelModal, setCancelModal] = useState(false);
@@ -62,6 +64,13 @@ const MyLoans = () => {
     const handleShowDetails = (loan) => {
         setSelectedTransaction(loan);
     };
+
+    // Redirect or block irrelevant roles
+    if (isRoleLoading) return <LoadingSpinner />;
+
+    if (role === 'admin' || role === 'manager') {
+        return <AccessRestricted role={role} message="As an Admin/Manager, you are not eligible to view this page. This feature is reserved for Borrowers only." />;
+    }
 
     if (isLoading) return <LoadingSpinner />;
 
@@ -392,7 +401,7 @@ const MyLoans = () => {
             </Modal>
         </div>
     );
-    
+
 
 };
 

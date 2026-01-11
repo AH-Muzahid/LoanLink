@@ -4,13 +4,16 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
+import useRole from '../../Hooks/useRole/useRole';
+import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { FaMoneyBillWave, FaUser, FaIdCard, FaMapMarkerAlt, FaFileAlt, FaPhone, FaBriefcase } from 'react-icons/fa';
+import AccessRestricted from '../../Componets/Shared/AccessRestricted';
 
 const ApplyLoan = () => {
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
+    const [role, isRoleLoading] = useRole();
     const navigate = useNavigate();
     const location = useLocation();
     const { register, handleSubmit, formState: { errors }, } = useForm();
@@ -80,6 +83,13 @@ const ApplyLoan = () => {
             setLoading(false);
         }
     };
+
+    // Redirect or block irrelevant roles - Moved here to respect Hook rules
+    if (isRoleLoading) return <LoadingSpinner />;
+
+    if (role === 'admin' || role === 'manager') {
+        return <AccessRestricted role={role} message="As an Admin/Manager, you are not eligible to submit loan applications. This feature is reserved for Borrowers only." />;
+    }
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-red-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
