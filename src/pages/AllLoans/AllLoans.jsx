@@ -33,6 +33,11 @@ const AllLoans = () => {
         document.title = 'All Loans - LoanLink';
     }, []);
 
+    // Reset page to 1 whenever search term changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
     const { data: loans = [] } = useQuery({
         queryKey: ['loans', searchTerm],
         queryFn: async () => {
@@ -123,7 +128,7 @@ const AllLoans = () => {
                 </Reveal>
 
                 {/* Loans Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {currentLoans.map((loan, index) => (
                         <Reveal key={loan._id} delay={index * 0.1}>
                             <LoanCard loan={loan} />

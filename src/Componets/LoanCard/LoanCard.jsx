@@ -32,10 +32,6 @@ const LoanCard = ({ loan }) => {
                     <h3 className="font-bold text-lg text-slate-800 line-clamp-1 group-hover:text-red-700 transition-colors">
                         {title}
                     </h3>
-                    <div className="flex items-center gap-1 text-amber-500">
-                        <HiStar className="text-sm" />
-                        <span className="text-xs font-bold text-slate-600">4.8</span>
-                    </div>
                 </div>
 
                 <p className="text-sm text-slate-500 mb-6 line-clamp-2 h-10 leading-relaxed">
@@ -43,7 +39,7 @@ const LoanCard = ({ loan }) => {
                 </p>
 
                 {/* Key Metrics */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 mb-2">
                     <div className="bg-red-50/50 p-3 rounded-xl border border-red-100/50">
                         <p className="text-xs text-slate-500 font-medium mb-1">Interest</p>
                         <p className="text-lg font-bold text-red-700">{interestRate}%</p>
@@ -55,7 +51,7 @@ const LoanCard = ({ loan }) => {
                 </div>
 
                 {/* Footer / Action */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100/50">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100/50">
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         <span>Secure</span>

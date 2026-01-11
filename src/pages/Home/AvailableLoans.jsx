@@ -13,7 +13,7 @@ const AvailableLoans = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/all-loans?limit=6&sort=desc`)
+        axios.get(`${import.meta.env.VITE_API_URL}/all-loans?limit=8&sort=desc`)
             .then(res => {
                 setLoans(res.data);
                 setLoading(false);
@@ -36,7 +36,7 @@ const AvailableLoans = () => {
             <Reveal delay={0.1}>
                 <p className='text-md text-center max-w-2xl mx-auto mb-10 md:mb-16 -mt-10 text-base-content/60'>Browse through our comprehensive collection of loan options tailored for your needs</p>
             </Reveal>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {loans.map((loan, index) => (
                     <Reveal key={index} delay={index * 0.1}>
                         <LoanCard loan={loan} />

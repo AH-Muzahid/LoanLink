@@ -3,7 +3,7 @@ import useAuth from "../../Hooks/useAuth/useAuth"
 import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { LogOut, LayoutDashboard, User, HandCoins } from "lucide-react"; // Removed Bell
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import NotificationBell from "../Shared/NotificationBell"; // Added Import
