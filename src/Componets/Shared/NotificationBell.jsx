@@ -10,7 +10,7 @@ const NotificationBell = () => {
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const isInitialized = useRef(false);
-    const lastNotificationId = useRef(null);
+    const lastNotificationTimestamp = useRef(0);
 
     // Fetch Notifications Polling every 5 seconds
     const { data: rawNotifications = [], isLoading } = useQuery({
@@ -34,18 +34,20 @@ const NotificationBell = () => {
         const newestItem = notifications[0];
 
         if (!isInitialized.current) {
-            // First load: just sync the ID, don't notify
-            lastNotificationId.current = newestItem._id;
+            // First load: just sync the timestamp, don't notify
+            lastNotificationTimestamp.current = new Date(newestItem.timestamp).getTime();
             isInitialized.current = true;
             return;
         }
 
-        // Check if the newest item is different from what we last saw
-        if (newestItem._id !== lastNotificationId.current) {
+        // Check if the newest item is strictly NEWER than what we last saw
+        const newestTimestamp = new Date(newestItem.timestamp).getTime();
+
+        if (newestTimestamp > lastNotificationTimestamp.current) {
             // New notification detected!
 
-            // Update tracker immediately to prevent double-firing
-            lastNotificationId.current = newestItem._id;
+            // Update tracker immediately
+            lastNotificationTimestamp.current = newestTimestamp;
 
             // Play "Cool" Notification Sound (Modern Pop/Pluck)
             try {
@@ -166,7 +168,7 @@ const NotificationBell = () => {
 
             <div
                 tabIndex={0}
-                className="dropdown-content z-[999] menu p-0 shadow-2xl bg-base-100 rounded-box border border-base-200 mt-4 overflow-hidden 
+                className="dropdown-content z-[999] p-0 shadow-2xl bg-base-100 rounded-box border border-base-200 mt-4 overflow-hidden 
                            fixed left-0 right-0 mx-auto top-20 w-[90vw] max-w-sm 
                            md:absolute md:left-auto md:right-0 md:top-full md:w-96 md:mx-0"
             >
