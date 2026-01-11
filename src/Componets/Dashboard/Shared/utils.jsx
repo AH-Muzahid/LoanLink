@@ -17,3 +17,14 @@ export const getStatusIcon = (status, feeStatus) => {
         default: return <FaClock />;
     }
 };
+
+export const getStatusBadge = (status) => {
+    switch (status) {
+        case 'approved':
+            return <span className="badge badge-success gap-1 p-3 text-white"><FaCheckCircle /> Approved</span>;
+        case 'rejected':
+            return <span className="badge badge-error gap-1 p-3 text-white"><FaTimesCircle /> Rejected</span>;
+        default:
+            return <span className="badge badge-warning gap-1 p-3 text-white"><FaClock /> Pending</span>;
+    }
+};

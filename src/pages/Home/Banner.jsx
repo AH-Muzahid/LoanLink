@@ -20,7 +20,7 @@ const Banner = () => {
                     clipPath: "ellipse(100% 100% at 50% 0%)"
                 }}
             >
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 flex flex-col md:flex-row items-center justify-between">
                     <div>
                         <h1 className="text-3xl md:text-5xl text-white font-bold text-center md:text-left">
                             Welcome to LoanLinks
@@ -37,7 +37,7 @@ const Banner = () => {
                         </Link>
                         <a href="#emi-calculator">
                             <button className="mt-4 md:mt-8 bg-[#cf7171] text-white text-sm md:text-lg font-medium py-2 px-4 rounded-full hover:bg-[#B21F1F] transition-all">
-                                Learn More
+                                EMI Calculator
                             </button>
                         </a>
                     </div>
@@ -45,7 +45,7 @@ const Banner = () => {
             </div>
 
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-25 md:-mt-67">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-25 md:-mt-65">
                 <Swiper
                     modules={[Autoplay, Pagination]}
                     spaceBetween={16}

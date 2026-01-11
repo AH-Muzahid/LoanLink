@@ -7,6 +7,7 @@ import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import useRole from '../../Hooks/useRole/useRole';
 import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { FaMoneyBillWave, FaUser, FaIdCard, FaMapMarkerAlt, FaFileAlt, FaPhone, FaBriefcase } from 'react-icons/fa';
 import AccessRestricted from '../../Componets/Shared/AccessRestricted';
 
