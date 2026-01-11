@@ -1,13 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
-import { FaEye, FaCheck, FaTimes, FaClock, FaUser, FaMoneyBillWave, FaTimesCircle, FaCheckCircle, FaFileAlt } from 'react-icons/fa';
+import { useState, useEffect, useMemo } from 'react';
+import { FaClock, FaSearch, FaSortAmountDown, FaCheckDouble, FaCheck, FaTimes, FaLayerGroup, FaCalendarAlt } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
-import { motion, AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
+import ApplicationTable from '../../Componets/Dashboard/Shared/ApplicationTable';
+import ApplicationCard from '../../Componets/Dashboard/Shared/ApplicationCard';
+import ApplicationDetailsModal from '../../Componets/Dashboard/Shared/ApplicationDetailsModal';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 const PendingLoans = () => {
     const [selectedApp, setSelectedApp] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
+    const [selectedIds, setSelectedIds] = useState([]); // Array of selected ID strings
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
+
     const queryClient = useQueryClient();
     const axiosSecure = useAxiosSecure();
 
@@ -39,266 +49,276 @@ const PendingLoans = () => {
         }
     });
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.05 }
+    const bulkUpdateMutation = useMutation({
+        mutationFn: async ({ ids, status }) => {
+            const promises = ids.map(id => {
+                const updates = {
+                    status,
+                    ...(status === 'approved' && { approvedAt: new Date().toISOString() })
+                };
+                return axiosSecure.patch(`/applications/${id}`, updates);
+            });
+            await Promise.all(promises);
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries(['pending-applications']);
+            toast.success(`${variables.ids.length} applications ${variables.status} successfully`);
+            setSelectedIds([]); // Clear selection
+        },
+        onError: () => {
+            toast.error("Failed to update some applications");
+        }
+    });
+
+    // Filter and Sort Logic
+    const filteredApps = useMemo(() => {
+        let result = [...applications];
+
+        // Search
+        if (searchTerm) {
+            const lowerTerm = searchTerm.toLowerCase();
+            result = result.filter(app =>
+                (app.userName || '').toLowerCase().includes(lowerTerm) ||
+                (app.userEmail || '').toLowerCase().includes(lowerTerm) ||
+                (app.category || '').toLowerCase().includes(lowerTerm) ||
+                (app.loanId || '').toLowerCase().includes(lowerTerm)
+            );
+        }
+
+        // Date Range Filter
+        if (startDate && endDate) {
+            result = result.filter(app => {
+                const appDate = new Date(app.createdAt);
+                // Ensure endDate includes the full day by setting it to end of day
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                return appDate >= startDate && appDate <= end;
+            });
+        }
+
+        // Sort
+        result.sort((a, b) => {
+            if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+            if (sortBy === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+            if (sortBy === 'highest_amount') return b.amount - a.amount;
+            if (sortBy === 'lowest_amount') return a.amount - b.amount;
+            return 0;
+        });
+
+        return result;
+    }, [applications, searchTerm, sortBy, startDate, endDate]);
+
+    // Selection Handlers
+    const handleSelect = (id) => {
+        setSelectedIds(prev => prev.includes(id)
+            ? prev.filter(item => item !== id)
+            : [...prev, id]
+        );
+    };
+
+    const handleSelectAll = () => {
+        const selectableApps = filteredApps.filter(app => app.feeStatus !== 'paid');
+        const selectableIds = selectableApps.map(app => app._id);
+
+        // If all selectable provided are already selected, deselect all.
+        const allSelected = selectableIds.length > 0 && selectableIds.every(id => selectedIds.includes(id));
+
+        if (allSelected) {
+            setSelectedIds([]); // Deselect all
+        } else {
+            setSelectedIds(selectableIds); // Select all selectable
         }
     };
 
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: { type: "spring", stiffness: 100 }
+    const handleBulkAction = (status) => {
+        if (!selectedIds.length) return;
+        if (confirm(`Are you sure you want to ${status} ${selectedIds.length} applications?`)) {
+            bulkUpdateMutation.mutate({ ids: selectedIds, status });
         }
     };
+
+    // Shared Action Buttons
+    const renderActions = (app) => (
+        <>
+            {app.feeStatus === 'paid' ? (
+                <div className="tooltip tooltip-left" data-tip="Locked (Paid)">
+                    <button className="btn btn-circle btn-ghost btn-sm text-green-300 cursor-not-allowed">
+                        <FaCheckDouble />
+                    </button>
+                </div>
+            ) : (
+                <>
+                    <button
+                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'approved' })}
+                        className="btn btn-circle btn-ghost btn-sm text-green-500 hover:bg-green-50"
+                        title="Approve"
+                    >
+                        <FaCheck />
+                    </button>
+                    <button
+                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'rejected' })}
+                        className="btn btn-circle btn-ghost btn-sm text-red-500 hover:bg-red-50"
+                        title="Reject"
+                    >
+                        <FaTimes />
+                    </button>
+                </>
+            )}
+        </>
+    );
+
+    // Modal Actions (Buttons inside the modal)
+    const renderModalActions = (app) => (
+        <>
+            {app.feeStatus === 'paid' ? (
+                <div className="flex items-center gap-2 text-green-600 font-bold text-sm px-4 bg-green-50 rounded-lg">
+                    <FaCheckDouble /> Application Pending (Locked)
+                </div>
+            ) : (
+                <>
+                    <button
+                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'rejected' })}
+                        className="btn btn-outline btn-error btn-sm gap-2"
+                    >
+                        <FaTimes /> Reject
+                    </button>
+                    <button
+                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'approved' })}
+                        className="btn bg-[#B91116] hover:bg-[#900d11] text-white border-none btn-sm gap-2"
+                    >
+                        <FaCheck /> Approve
+                    </button>
+                </>
+            )}
+        </>
+    );
 
     return (
         <div className="min-h-screen bg-base-200/30 p-4 md:p-8">
-            {/* Header */}
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
-                    <FaClock className="text-[#B91116]" /> Pending Applications
-                </h2>
-                <p className="text-base-content/60 mt-1">Review and manage loan requests awaiting approval</p>
+            {/* Header Section with Search & Sort */}
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+                <div>
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-[#B91116] to-[#ff4d4d] bg-clip-text text-transparent flex items-center gap-3">
+                        <FaClock className="text-[#B91116]" /> Pending Applications
+                    </h2>
+                    <p className="text-base-content/60 mt-1">Review and manage loan requests awaiting approval</p>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-3 w-full xl:w-auto">
+                    {/* Date Picker */}
+                    <div className="relative z-20">
+                        <div className="relative">
+                            <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 z-10 pointer-events-none" />
+                            <DatePicker
+                                selectsRange={true}
+                                startDate={startDate}
+                                endDate={endDate}
+                                onChange={(update) => {
+                                    setDateRange(update);
+                                }}
+                                isClearable={true}
+                                placeholderText="Filter by Date Range"
+                                className="input input-bordered w-full md:w-56 pl-10 focus:border-[#B91116] rounded-xl cursor-pointer"
+                                wrapperClassName="w-full"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Search */}
+                    <div className="relative w-full md:w-64">
+                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="input input-bordered w-full pl-10 focus:border-[#B91116] rounded-xl"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Bulk Action Bar - Only shows when items are selected */}
+            {selectedIds.length > 0 && (
+                <div className="bg-[#B91116]/5 border border-[#B91116]/20 p-3 rounded-xl flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-2 text-[#B91116] font-medium px-2">
+                        <FaLayerGroup />
+                        <span>{selectedIds.length} Selected</span>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => handleBulkAction('approved')}
+                            className="btn btn-sm bg-[#B91116] hover:bg-[#900d11] text-white border-none"
+                        >
+                            <FaCheck /> Approve Selected
+                        </button>
+                        <button
+                            onClick={() => handleBulkAction('rejected')}
+                            className="btn btn-sm btn-outline btn-error hover:text-white"
+                        >
+                            <FaTimes /> Reject Selected
+                        </button>
+                        <button
+                            onClick={() => setSelectedIds([])}
+                            className="btn btn-sm btn-ghost"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Sort & Filter (Moved below bulk to prevent layout shift) */}
+            <div className="flex justify-end mb-4">
+                <div className="relative">
+                    <select
+                        className="select select-bordered select-sm w-full md:w-48 pl-3 focus:border-[#B91116] rounded-xl appearance-none"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                    >
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="highest_amount">Highest Amount</option>
+                        <option value="lowest_amount">Lowest Amount</option>
+                    </select>
+                    <FaSortAmountDown className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none" />
+                </div>
             </div>
 
             {isLoading ? (
                 <LoadingSpinner />
             ) : (
                 <>
-                    {/* Desktop Table View */}
-                    <motion.div
-                        variants={containerVariants}
-                        // initial="hidden"
-                        animate="visible"
-                        className="hidden md:block bg-base-100 rounded-2xl shadow-xl border border-base-200 overflow-hidden"
-                    >
-                        <div className="overflow-x-auto">
-                            <table className="table w-full">
-                                <thead className="bg-base-200/50 text-base-content/70">
-                                    <tr>
-                                        <th className="py-4 pl-6">Loan ID</th>
-                                        <th>User Info</th>
-                                        <th>Amount</th>
-                                        <th>Date</th>
-                                        <th className="pr-6 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {applications.map((app) => (
-                                        <motion.tr
-                                            key={app._id}
-                                            variants={itemVariants}
-                                            className="hover:bg-base-200/30 transition-colors border-b border-base-100 last:border-none"
-                                        >
-                                            <td className="pl-6 py-4 font-mono text-sm opacity-70">
-                                                #{app._id?.slice(-6).toUpperCase()}
-                                            </td>
-                                            <td>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="avatar placeholder">
-                                                        <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                            <span className="text-xs">{app.userName?.charAt(0)}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold">{app.userName}</div>
-                                                        <div className="text-xs text-base-content/50">{app.userEmail}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="font-bold text-[#B91116]">৳{app.amount?.toLocaleString()}</div>
-                                            </td>
-                                            <td>
-                                                <div className="text-sm">{new Date(app.createdAt).toLocaleDateString()}</div>
-                                            </td>
-                                            <td className="pr-6 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={() => setSelectedApp(app)}
-                                                        className="btn btn-circle btn-ghost btn-sm text-blue-500 hover:bg-blue-50"
-                                                        title="View Details"
-                                                    >
-                                                        <FaEye />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'approved' })}
-                                                        className="btn btn-circle btn-ghost btn-sm text-green-500 hover:bg-green-50"
-                                                        title="Approve"
-                                                    >
-                                                        <FaCheck />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'rejected' })}
-                                                        className="btn btn-circle btn-ghost btn-sm text-red-500 hover:bg-red-50"
-                                                        title="Reject"
-                                                    >
-                                                        <FaTimes />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </motion.tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                    <ApplicationTable
+                        applications={filteredApps}
+                        onView={setSelectedApp}
+                        renderActions={renderActions}
+                        showStatus={false}
+                        selectedIds={selectedIds}
+                        onSelect={handleSelect}
+                        onSelectAll={handleSelectAll}
+                    />
+
+                    {/* Mobile Card View (Selection not yet supported on mobile cards, can be added later) */}
+                    <div className="md:hidden">
+                        <div className="alert alert-info shadow-sm mb-4">
+                            <span className="text-xs">Switch to desktop to use Bulk Actions</span>
                         </div>
-                        {applications.length === 0 && (
-                            <div className="p-12 text-center text-base-content/50">
-                                <FaCheckCircle className="mx-auto text-4xl mb-3 opacity-20" />
-                                <p>No pending applications found.</p>
-                            </div>
-                        )}
-                    </motion.div>
-
-                    {/* Mobile Card View */}
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="md:hidden space-y-4"
-                    >
-                        {applications.map((app) => (
-                            <motion.div
-                                key={app._id}
-                                variants={itemVariants}
-                                className="bg-base-100 p-5 rounded-2xl shadow-lg border border-base-200"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="avatar placeholder">
-                                            <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                <span>{app.userName?.charAt(0)}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold">{app.userName}</h3>
-                                            <p className="text-xs text-base-content/60">{app.userEmail}</p>
-                                        </div>
-                                    </div>
-                                    <span className="font-mono text-xs opacity-50">#{app._id?.slice(-6).toUpperCase()}</span>
-                                </div>
-
-                                <div className="flex justify-between items-center py-3 border-t border-b border-base-100 mb-4">
-                                    <div className="text-sm">Amount</div>
-                                    <div className="font-bold text-[#B91116] text-lg">৳{app.amount?.toLocaleString()}</div>
-                                </div>
-
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => setSelectedApp(app)}
-                                        className="btn btn-sm flex-1 btn-ghost border border-base-200"
-                                    >
-                                        <FaEye /> View
-                                    </button>
-                                    <button
-                                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'approved' })}
-                                        className="btn btn-sm flex-1 btn-success text-white"
-                                    >
-                                        <FaCheck /> Approve
-                                    </button>
-                                    <button
-                                        onClick={() => updateStatusMutation.mutate({ id: app._id, status: 'rejected' })}
-                                        className="btn btn-sm flex-1 btn-error text-white"
-                                    >
-                                        <FaTimes /> Reject
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                        <ApplicationCard
+                            applications={filteredApps}
+                            onView={setSelectedApp}
+                            renderActions={renderActions}
+                            showStatus={false}
+                        />
+                    </div>
                 </>
             )}
 
-            {/* Details Modal */}
-            <AnimatePresence>
-                {selectedApp && (
-                    <dialog className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="modal-box w-11/12 max-w-2xl bg-base-100 shadow-2xl border border-base-200 p-0 overflow-hidden"
-                        >
-                            <div className="bg-[#B91116] p-4 text-white flex justify-between items-center">
-                                <h3 className="font-bold text-lg flex items-center gap-2">
-                                    <FaFileAlt /> Application Details
-                                </h3>
-                                <button onClick={() => setSelectedApp(null)} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/20">
-                                    <FaTimesCircle className="text-xl" />
-                                </button>
-                            </div>
-
-                            <div className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Applicant</h4>
-                                            <div className="flex items-center gap-3 p-3 bg-base-200/50 rounded-xl">
-                                                <div className="avatar placeholder">
-                                                    <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                        <span>{selectedApp.userName?.charAt(0)}</span>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold">{selectedApp.userName}</div>
-                                                    <div className="text-xs text-base-content/60">{selectedApp.userEmail}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Loan Details</h4>
-                                            <div className="p-3 bg-base-200/50 rounded-xl space-y-2">
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Amount:</span>
-                                                    <span className="font-bold text-[#B91116]">৳{selectedApp.amount?.toLocaleString()}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Category:</span>
-                                                    <span className="font-medium">{selectedApp.category}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Date:</span>
-                                                    <span className="font-medium">{new Date(selectedApp.createdAt).toLocaleDateString()}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Purpose</h4>
-                                            <div className="p-3 bg-base-200/50 rounded-xl min-h-[100px]">
-                                                <p className="text-sm">{selectedApp.purpose || "No purpose specified."}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="modal-action mt-8 border-t border-base-200 pt-4">
-                                    <button
-                                        onClick={() => updateStatusMutation.mutate({ id: selectedApp._id, status: 'rejected' })}
-                                        className="btn btn-outline btn-error gap-2"
-                                    >
-                                        <FaTimes /> Reject Application
-                                    </button>
-                                    <button
-                                        onClick={() => updateStatusMutation.mutate({ id: selectedApp._id, status: 'approved' })}
-                                        className="btn bg-[#B91116] hover:bg-[#900d11] text-white border-none gap-2"
-                                    >
-                                        <FaCheck /> Approve Application
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </dialog>
-                )}
-            </AnimatePresence>
+            <ApplicationDetailsModal
+                application={selectedApp}
+                onClose={() => setSelectedApp(null)}
+                renderActions={renderModalActions}
+            />
         </div>
     );
 };

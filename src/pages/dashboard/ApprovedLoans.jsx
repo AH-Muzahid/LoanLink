@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaEye, FaSearch, FaCalendarAlt, FaUser, FaMoneyBillWave, FaTimesCircle, FaFileAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaSearch, FaFileAlt, FaCheckDouble } from 'react-icons/fa';
 import LoadingSpinner from '../../Componets/Loading/LoadingSpinner';
+import ApplicationTable from '../../Componets/Dashboard/Shared/ApplicationTable';
+import ApplicationCard from '../../Componets/Dashboard/Shared/ApplicationCard';
+import ApplicationDetailsModal from '../../Componets/Dashboard/Shared/ApplicationDetailsModal';
 
 const ApprovedLoans = () => {
     const [selectedApp, setSelectedApp] = useState(null);
@@ -22,28 +24,36 @@ const ApprovedLoans = () => {
         }
     });
 
-    const filteredApps = applications.filter(app =>
-        app.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app._id.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredApps = useMemo(() => {
+        if (!searchTerm) return applications;
+        const lowerTerm = searchTerm.toLowerCase();
+        return applications.filter(app =>
+            (app.userName || '').toLowerCase().includes(lowerTerm) ||
+            (app.userEmail || '').toLowerCase().includes(lowerTerm) ||
+            (app._id || '').toLowerCase().includes(lowerTerm) ||
+            (app.loanId || '').toLowerCase().includes(lowerTerm)
+        );
+    }, [applications, searchTerm]);
+
+    const renderActions = (app) => (
+        <>
+            {app.feeStatus === 'paid' && (
+                <div className="badge badge-success gap-1 py-3 px-3 opacity-90 text-white" title="Paid">
+                    <FaCheckDouble className="text-xs" /> Paid
+                </div>
+            )}
+        </>
     );
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.05 }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: { type: "spring", stiffness: 100 }
-        }
-    };
+    const renderModalActions = (app) => (
+        <>
+            {app.feeStatus === 'paid' && (
+                <div className="flex items-center gap-2 text-green-600 font-bold text-sm px-2">
+                    <FaCheckDouble /> Loan Paid
+                </div>
+            )}
+        </>
+    );
 
     return (
         <div className="min-h-screen bg-base-200/30 p-4 md:p-8">
@@ -73,204 +83,27 @@ const ApprovedLoans = () => {
                 <LoadingSpinner />
             ) : (
                 <>
-                    {/* Desktop Table View */}
-                    <motion.div
-                        variants={containerVariants}
-                        // initial="hidden"
-                        animate="visible"
-                        className="hidden md:block bg-base-100 rounded-2xl shadow-xl border border-base-200 overflow-hidden"
-                    >
-                        <div className="overflow-x-auto">
-                            <table className="table w-full">
-                                <thead className="bg-base-200/50 text-base-content/70">
-                                    <tr>
-                                        <th className="py-4 pl-6">Loan ID</th>
-                                        <th>User Info</th>
-                                        <th>Amount</th>
-                                        <th>Approved Date</th>
-                                        <th className="pr-6 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredApps.map((app) => (
-                                        <motion.tr
-                                            key={app._id}
-                                            variants={itemVariants}
-                                            className="hover:bg-base-200/30 transition-colors border-b border-base-100 last:border-none"
-                                        >
-                                            <td className="pl-6 py-4 font-mono text-sm opacity-70">
-                                                #{app._id?.slice(-6).toUpperCase()}
-                                            </td>
-                                            <td>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="avatar placeholder">
-                                                        <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                            <span className="text-xs">{app.userName?.charAt(0)}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold">{app.userName}</div>
-                                                        <div className="text-xs text-base-content/50">{app.userEmail}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="font-bold text-[#B91116]">৳{app.amount?.toLocaleString()}</div>
-                                            </td>
-                                            <td>
-                                                <div className="flex items-center gap-2 text-sm">
-                                                    <FaCalendarAlt className="text-base-content/40" />
-                                                    {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A')}
-                                                </div>
-                                            </td>
-                                            <td className="pr-6 text-right">
-                                                <button
-                                                    onClick={() => setSelectedApp(app)}
-                                                    className="btn btn-circle btn-ghost btn-sm text-blue-500 hover:bg-blue-50"
-                                                    title="View Details"
-                                                >
-                                                    <FaEye />
-                                                </button>
-                                            </td>
-                                        </motion.tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        {filteredApps.length === 0 && (
-                            <div className="p-12 text-center text-base-content/50">
-                                <FaSearch className="mx-auto text-4xl mb-3 opacity-20" />
-                                <p>No approved applications found matching your search.</p>
-                            </div>
-                        )}
-                    </motion.div>
+                    <ApplicationTable
+                        applications={filteredApps}
+                        onView={setSelectedApp}
+                        renderActions={renderActions}
+                        showStatus={true}
+                    />
 
-                    {/* Mobile Card View */}
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="md:hidden space-y-4"
-                    >
-                        {filteredApps.map((app) => (
-                            <motion.div
-                                key={app._id}
-                                variants={itemVariants}
-                                className="bg-base-100 p-5 rounded-2xl shadow-lg border border-base-200"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="avatar placeholder">
-                                            <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                <span>{app.userName?.charAt(0)}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold">{app.userName}</h3>
-                                            <p className="text-xs text-base-content/60">{app.userEmail}</p>
-                                        </div>
-                                    </div>
-                                    <span className="font-mono text-xs opacity-50">#{app._id?.slice(-6).toUpperCase()}</span>
-                                </div>
-
-                                <div className="flex justify-between items-center py-3 border-t border-b border-base-100 mb-4">
-                                    <div className="text-sm">Amount</div>
-                                    <div className="font-bold text-[#B91116] text-lg">৳{app.amount?.toLocaleString()}</div>
-                                </div>
-
-                                <div className="flex justify-between items-center text-sm text-base-content/60 mb-4">
-                                    <span>Approved Date:</span>
-                                    <span className="font-medium text-base-content">
-                                        {app.approvedAt ? new Date(app.approvedAt).toLocaleDateString() : (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A')}
-                                    </span>
-                                </div>
-
-                                <button
-                                    onClick={() => setSelectedApp(app)}
-                                    className="btn btn-sm w-full btn-outline border-base-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
-                                >
-                                    <FaEye /> View Details
-                                </button>
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                    <ApplicationCard
+                        applications={filteredApps}
+                        onView={setSelectedApp}
+                        renderActions={renderActions}
+                        showStatus={true}
+                    />
                 </>
             )}
 
-            {/* Details Modal */}
-            <AnimatePresence>
-                {selectedApp && (
-                    <dialog className="modal modal-open backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="modal-box w-11/12 max-w-2xl bg-base-100 shadow-2xl border border-base-200 p-0 overflow-hidden"
-                        >
-                            <div className="bg-[#B91116] p-4 text-white flex justify-between items-center">
-                                <h3 className="font-bold text-lg flex items-center gap-2">
-                                    <FaFileAlt /> Application Details
-                                </h3>
-                                <button onClick={() => setSelectedApp(null)} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/20">
-                                    <FaTimesCircle className="text-xl" />
-                                </button>
-                            </div>
-
-                            <div className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Applicant</h4>
-                                            <div className="flex items-center gap-3 p-3 bg-base-200/50 rounded-xl">
-                                                <div className="avatar placeholder">
-                                                    <div className="bg-neutral text-neutral-content rounded-full w-10">
-                                                        <span>{selectedApp.userName?.charAt(0)}</span>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold">{selectedApp.userName}</div>
-                                                    <div className="text-xs text-base-content/60">{selectedApp.userEmail}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Loan Details</h4>
-                                            <div className="p-3 bg-base-200/50 rounded-xl space-y-2">
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Amount:</span>
-                                                    <span className="font-bold text-[#B91116]">৳{selectedApp.amount?.toLocaleString()}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Category:</span>
-                                                    <span className="font-medium">{selectedApp.category}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-sm">Approved Date:</span>
-                                                    <span className="font-medium">{selectedApp.approvedAt ? new Date(selectedApp.approvedAt).toLocaleDateString() : (selectedApp.createdAt ? new Date(selectedApp.createdAt).toLocaleDateString() : 'N/A')}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-1">Purpose</h4>
-                                            <div className="p-3 bg-base-200/50 rounded-xl min-h-[100px]">
-                                                <p className="text-sm">{selectedApp.purpose || "No purpose specified."}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="modal-action mt-8 border-t border-base-200 pt-4">
-                                    <button onClick={() => setSelectedApp(null)} className="btn btn-ghost">Close</button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </dialog>
-                )}
-            </AnimatePresence>
+            <ApplicationDetailsModal
+                application={selectedApp}
+                onClose={() => setSelectedApp(null)}
+                renderModalActions={renderModalActions}
+            />
         </div>
     );
 };

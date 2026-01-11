@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useUserData from '../../Hooks/useUserData';
-import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaPlus, FaList, FaChartLine } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaFileAlt, FaCheckCircle, FaPlus, FaList, FaChartLine, FaClock } from 'react-icons/fa';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { motion } from 'framer-motion';
 import AdminAnalytics from './AdminAnalytics';
@@ -18,22 +18,48 @@ const DashboardHome = () => {
     const axiosSecure = useAxiosSecure();
 
     const { data: stats = {} } = useQuery({
-        queryKey: ['dashboard-stats'],
+        queryKey: ['dashboard-stats', role],
         queryFn: async () => {
-            const [users, loans, applications] = await Promise.all([
-                axiosSecure.get('/users'),
-                axiosSecure.get('/all-loans'),
-                axiosSecure.get('/applications')
-            ]);
-            return {
-                totalUsers: users.data.length,
-                totalLoans: loans.data.length,
-                totalApplications: applications.data.length,
-                approvedApplications: applications.data.filter(app => app.status === 'approved').length,
-                applications: applications.data
+            const statsData = {
+                totalUsers: 0,
+                totalLoans: 0,
+                totalApplications: 0,
+                approvedApplications: 0,
+                pendingApplications: 0,
+                totalApprovedValue: 0,
+                applications: []
             };
+
+            const promises = [];
+            // Common data for Admins and Managers
+            if (role === 'admin' || role === 'manager') {
+                promises.push(axiosSecure.get('/all-loans').then(res => ({ key: 'loans', data: res.data })));
+                promises.push(axiosSecure.get('/applications').then(res => ({ key: 'apps', data: res.data })));
+            }
+            // Admin only data
+            if (role === 'admin') {
+                promises.push(axiosSecure.get('/users').then(res => ({ key: 'users', data: res.data })));
+            }
+
+            const results = await Promise.all(promises);
+
+            results.forEach(({ key, data }) => {
+                if (key === 'users') statsData.totalUsers = data.length;
+                if (key === 'loans') statsData.totalLoans = data.length;
+                if (key === 'apps') {
+                    statsData.applications = data;
+                    statsData.totalApplications = data.length;
+                    statsData.approvedApplications = data.filter(app => app.status === 'approved').length;
+                    statsData.pendingApplications = data.filter(app => app.status === 'pending').length;
+                    statsData.totalApprovedValue = data
+                        .filter(app => app.status === 'approved')
+                        .reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+                }
+            });
+
+            return statsData;
         },
-        enabled: role === 'admin'
+        enabled: !!role && (role === 'admin' || role === 'manager')
     });
 
     const containerVariants = {
@@ -58,7 +84,7 @@ const DashboardHome = () => {
         }
     };
 
-    const StatCard = ({ title, value, icon: Icon, color }) => (
+    const StatCard = ({ title, value, icon: Icon, color, subValue }) => (
         <motion.div
             variants={itemVariants}
             className="stat bg-base-100 shadow-xl rounded-2xl border border-base-200 overflow-hidden relative group"
@@ -72,9 +98,9 @@ const DashboardHome = () => {
                 </div>
             </div>
             <div className="stat-title font-medium text-base-content/60">{title}</div>
-            <div className="stat-value text-4xl font-bold text-base-content my-2">{value}</div>
+            <div className="stat-value text-3xl md:text-4xl font-bold text-base-content my-2">{value}</div>
             <div className="stat-desc text-base-content/50 flex items-center gap-1">
-                <FaChartLine /> Updated just now
+                {subValue || <><FaChartLine /> Updated just now</>}
             </div>
         </motion.div>
     );
@@ -125,40 +151,68 @@ const DashboardHome = () => {
                 </div>
             </motion.div>
 
-            {/* Stats Cards - Admin Only */}
-            {role === 'admin' && (
+            {/* Stats Cards - Admin & Manager */}
+            {(role === 'admin' || role === 'manager') && (
                 <div className="mb-12">
                     <motion.h3 variants={itemVariants} className="text-xl font-bold mb-6 flex items-center gap-2 text-base-content">
-                        <FaChartLine className="text-[#B91116]" /> Overview Statistics
+                        <FaChartLine className="text-[#B91116]" /> {role === 'admin' ? 'System Overview' : 'Performance Overview'}
                     </motion.h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {/* Admin sees Users, Managers see Pending Apps instead */}
+                        {role === 'admin' ? (
+                            <StatCard
+                                title="Total Users"
+                                value={stats.totalUsers || 0}
+                                icon={FaUsers}
+                                color="text-blue-500"
+                            />
+                        ) : (
+                            <StatCard
+                                title="Pending Reviews"
+                                value={stats.pendingApplications || 0}
+                                icon={FaClock}
+                                color="text-yellow-500"
+                                subValue="Awaiting action"
+                            />
+                        )}
+
                         <StatCard
-                            title="Total Users"
-                            value={stats.totalUsers || 0}
-                            icon={FaUsers}
-                            color="text-blue-500"
-                        />
-                        <StatCard
-                            title="Total Loans"
-                            value={stats.totalLoans || 0}
-                            icon={FaMoneyBillWave}
-                            color="text-green-500"
-                        />
-                        <StatCard
-                            title="Applications"
+                            title="Total Applications"
                             value={stats.totalApplications || 0}
                             icon={FaFileAlt}
                             color="text-orange-500"
                         />
+
+                        {/* Value Card - Differentiated for visual variety */}
                         <StatCard
-                            title="Approved"
-                            value={stats.approvedApplications || 0}
-                            icon={FaCheckCircle}
-                            color="text-purple-500"
+                            title="Approved Value"
+                            value={`৳${(stats.totalApprovedValue / 100000).toFixed(1)}L`}
+                            icon={FaMoneyBillWave}
+                            color="text-green-500"
+                            subValue={`${stats.approvedApplications} loans approved`}
                         />
+
+                        {role === 'admin' ? (
+                            <StatCard
+                                title="Total Loans"
+                                value={stats.totalLoans || 0}
+                                icon={FaList} // Icon changed to distinguish
+                                color="text-purple-500" // Color changed
+                            />
+                        ) : (
+                            <StatCard
+                                title="Loan Packages"
+                                value={stats.totalLoans || 0}
+                                icon={FaList}
+                                color="text-blue-500"
+                            />
+                        )}
+
                     </div>
-                    {/* Analytics Charts */}
-                    <AdminAnalytics applications={stats.applications} />
+                    {/* Analytics Charts - Available for both now since we have data */}
+                    <div className="mt-8">
+                        <AdminAnalytics applications={stats.applications} />
+                    </div>
                 </div>
             )}
 
@@ -215,6 +269,13 @@ const DashboardHome = () => {
                                 title="Pending Applications"
                                 desc="Review applications waiting for approval."
                                 color="bg-orange-500"
+                            />
+                            <ActionCard
+                                to="/dashboard/approved-loans"
+                                icon={FaCheckCircle}
+                                title="Approved Loans"
+                                desc="View history of all approved loans."
+                                color="bg-green-500"
                             />
                         </>
                     )}
