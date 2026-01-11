@@ -49,10 +49,9 @@ const AllLoans = () => {
 
     return (
         <section className=" mb-8 md:mb-12 relative overflow-hidden">
-            {/* ... (Banner section remains the same) */}
             <div className='relative mb-8 md:mb-16'>
                 <div
-                    className=" bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] min-h-[300px] md:min-h-[450px] w-full pt-24 md:pt-28 pb-28 md:pb-45"
+                    className=" bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] min-h-[300px] md:min-h-[450px] w-full pt-16 pb-28 md:pb-45"
                     style={{
                         clipPath: "ellipse(100% 100% at 50% 0%)"
                     }}

@@ -3,7 +3,7 @@ import useAuth from "../../Hooks/useAuth/useAuth"
 import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { LogOut, LayoutDashboard, User, HandCoins } from "lucide-react"; // Removed Bell
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import NotificationBell from "../Shared/NotificationBell"; // Added Import
@@ -30,11 +30,20 @@ const Navbar = () => {
 
     // Theme Controller Logic
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('theme', theme);
         document.querySelector('html').setAttribute('data-theme', theme);
     }, [theme]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleToggle = (e) => {
         setTheme(e.target.checked ? 'dark' : 'light');
@@ -56,11 +65,8 @@ const Navbar = () => {
     };
 
     return (
-        <motion.nav
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.5 }}
-            className={`fixed top-0 w-full z-[999] transition-all duration-300 bg-base-100 shadow-md py-3`}
+        <nav
+            className={`sticky top-0 w-full z-[999] transition-all duration-500 bg-base-100 shadow-md ${isScrolled ? 'py-2' : 'py-4'}`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center">
@@ -224,7 +230,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.nav>
+        </nav>
     );
 };
 
