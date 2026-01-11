@@ -13,6 +13,7 @@ import LoanDetailsModal from '../../Componets/Dashboard/Borrower/LoanDetailsModa
 import PaymentReceiptModal from '../../Componets/Dashboard/Borrower/PaymentReceiptModal';
 import { motion } from 'framer-motion';
 import { getStatusBadge } from '../../Componets/Dashboard/Shared/utils';
+import RepaymentScheduleModal from '../../Componets/Dashboard/Borrower/RepaymentScheduleModal';
 
 const MyLoans = () => {
     const axiosSecure = useAxiosSecure();
@@ -24,6 +25,7 @@ const MyLoans = () => {
     const queryClient = useQueryClient();
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [loanToCancel, setLoanToCancel] = useState(null);
+    const [selectedScheduleLoan, setSelectedScheduleLoan] = useState(null);
 
     useEffect(() => {
         document.title = 'My Loans - Dashboard | LoanLink';
@@ -200,6 +202,15 @@ const MyLoans = () => {
                                                             Pay Now
                                                         </button>
                                                     )}
+
+                                                    {/* EMI Schedule Button */}
+                                                    <button
+                                                        onClick={() => setSelectedScheduleLoan(loan)}
+                                                        className="btn btn-sm btn-ghost btn-square hover:bg-base-300 text-base-content/70 tooltip tooltip-left"
+                                                        data-tip="EMI Schedule"
+                                                    >
+                                                        <FaCalendarAlt className="text-lg" />
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -244,12 +255,19 @@ const MyLoans = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-2 pt-2 border-t border-base-200">
+                                    <div className="flex gap-2 pt-2 border-t border-base-200 flex-wrap">
                                         <button
                                             onClick={() => setSelectedLoan(loan)}
                                             className="btn btn-sm flex-1 btn-ghost  text-base-content/70"
                                         >
                                             <FaEye /> Details
+                                        </button>
+
+                                        <button
+                                            onClick={() => setSelectedScheduleLoan(loan)}
+                                            className="btn btn-sm flex-1 btn-ghost text-base-content/70"
+                                        >
+                                            <FaCalendarAlt /> Schedule
                                         </button>
 
                                         {loan.status === 'pending' && (
@@ -281,6 +299,13 @@ const MyLoans = () => {
             <LoanDetailsModal
                 loan={selectedLoan}
                 onClose={() => setSelectedLoan(null)}
+            />
+
+            {/* Repayment Schedule Modal */}
+            <RepaymentScheduleModal
+                loan={selectedScheduleLoan}
+                isOpen={!!selectedScheduleLoan}
+                onClose={() => setSelectedScheduleLoan(null)}
             />
 
             {/* Cancel Confirmation Modal */}

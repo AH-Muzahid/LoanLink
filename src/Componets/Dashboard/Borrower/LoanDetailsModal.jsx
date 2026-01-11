@@ -1,5 +1,5 @@
 import Modal from '../../Modal/Modal';
-import { FaInfoCircle, FaFileInvoiceDollar } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
 import StatusTimeline from '../../Shared/StatusTimeline';
 import { getStatusBadge } from '../Shared/utils';
 
@@ -16,7 +16,7 @@ const LoanDetailsModal = ({ loan, onClose }) => {
                 </span>
             }
         >
-            <>
+            <div>
                 {/* Status Timeline */}
                 <div className="px-6 pt-4">
                     <StatusTimeline status={loan.status} feeStatus={loan.feeStatus} />
@@ -58,10 +58,10 @@ const LoanDetailsModal = ({ loan, onClose }) => {
                         <p className="text-base-content italic">"{loan.purpose}"</p>
                     </div>
                 </div>
-                <div className="p-4 bg-base-200/50 border-t border-base-200 flex justify-end">
+                <div className="p-4 bg-base-200/50 border-t border-base-200 flex justify-end gap-2">
                     <button onClick={onClose} className="btn btn-ghost text-base-content/70 hover:bg-base-200">Close</button>
                 </div>
-            </>
+            </div>
         </Modal>
     );
 };
