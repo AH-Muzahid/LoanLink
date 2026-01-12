@@ -56,8 +56,8 @@ const Checkout = () => {
     };
 
     return (
-        <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-            <div className="card bg-base-100 w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        <div className="min-h-[80vh] bg-base-200 flex justify-center items-start pt-12 px-4 pb-12">
+            <div className="card bg-base-100 w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row mt-4">
 
                 {/* Left Side - Order Summary */}
                 <div className="md:w-1/2 bg-[#B91116] text-white p-8 flex flex-col justify-between relative overflow-hidden">

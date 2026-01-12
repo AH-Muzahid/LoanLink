@@ -11,6 +11,31 @@ import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import NotificationBell from "../../Componets/Shared/NotificationBell";
 
+const NavItem = ({ to, icon, label, end = false, isCollapsed, isMobile }) => {
+    const Icon = icon;
+    return (
+        <li>
+            <NavLink
+                to={to}
+                end={end}
+                className={({ isActive }) => `
+                flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300
+                ${isActive
+                        ? 'bg-[#B91116] text-white shadow-md'
+                        : 'text-base-content/70 hover:bg-base-200 hover:text-[#B91116]'
+                    }
+                ${isCollapsed && !isMobile ? 'justify-center px-2' : ''}
+            `}
+            >
+                <Icon className={`text-xl ${isCollapsed && !isMobile ? 'text-2xl' : ''}`} />
+                {(!isCollapsed || isMobile) && (
+                    <span className="font-medium whitespace-nowrap">{label}</span>
+                )}
+            </NavLink>
+        </li>
+    );
+};
+
 const DashboardLayout = () => {
     const userData = useUserData();
     const { user, logOut } = useAuth();
@@ -60,27 +85,7 @@ const DashboardLayout = () => {
         collapsed: { width: "80px" }
     };
 
-    const NavItem = ({ to, icon: Icon, label, end = false }) => (
-        <li>
-            <NavLink
-                to={to}
-                end={end}
-                className={({ isActive }) => `
-                    flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300
-                    ${isActive
-                        ? 'bg-[#B91116] text-white shadow-md'
-                        : 'text-base-content/70 hover:bg-base-200 hover:text-[#B91116]'
-                    }
-                    ${isCollapsed && !isMobile ? 'justify-center px-2' : ''}
-                `}
-            >
-                <Icon className={`text-xl ${isCollapsed && !isMobile ? 'text-2xl' : ''}`} />
-                {(!isCollapsed || isMobile) && (
-                    <span className="font-medium whitespace-nowrap">{label}</span>
-                )}
-            </NavLink>
-        </li>
-    );
+
 
     return (
         <div className="drawer lg:drawer-open">
@@ -186,7 +191,7 @@ const DashboardLayout = () => {
                     {/* Menu Items */}
                     <div className="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar">
                         <ul className="space-y-1">
-                            <NavItem to="/dashboard" icon={FaHome} label="Dashboard" end />
+                            <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard" icon={FaHome} label="Dashboard" end />
 
                             <div className={`divider my-2 ${isCollapsed && !isMobile ? 'opacity-0 h-0' : 'opacity-100'}`}></div>
 
@@ -194,9 +199,9 @@ const DashboardLayout = () => {
                             {role === 'admin' && (
                                 <>
                                     {(!isCollapsed || isMobile) && <li className="menu-title text-xs font-bold text-base-content/40 uppercase px-4 mb-2">Admin</li>}
-                                    <NavItem to="/dashboard/manage-users" icon={FaUsers} label="Manage Users" />
-                                    <NavItem to="/dashboard/all-loans" icon={FaMoneyBillWave} label="All Loans" />
-                                    <NavItem to="/dashboard/loan-applications" icon={FaFileAlt} label="Applications" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/manage-users" icon={FaUsers} label="Manage Users" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/all-loans" icon={FaMoneyBillWave} label="All Loans" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/loan-applications" icon={FaFileAlt} label="Applications" />
                                 </>
                             )}
 
@@ -204,10 +209,10 @@ const DashboardLayout = () => {
                             {role === 'manager' && (
                                 <>
                                     {(!isCollapsed || isMobile) && <li className="menu-title text-xs font-bold text-base-content/40 uppercase px-4 mb-2">Manager</li>}
-                                    <NavItem to="/dashboard/add-loan" icon={FaPlus} label="Add Loan" />
-                                    <NavItem to="/dashboard/manage-loans" icon={FaList} label="Manage Loans" />
-                                    <NavItem to="/dashboard/pending-loans" icon={FaFileAlt} label="Pending" />
-                                    <NavItem to="/dashboard/approved-loans" icon={FaMoneyBillWave} label="Approved" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/add-loan" icon={FaPlus} label="Add Loan" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/manage-loans" icon={FaList} label="Manage Loans" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/pending-loans" icon={FaFileAlt} label="Pending" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/approved-loans" icon={FaMoneyBillWave} label="Approved" />
                                 </>
                             )}
 
@@ -215,15 +220,15 @@ const DashboardLayout = () => {
                             {role === 'borrower' && (
                                 <>
                                     {(!isCollapsed || isMobile) && <li className="menu-title text-xs font-bold text-base-content/40 uppercase px-4 mb-2">Borrower</li>}
-                                    <NavItem to="/dashboard/my-loans" icon={FaMoneyBillWave} label="My Loans" />
-                                    <NavItem to="/dashboard/apply-loan" icon={FaPlus} label="Apply Loan" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/my-loans" icon={FaMoneyBillWave} label="My Loans" />
+                                    <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/apply-loan" icon={FaPlus} label="Apply Loan" />
                                 </>
                             )}
 
                             <div className={`divider my-2 ${isCollapsed && !isMobile ? 'opacity-0 h-0' : 'opacity-100'}`}></div>
 
-                            <NavItem to="/dashboard/profile" icon={FaUser} label="My Profile" />
-                            <NavItem to="/" icon={FaHome} label="Back Home" />
+                            <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/dashboard/profile" icon={FaUser} label="My Profile" />
+                            <NavItem isCollapsed={isCollapsed} isMobile={isMobile} to="/" icon={FaHome} label="Back Home" />
                         </ul>
                     </div>
 

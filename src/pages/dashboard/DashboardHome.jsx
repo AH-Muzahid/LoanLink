@@ -18,7 +18,7 @@ const DashboardHome = () => {
     const axiosSecure = useAxiosSecure();
 
     const { data: stats = {} } = useQuery({
-        queryKey: ['dashboard-stats', role],
+        queryKey: ['dashboard-stats', role, user?.email],
         queryFn: async () => {
             const statsData = {
                 totalUsers: 0,
@@ -31,14 +31,21 @@ const DashboardHome = () => {
             };
 
             const promises = [];
-            // Common data for Admins and Managers
+
+            // 1. Admin/Manager Data
             if (role === 'admin' || role === 'manager') {
                 promises.push(axiosSecure.get('/all-loans').then(res => ({ key: 'loans', data: res.data })));
                 promises.push(axiosSecure.get('/applications').then(res => ({ key: 'apps', data: res.data })));
             }
-            // Admin only data
+
+            // 2. Admin Only Data
             if (role === 'admin') {
                 promises.push(axiosSecure.get('/users').then(res => ({ key: 'users', data: res.data })));
+            }
+
+            // 3. Borrower Data
+            if (role === 'borrower' && user?.email) {
+                promises.push(axiosSecure.get(`/my-applications/${user.email}`).then(res => ({ key: 'borrowerApps', data: res.data })));
             }
 
             const results = await Promise.all(promises);
@@ -46,7 +53,20 @@ const DashboardHome = () => {
             results.forEach(({ key, data }) => {
                 if (key === 'users') statsData.totalUsers = data.length;
                 if (key === 'loans') statsData.totalLoans = data.length;
+
+                // Handle Admin/Manager Applications
                 if (key === 'apps') {
+                    statsData.applications = data;
+                    statsData.totalApplications = data.length;
+                    statsData.approvedApplications = data.filter(app => app.status === 'approved').length;
+                    statsData.pendingApplications = data.filter(app => app.status === 'pending').length;
+                    statsData.totalApprovedValue = data
+                        .filter(app => app.status === 'approved')
+                        .reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+                }
+
+                // Handle Borrower Applications
+                if (key === 'borrowerApps') {
                     statsData.applications = data;
                     statsData.totalApplications = data.length;
                     statsData.approvedApplications = data.filter(app => app.status === 'approved').length;
@@ -59,7 +79,7 @@ const DashboardHome = () => {
 
             return statsData;
         },
-        enabled: !!role && (role === 'admin' || role === 'manager')
+        enabled: !!role
     });
 
     const containerVariants = {
@@ -210,6 +230,52 @@ const DashboardHome = () => {
 
                     </div>
                     {/* Analytics Charts - Available for both now since we have data */}
+                    <div className="mt-8">
+                        <AdminAnalytics applications={stats.applications} />
+                    </div>
+                </div>
+            )}
+
+            {/* Stats Cards - Borrower */}
+            {role === 'borrower' && (
+                <div className="mb-12">
+                    <motion.h3 variants={itemVariants} className="text-xl font-bold mb-6 flex items-center gap-2 text-base-content">
+                        <FaChartLine className="text-[#B91116]" /> Your Financial Overview
+                    </motion.h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <StatCard
+                            title="Total Applications"
+                            value={stats.totalApplications || 0}
+                            icon={FaFileAlt}
+                            color="text-blue-500"
+                        />
+
+                        <StatCard
+                            title="Approved Loans"
+                            value={stats.approvedApplications || 0}
+                            icon={FaCheckCircle}
+                            color="text-green-500"
+                            subValue="Active loans"
+                        />
+
+                        <StatCard
+                            title="Pending Requests"
+                            value={stats.pendingApplications || 0}
+                            icon={FaClock}
+                            color="text-yellow-500"
+                            subValue="Under review"
+                        />
+
+                        <StatCard
+                            title="Approved Amount"
+                            value={`৳${(stats.totalApprovedValue || 0).toLocaleString()}`}
+                            icon={FaMoneyBillWave}
+                            color="text-[#B91116]"
+                            subValue="Total borrowed"
+                        />
+                    </div>
+
+                    {/* Analytics for Borrower */}
                     <div className="mt-8">
                         <AdminAnalytics applications={stats.applications} />
                     </div>

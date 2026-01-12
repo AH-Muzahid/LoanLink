@@ -4,7 +4,7 @@ import Home from '../pages/Home/Home';
 import ErrorPage from '../pages/Error/ErrorPage';
 import MainLayout from './../Layouts/MainLayout/MainLayout';
 import Login from '../pages/Login/Login';
-import Register from '../pages/Register/Regiser';
+import Register from '../pages/Register/Register';
 import AllLoans from '../pages/AllLoans/AllLoans';
 import PersonalLoanDetails from '../pages/Home/PersonalLoanDetails';
 import MyLoans from '../pages/dashboard/MyLoans';

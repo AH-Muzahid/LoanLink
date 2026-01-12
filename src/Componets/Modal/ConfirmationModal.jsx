@@ -11,8 +11,9 @@ const ConfirmationModal = ({
     confirmText = 'Confirm',
     cancelText = 'Cancel',
     confirmButtonClass = 'btn-error',
-    icon: Icon = FaExclamationTriangle
+    icon = FaExclamationTriangle
 }) => {
+    const Icon = icon;
     return (
         <AnimatePresence>
             {isOpen && (
