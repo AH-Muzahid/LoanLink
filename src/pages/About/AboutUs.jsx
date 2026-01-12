@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaHandshake, FaLightbulb, FaUsers, FaAward, FaCheckCircle } from 'react-icons/fa';
 import Reveal from '../../Componets/Shared/Reveal';
+import SEO from '../../Componets/Shared/SEO';
 
 const AboutUs = () => {
     const stats = [
@@ -35,6 +36,11 @@ const AboutUs = () => {
 
     return (
         <div className="min-h-screen max-w-8xl mx-auto bg-base-100">
+            <SEO
+                title="About Us"
+                description="Learn about LoanLinks, our mission, vision, and the team dedicated to providing transparency and speed in the financial sector."
+                keywords="About LoanLinks, Financial Mission, Our Team, Loan Management Company, AH Muzahid"
+            />
             {/* Hero Section */}
             <div className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 bg-base-200/50 overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-[#B91116]/5 to-transparent -z-10"></div>

@@ -10,6 +10,7 @@ import { Pagination, Autoplay } from 'swiper/modules';
 import LoanCard from '../../Componets/LoanCard/LoanCard';
 import LoanSkeleton from './LoanSkeleton';
 import Reveal from '../../Componets/Shared/Reveal';
+import SEO from '../../Componets/Shared/SEO';
 
 import img4 from '../../assets/imgi_57_home-loan-2021-01-19-6006ae651fe5c.jpg'
 import img5 from '../../assets/imgi_58_home-loan-2021-01-19-6006ae7bd1c58.jpg'
@@ -28,10 +29,6 @@ const AllLoans = () => {
     useEffect(() => {
         setSearchTerm(searchParams.get('search') || '');
     }, [searchParams]);
-
-    useEffect(() => {
-        document.title = 'All Loans - LoanLink';
-    }, []);
 
     // Reset page to 1 whenever search term changes
     useEffect(() => {
@@ -54,6 +51,11 @@ const AllLoans = () => {
 
     return (
         <section className=" mb-8 md:mb-12 relative overflow-hidden">
+            <SEO
+                title="All Loan Packages"
+                description="Browse our extensive collection of loan packages including Home Loans, Car Loans, Personal Loans, and more."
+                keywords="Loan Packages, Interest Rates, Apply Loan, Finance Options, LoanLinks Loans"
+            />
             <div className='relative mb-8 md:mb-16'>
                 <div
                     className=" bg-linear-to-r from-[#cf2829] via-[#d62e2f] to-[#B21F1F] min-h-[300px] md:min-h-[450px] w-full pt-16 pb-28 md:pb-45"

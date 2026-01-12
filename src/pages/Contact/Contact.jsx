@@ -1,22 +1,28 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaPaperPlane } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaFacebook, FaLinkedin, FaGithub, FaPaperPlane } from 'react-icons/fa';
 import Reveal from '../../Componets/Shared/Reveal';
+import SEO from '../../Componets/Shared/SEO';
 
 const Contact = () => {
     return (
         <div className="min-h-screen max-w-8xl mx-auto bg-base-100">
+            <SEO
+                title="Contact Support"
+                description="Get in touch with AH Muzahid. Available for freelance projects and full-time opportunities."
+                keywords="Contact AH Muzahid, Web Developer Contact, Hire React Developer, LoanLinks Support"
+            />
             {/* Hero Section */}
             <div className="relative pt-32 pb-20 bg-[#B91116] text-white overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                 <div className="container mx-auto px-4 text-center relative z-10">
                     <Reveal>
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Get in Touch
+                            Let's Connect
                         </h1>
                     </Reveal>
                     <Reveal delay={0.1}>
                         <p className="text-lg text-white/80 max-w-2xl mx-auto">
-                            Have questions about our loans? Our team is here to help you 24/7.
+                            Open for opportunities, collaborations, and discussions.
                         </p>
                     </Reveal>
                 </div>
@@ -29,9 +35,9 @@ const Contact = () => {
                     <div className="lg:col-span-1 space-y-8">
                         <Reveal>
                             <div>
-                                <h3 className="text-2xl font-bold mb-6 text-[#B91116]">Contact Information</h3>
+                                <h3 className="text-2xl font-bold mb-6 text-[#B91116]">Contact Details</h3>
                                 <p className="text-base-content/70 mb-8">
-                                    Fill up the form and our team will get back to you within 24 hours.
+                                    Feel free to reach out directly via email or phone.
                                 </p>
                             </div>
 
@@ -42,8 +48,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-lg">Phone</h4>
-                                        <p className="text-base-content/70">+880 1712-345678</p>
-                                        <p className="text-base-content/70">+880 1912-345678</p>
+                                        <p className="text-base-content/70">+880 1312-009084</p>
                                     </div>
                                 </div>
 
@@ -53,8 +58,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-lg">Email</h4>
-                                        <p className="text-base-content/70">support@loanlink.bd</p>
-                                        <p className="text-base-content/70">info@loanlink.bd</p>
+                                        <p className="text-base-content/70">ahmuzahid40@gmail.com</p>
                                     </div>
                                 </div>
 
@@ -63,9 +67,8 @@ const Contact = () => {
                                         <FaMapMarkerAlt />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-lg">Office</h4>
+                                        <h4 className="font-bold text-lg">Location</h4>
                                         <p className="text-base-content/70">
-                                            Shaheb Bazar, Zero Point,<br />
                                             Rajshahi, Bangladesh
                                         </p>
                                     </div>
@@ -73,13 +76,17 @@ const Contact = () => {
                             </div>
 
                             <div className="pt-8 border-t border-base-200">
-                                <h4 className="font-bold text-lg mb-4">Follow Us</h4>
+                                <h4 className="font-bold text-lg mb-4">Social Profiles</h4>
                                 <div className="flex gap-4">
-                                    {[FaFacebook, FaTwitter, FaLinkedin, FaInstagram].map((Icon, i) => (
-                                        <a key={i} href="#" className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center hover:bg-[#B91116] hover:text-white transition-all duration-300">
-                                            <Icon />
-                                        </a>
-                                    ))}
+                                    <a href="https://github.com/AH-Muzahid" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center hover:bg-[#B91116] hover:text-white transition-all duration-300">
+                                        <FaGithub />
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/ali-hasan-muzahid/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center hover:bg-[#0077B5] hover:text-white transition-all duration-300">
+                                        <FaLinkedin />
+                                    </a>
+                                    <a href="https://www.facebook.com/ah.muzahid.2025" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition-all duration-300">
+                                        <FaFacebook />
+                                    </a>
                                 </div>
                             </div>
                         </Reveal>

@@ -5,6 +5,8 @@ import SocialLogin from "../../Componets/SocialLogin/SocialLogin";
 import toast from "react-hot-toast";
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
+import SEO from "../../Componets/Shared/SEO";
+
 
 
 const Login = () => {
@@ -31,6 +33,11 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 relative overflow-hidden">
+            <SEO
+                title="Login"
+                description="Securely log in to your LoanLinks account to manage your loans, applications, and profile."
+                keywords="Login, Secure Access, Loan Dashboard, User Account"
+            />
             {/* Background Decorations */}
             <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-red-100/40 rounded-full blur-[100px] -z-10" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[100px] -z-10" />

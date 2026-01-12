@@ -6,6 +6,7 @@ import SocialLogin from '../../Componets/SocialLogin/SocialLogin';
 import toast from 'react-hot-toast';
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaImage, FaRocket, FaUserTag } from 'react-icons/fa';
 import axios from 'axios';
+import SEO from '../../Componets/Shared/SEO';
 
 const Register = () => {
     const { createUser, updateUserProfile } = useAuth();
@@ -38,6 +39,11 @@ const Register = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 relative overflow-hidden">
+            <SEO
+                title="Create Account"
+                description="Join LoanLinks today to access quick and easy loan solutions tailored for you."
+                keywords="Register, Sign Up, Loan Account, Create Account, Join LoanLinks"
+            />
             {/* Background Decorations */}
             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-red-100/40 rounded-full blur-[100px] -z-10" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[100px] -z-10" />
