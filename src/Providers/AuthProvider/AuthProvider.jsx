@@ -73,7 +73,7 @@ const AuthProvider = ({ children }) => {
             }
             else {
                 axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true })
-                    .then(res => {
+                    .then(_res => {
                         // console.log('Logged out:', res.data);
                     })
                     .catch(error => {
