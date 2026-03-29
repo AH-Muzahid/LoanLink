@@ -61,6 +61,7 @@ const AuthProvider = ({ children }) => {
                 axios.post(`${import.meta.env.VITE_API_URL}/jwt`, { email: currentUser.email }, { withCredentials: true })
                     .then(res => {
                         if (res?.data?.success) {
+                            localStorage.setItem('token', res.data.token);
                             console.log("JWT Token Generated Successfully");
                         }
                     })
@@ -72,6 +73,7 @@ const AuthProvider = ({ children }) => {
                     });
             }
             else {
+                localStorage.removeItem('token');
                 axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true })
                     .then(res => {
                         // console.log('Logged out:', res.data);

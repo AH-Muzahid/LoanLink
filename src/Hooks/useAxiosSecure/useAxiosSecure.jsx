@@ -13,6 +13,14 @@ const useAxiosSecure = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const requestId = axiosSecure.interceptors.request.use(config => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
+
         const interceptorId = axiosSecure.interceptors.response.use(res => {
             return res;
         }, error => {
@@ -29,6 +37,7 @@ const useAxiosSecure = () => {
         });
 
         return () => {
+            axiosSecure.interceptors.request.eject(requestId);
             axiosSecure.interceptors.response.eject(interceptorId);
         };
     }, [logOut, navigate])
